@@ -36,7 +36,7 @@ guide your decision:
   If not implemented, they will introduce high risks to your workstation
   security.
 - _(MODERATE)_ items will improve your security posture, but are less
-  important, especially if they interfere too much with your work.
+  important, especially if they interfere too much with your workflow.
 - _(LOW)_ items may improve the overall security, but may not be worth the
   convenience trade-offs.
 - _(PARANOID)_ is reserved for items we feel will dramatically improve your
@@ -554,7 +554,61 @@ fully isolated VMs.
 
 ### Password managers
 
-### Team communication
+#### Checklist
+
+- [ ] Use a password manager _(CRITICAL_)
+- [ ] Use unique passwords on unrelated sites _(CRITICAL)_
+- [ ] Use a password manager that supports team sharing _(MODERATE)_
+- [ ] Use a separate password manager for non-website accounts _(PARANOID)_
+
+Using good, unique passwords should be a critical requirement for every member
+of your team. Credential theft is happening all the time -- either via
+compromised computers, stolen database dumps, remote site exploits, or any
+number of other means. No credentials should ever be reused across sites,
+especially for critical applications.
+
+#### In-browser password manager
+
+Every browser has a mechanism for saving passwords that is fairly secure and
+can sync with vendor-provided cloud storage by first encrypting the data with
+a passphrase. However, this mechanism has important disadvantages:
+
+1. It does not work across browsers
+2. It does not offer any way of sharing credentials with team members
+
+There are several well-supported, free-or-cheap password managers that are
+well-integrated into multiple browsers, work across platforms, and offer
+group sharing (usually as a paid service). Solutions can be easily found via
+search engines.
+
+#### Standalone password manager
+
+One of the major drawbacks of any password manager that is integrated with
+the browser is the fact that it's part of the application that is most likely
+to be attacked by intruders. If this makes you uncomfortable (and it should),
+you may choose to have two different password managers -- one for websites
+that is integrated into your browser, and one as a standalone application. The
+latter can be used to store high-risk credentials such as root passwords,
+database passwords, other shell account credentials, etc.
+
+It may be particularly useful to have such tool for sharing superuser account
+credentials with other members of your team. The best is, obviously, not to
+have shared account credentials at all and manage superuser access via
+role-based tools such as sudo and group membership. However, not all
+systems are easily managed that way, so having a way to securely pass account
+credentials to other members of your team may be very handy.
+
+A few tools can help you:
+
+- [KeePassX][8], which improves team sharing in version 2
+- [Pass][9], which uses text files and PGP and integrates with git
+- [Django-Pstore][10], which uses GPG to share credentials between admins
+- [Hiera-Eyaml][11], if you are already using Puppet for your infrastructure,
+  this may be a handy way to track your server/service credentials as part of
+  your encrypted Hiera data store
+
+### Securing SSH and PGP private keys
+
 
 ### SELinux on the workstation
 
@@ -571,3 +625,7 @@ fully isolated VMs.
 [5]: https://spideroak.com/
 [6]: https://code.google.com/p/chromium/wiki/LinuxSandboxing
 [7]: http://www.thoughtcrime.org/software/sslstrip/
+[8]: https://keepassx.org/
+[9]: http://www.passwordstore.org/
+[10]: https://pypi.python.org/pypi/django-pstore
+[11]: https://github.com/TomPoulton/hiera-eyaml
