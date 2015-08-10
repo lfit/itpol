@@ -1,4 +1,5 @@
 # Linux workstation security checklist
+
 This is a set of recommendations used by the Linux Foundation for their systems
 administrators. All of LF employees are remote workers and we use this set of
 guidelines to ensure that a sysadmin's system passes core security requirements
@@ -21,17 +22,46 @@ is a crazy person. These guidelines are merely a basic set of highway safety
 rules that is neither exhaustive, nor a replacement for experience, vigilance,
 and common sense.
 
+Each section is split into two areas:
+
+- The checklist that can be adapted to your project's needs
+- Free-form list of considerations that explain what dictated these decisions
+
+## Severity levels
+
+The items in the checklist include the severity level, which we hope will help
+guide your decision:
+
+- _(CRITICAL)_ items should definitely be high on the consideration list.
+  If not implemented, they will introduce high risks to your workstation
+  security.
+- _(MODERATE)_ items will improve your security posture, but are less
+  important, especially if they interfere too much with your work.
+- _(LOW)_ items may improve the overall security, but may not be worth the
+  convenience trade-offs.
+- _(PARANOID)_ is reserved for items we feel will dramatically improve your
+  workstation security, but will probably require a lot of adjustment to the
+  way you interact with your operating system.
+
+Remember, these are only guidelines. If you feel the severity levels do not
+reflect your project's commitment to security, you should adjust them as you
+see fit.
+
 ## Choosing the right hardware
+
 We do not mandate that our admins use a specific vendor or a specific model, so
 this section addresses core considerations when choosing a work system.
 
 ### Checklist
+
 - [ ] System supports SecureBoot _(CRITICAL)_
 - [ ] System has no firewire, thunderbolt or ExpressCard ports _(MODERATE)_
 - [ ] System has a TPM chip _(LOW)_
 
 ### Considerations
+
 #### SecureBoot
+
 Despite its controversial nature, SecureBoot offers prevention against many
 attacks targeting workstations (Rootkits, "Evil Maid," etc), without
 introducing too much extra hassle. It will not stop a truly dedicated attacker,
@@ -44,6 +74,7 @@ protection against the type of attacks that SecureBoot is supposed to prevent,
 but it will require more effort to set up and maintain.
 
 #### Firewire, thunderbolt, and ExpressCard ports
+
 Firewire is a silly standard that, by design, allows any connecting device full
 direct memory access to your system ([see Wikipedia][2]). Thunderbolt and
 ExpressCard are guilty of the same sin, though some later implementations of
@@ -52,6 +83,7 @@ you are getting has none of these ports, but it is not critical, as they
 usually can be turned off via UEFI or disabled in the kernel itself.
 
 #### TPM Chip
+
 Trusted Platform Module (TPM) is a crypto chip bundled with the motherboard
 separately from the core processor, which can be used for additional platform
 security (such as to store full-disk encryption keys), but is not normally used
@@ -59,17 +91,21 @@ for day-to-day workstation operation. At best, this is a nice-to-have, unless
 you have a specific need to use TPM for your workstation security.
 
 ## Pre-boot environment
+
 This is a set of recommendations for your workstation before you even start
 with OS installation.
 
 ### Checklist
+
 - [ ] UEFI boot mode is used (not legacy BIOS) _(CRITICAL)_
 - [ ] Password is required to enter UEFI configuration _(CRITICAL)_
 - [ ] SecureBoot is enabled _(CRITICAL)_
 - [ ] UEFI-level password is required to boot the system _(LOW)_
 
 ### Considerations
+
 #### UEFI and SecureBoot
+
 UEFI, with all its warts, offers a lot of goodies that legacy BIOS doesn't,
 such as SecureBoot. Most modern systems come with UEFI mode on by default.
 
@@ -93,11 +129,13 @@ not bother with this, as you will already have to enter a LUKS passphrase and
 this will save you a few extra keystrokes.
 
 ## Distro choice considerations
+
 Chances are you'll stick with a fairly widely-used distribution such as Fedora,
 Ubuntu, Arch, Debian, or one of their close spin-offs. In any case, this is
 what you should consider when picking a distribution to use.
 
 ### Checklist
+
 - [ ] Has a robust MAC/RBAC implementation (SELinux/AppArmor/PaX) _(CRITICAL)_
 - [ ] Publishes security bulletins _(CRITICAL)_
 - [ ] Provides timely security patches _(CRITICAL)_
@@ -106,7 +144,9 @@ what you should consider when picking a distribution to use.
 - [ ] Has robust native full disk encryption support _(CRITICAL)_
 
 ### Considerations
+
 #### SELinux, AppArmor, and GrSecurity/PaX
+
 Mandatory Access Controls (MAC) or Role-Based Access Controls are an extension
 of the basic user/group security mechanism used in legacy POSIX systems. Most
 distributions these days either already come bundled with a MAC/RBAC
@@ -125,6 +165,7 @@ externally listening daemons, and where user-run applications pose the highest
 risk, GrSecurity/PaX will _probably_ offer more security benefits than SELinux.
 
 #### Distro security bulletins
+
 Most widely used distributions have a mechanism to deliver security bulletins
 to its users, but if you are fond of something esoteric, check whether the
 developers have a documented mechanism of alerting the users about security
@@ -133,6 +174,7 @@ that the distribution is not mature enough to be considered for a primary admin
 workstation.
 
 #### Timely and trusted security updates
+
 Most widely used distributions deliver security updates, but is worth checking
 to ensure that critical package updates are provided in a timely fashion. Avoid
 using spin-offs and "community rebuilds" for this reason, as they routinely
@@ -146,6 +188,7 @@ this basic security measure (Arch, I'm looking at you), so this is a thing
 worth checking.
 
 #### Distros supporing UEFI and SecureBoot
+
 Check that the distribution supports UEFI and SecureBoot. Find out whether it
 requires importing an extra key or whether it signs its boot kernels with a key
 already trusted by systems manufacturers (e.g. via an agreement with
@@ -156,6 +199,7 @@ doesn't support SecureBoot and has no mechanisms to prevent boot-level attacks,
 look elsewhere.
 
 #### Full disk encryption
+
 Full disk encryption is a requirement for securing data at rest, and is
 supported by most distributions. As an alternative, systems with
 self-encrypting hard drives may be used (normally implemented via the on-board
@@ -163,9 +207,11 @@ TPM chip) and offer comparable levels of security plus faster operation, but at
 a considerably higher cost.
 
 ## Distro installation guidelines
+
 All distributions are different, but here are general guidelines:
 
 ### Checklist
+
 - [ ] Use full disk encryption (LUKS) with a robust passphrase _(CRITICAL)_
 - [ ] Make sure swap is also encrypted _(CRITICAL)_
 - [ ] Require a password to edit bootloader (can be same as LUKS) _(CRITICAL)_
@@ -174,7 +220,9 @@ All distributions are different, but here are general guidelines:
 - [ ] Set up a robust user-account password, different from root _(CRITICAL)_
 
 ### Considerations
+
 #### Full disk encryption
+
 Unless you are using self-encrypting hard drives, it is important to configure
 your installer to fully encrypt all the disks that will be used for storing
 your data and your system files. It is not sufficient to simply encrypt the
@@ -193,6 +241,7 @@ In other words, `/boot` should always be the only unencrypted partition on your
 system.
 
 #### Choosing good passphrases
+
 Modern Linux systems have no limitation of password/passphrase length, so the
 only real limitation is your level of paranoia and your stubbornness. If you
 boot your system a lot, you will probably have to type at least two different
@@ -212,6 +261,7 @@ Unless you have concerns about physical security, it is fine to write down your
 passphrases and keep them in a safe place away from your work desk.
 
 #### Root, user passwords and the admin group
+
 I recommend that you use the same passphrase for your root password as you use
 for your LUKS encryption (unless you share your laptop with other trusted
 people who should be able to unlock the drives, but shouldn't be able to become
@@ -231,23 +281,27 @@ In other words, if you are the sole user on your workstation, you should have 2
 distinct, robust, equally strong passphrases you will need to remember:
 
 **Admin-level**, used in the following locations:
+
 - UEFI administration
 - Bootloader (GRUB)
 - Disk encryption (LUKS)
 - Workstation admin (root user)
 
 **User-level**, used for the following:
+
 - User account and sudo
 - Master password for the password manager
 
 All of them, obviously, can be different if there is a compelling reason.
 
 ## Post-installation hardening
+
 Post-installation security hardening will depend greatly on your distribution
 of choice, so it is futile to provide detailed instructions in a general
 document such as this one. However, here are some steps you should take:
 
 ### Checklist
+
 - [ ] Globally disable firewire and thunderbolt modules _(CRITICAL)_
 - [ ] Check your firewalls to ensure all incoming ports are filtered _(CRITICAL)_
 - [ ] Make sure root mail is forwarded to an account you check _(CRITICAL)_
@@ -259,7 +313,9 @@ document such as this one. However, here are some steps you should take:
 - [ ] Install an Intrusion Detection System _(PARANOID)_
 
 ### Considerations
+
 #### Blacklisting modules
+
 To blacklist a firewire and thunderbolt modules, add the following lines to a
 file in `/etc/modprobe.d/blacklist-dma.conf`:
 
@@ -270,6 +326,7 @@ The modules will be blacklisted upon reboot. It doesn't hurt doing this even if
 you don't have these ports (but it doesn't do anything either).
 
 #### Root mail
+
 By default, root mail is just saved on the system and tends to never be read.
 Make sure you set your `/etc/aliases` to forward root mail to a mailbox that
 you actually read, otherwise you may miss important system notifications and
@@ -284,6 +341,7 @@ nonexistent or non-routable domain names. If that is the case, you will need to
 play with your mail forwarding configuration until this actually works.
 
 #### Firewalls, sshd, and listening daemons
+
 The default firewall settings will depend on your distribution, but many of
 them will allow incoming `sshd` ports. Unless you have a compelling legitimate
 reason to allow incoming ssh, you should filter that out and disable the `sshd`
@@ -299,6 +357,7 @@ responding to ping. This will help safeguard you against network-level 0-day
 exploits.
 
 #### Automatic updates or notifications
+
 It is recommended to turn on automatic updates, unless you have a very good
 reason not to do so, such as fear that an automatic update would render your
 system unusable (it's happened in the past, so this fear is not unfounded). At
@@ -309,11 +368,12 @@ documentation to find out more.
 
 You should apply all outstanding errata as soon as possible, even if something
 isn't specifically labeled as "security update" or has an associated CVE code.
-All bugs have potential of being security bugs and erring on the side of newer,
-unknown bugs is _generally_ a safer strategy than sticking with old, known
-ones.
+All bugs have the potential of being security bugs and erring on the side of
+newer, unknown bugs is _generally_ a safer strategy than sticking with old,
+known ones.
 
 #### Watching logs
+
 You should have a keen interest in what happens on your system. For this
 reason, you should install `logwatch` and configure it to send nightly activity
 reports of everything that happens on your system. This won't prevent a
@@ -325,11 +385,12 @@ you will need to install and enable `rsyslog` to make sure your `/var/log` is
 not empty before logwatch will be of any use.
 
 #### Rkhunter and IDS
+
 Installing `rkhunter` and an intrusion detection system (IDS) like `aide` or
 `tripwire` will not be that useful unless you actually understand how they work
 and take the necessary steps to set them up properly (such as, keeping the
 databases on external media, running checks from a trusted environment,
-remembering to update the hash databases after performing system updates and
+remembering to refresh the hash databases after performing system updates and
 configuration changes, etc). If you are not willing to take these steps and
 adjust how you do things on your own workstation, these tools will introduce
 hassle without any tangible security benefit.
@@ -339,15 +400,19 @@ to learn and use, and though it will not deter a sophisticated attacker, it may
 help you catch your own mistakes.
 
 ## Personal workstation backups
+
 Workstation backups tend to be overlooked or done in a haphazard, often unsafe
 manner.
 
 ### Checklist
+
 - [ ] Set up encrypted workstation backups to external storage _(CRITICAL)_
 - [ ] Use zero-knowledge backup tools for cloud backups _(MODERATE)_
 
 ### Considerations
+
 #### Full encrypted backups to external storage
+
 It is handy to have an external hard drive where one can dump full backups
 without having to worry about such things like bandwidth and upstream speeds
 (in this day and age most providers still offer dramatically asymmetric
@@ -355,17 +420,20 @@ upload/download speeds). Needless to say, this hard drive needs to be in itself
 encrypted (again, via LUKS), or you should use a backup tool that creates
 encrypted backups, such as `duplicity` or its GUI companion, `deja-dup`. I
 recommend using the latter with a good randomly generated passphrase, stored in
-a password manager. If you travel with your laptop, leave this drive at home to
-have something to come home to in case your laptop is lost or stolen.
+your password manager. If you travel with your laptop, leave this drive at home
+to have something to come back to in case your laptop is lost or stolen.
 
 In addition to your home directory, you should also back up `/etc` and
 `/var/log` for various forensic purposes.
 
-Above all, avoid copying your home directory onto unencrypted storage, even as
-a quick way to move your files around between systems, as you will most
-certainly forget to erase it once you're done.
+Above all, avoid copying your home directory onto any unencrypted storage, even
+as a quick way to move your files around between systems, as you will most
+certainly forget to erase it once you're done, exposing potentially private or
+otherwise security sensitive data to snooping hands -- especially if you keep
+that storage media in the same bag with your laptop.
 
 #### Selective zero-knowledge backups off-site
+
 Off-site backups are also extremely important and can be done either to your
 employer, if they offer space for it, or to a cloud provider. You can set up a
 separate duplicity/deja-dup profile to only include most important files in
@@ -378,61 +446,70 @@ useful features such as synchronizing content between multiple systems and
 platforms.
 
 ## Best practices
+
 What follows is a curated list of best practices that we think you should
-adopt. It is most certainly non-exhaustive, but attempts to offer practical
-advice that strikes a workable balance between security and overall usability.
+adopt. It is most certainly non-exhaustive, but rather attempts to offer
+practical advice that strikes a workable balance between security and overall
+usability.
 
 ### Browsing
+
 There is no question that the web browser will be the piece of software with
 the largest and the most exposed attack surface on your system. It is a tool
 written specifically to download and execute untrusted, frequently hostile
-code. It attempts to shield you from this by employing multiple mechanisms
-such as sandboxes and code inspection, but they have all been previously
-defeated on multiple occasions. You should learn to treat browsing websites as
-the most insecure activity you'll engage in on any given day.
+code. It attempts to shield you from this danger by employing multiple
+mechanisms such as sandboxes and code sanitization, but they have all been
+previously defeated on multiple occasions. You should learn to approach
+browsing websites as the most insecure activity you'll engage in on any given
+day.
 
 There are several ways you can reduce the impact of a compromised browser, but
 the truly effective ways will require significant changes in the way you
 operate your workstation.
 
 #### 1: Use two different browsers
+
 This is the easiest to do, but only offers minor security benefits. Not all
 browser compromises give an attacker full unfettered access to your system --
 sometimes they are limited to allowing one to read local browser storage,
 steal active sessions from other tabs, capture input entered into the browser,
 etc. Using two different browsers, one for work/high security sites, and
 another for everything else will help prevent minor compromises from giving
-attackers access to the whole cookie jar. The main inconvenience will be the
-amount of memory consumed by two different browser processes.
+attackers access to the whole proverbial cookie jar. The main inconvenience
+will be the amount of memory consumed by two different browser processes.
 
 Here's what we recommend:
 
 ##### Firefox for work and high security sites
-Use it to access work-related sites, where extra care should be taken to
+
+Use Firefox to access work-related sites, where extra care should be taken to
 ensure that data like cookies, sessions, login information, keystrokes, etc,
-should most definitely not fall into an attacker's hands. You should NOT use
+should most definitely not fall into attackers' hands. You should NOT use
 this browser for accessing any other sites except select few.
 
 You should install the following Firefox add-ons:
 
 - [ ] NoScript _(CRITICAL)_
   - NoScript prevents active content from loading, unless specifically
-    whitelisted. It is a great hassle to use inside your default browser
+    whitelisted. It is a great hassle to use with your default browser
     (though offers really good security benefits), so we recommend only
     enabling it on the browser you use to access work-related sites.
+
 - [ ] Ghostery _(CRITICAL)_
   - Ghostery will prevent most external trackers and ad platforms from being
-    loaded on the pages, which will help prevent compromises on these tracking
+    loaded on the pages, which will help avoid compromises on these tracking
     sites from affecting your browser (trackers and ad sites are very commonly
-    targeted by attackers, as they allow rapid infection of multiple systems
+    targeted by attackers, as they allow rapid infection of thousands of systems
     worldwide).
+
 - [ ] HTTPS Everywhere _(CRITICAL)_
-  - This EFF-developed Add-on will ensure that all your sites are accessed
+  - This EFF-developed Add-on will ensure that most of your sites are accessed
     over a secure connection, even if a link you click is using http:// (great
-    to avoid a number of attacks like SSL-strip).
+    to avoid a number of attacks, such as [SSL-strip][7]).
+
 - [ ] Certificate Patrol _(MODERATE)_
   - This tool will alert you if the site you're accessing has recently changed
-    the TLS certificates -- especially if it wasn't nearing expiration dates
+    their TLS certificates -- especially if it wasn't nearing expiration dates
     or if it is now using a different certification authority. Note, that this
     will generate a lot of false-positives.
 
@@ -440,6 +517,7 @@ You should leave Firefox as your default browser for opening links, as
 NoScript will prevent most active content from loading or executing.
 
 ##### Chrome/Chromium for everything else
+
 Chromium developers are ahead of Firefox in adding a lot of nice security
 features (at least [on Linux][6]), such as seccomp sandboxes, kernel user
 namespaces, etc, which act as an added layer of isolation between the sites
@@ -448,18 +526,20 @@ project, and Chrome is Google's proprietary binary build based on it (insert
 the usual paranoid caution about not using it for anything you don't want
 Google to know about).
 
-It is recommended that you install Ghostery and HTTPS Everywhere extensions in
-Chrome as well and give it a distinct theme from Firefox to indicate that this
-is your "untrusted sites" browser.
+It is recommended that you install **Ghostery** and **HTTPS Everywhere**
+extensions in Chrome as well and give it a distinct theme from Firefox to
+indicate that this is your "untrusted sites" browser.
 
 #### 2: Use two different browsers, one inside a dedicated VM
+
 This is a similar recommendation to the above, except you will add an extra
 step of running Chrome inside a dedicated VM that you access via a fast
 protocol that allows you to share clipboards and forwards sound events (e.g.
 Spice or RDP). This will add an excellent layer of isolation between the
 untrusted browser and the rest of your work environment, ensuring that
-attackers who manage to fully compromise your browser will then have to break
-out of the VM isolation layer in order to get to the rest of your system.
+attackers who manage to fully compromise your browser will then have to then
+break out of the VM isolation layer in order to get to the rest of your
+system.
 
 This is a surprisingly workable configuration, but requires a lot of RAM and
 fast processors that can handle the increased load. It will also require an
@@ -467,6 +547,7 @@ important amount of dedication on the part of the admin who will need to
 adjust their work practices accordingly.
 
 #### 3: Fully separate your work and play environments via virtualization
+
 See [Qubes-OS project][3], which strives to provide a high-security
 workstation environment via compartmentalizing your applications into separate
 fully isolated VMs.
@@ -476,6 +557,7 @@ fully isolated VMs.
 ### Team communication
 
 ### SELinux on the workstation
+
 - [CRITICAL] Make sure SELinux is enforcing on your workstation
 - [CRITICAL] Never `setenforce 0`, use `semanage permissive -a somedomain_t`
 - [CRITICAL] Never blindly run `audit2allow`, always check
@@ -488,3 +570,4 @@ fully isolated VMs.
 [4]: https://xkcd.com/936/
 [5]: https://spideroak.com/
 [6]: https://code.google.com/p/chromium/wiki/LinuxSandboxing
+[7]: http://www.thoughtcrime.org/software/sslstrip/
