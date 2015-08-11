@@ -3,22 +3,22 @@
 This is a set of recommendations used by the Linux Foundation for their systems
 administrators. All of LF employees are remote workers and we use this set of
 guidelines to ensure that a sysadmin's system passes core security requirements
-in order to reduce the risk of it becoming the attack vector against the rest
+in order to reduce the risk of it becoming an attack vector against the rest
 of our infrastructure.
 
 Even if your systems administrators are not remote workers, chances are that
 they perform a lot of their work either from a portable laptop in a work
-environment, or set up their home systems to access work infrastructure for
-after-hours/emergency support. In either case, you can adapt this set of
+environment, or set up their home systems to access the work infrastructure
+for after-hours/emergency support. In either case, you can adapt this set of
 recommendations to suit your environment.
 
 This, by no means, is an exhaustive "workstation hardening" document, but
 rather an attempt at a set of baseline recommendations to avoid most glaring
 security errors without introducing too much inconvenience. You may read this
 document and think it is way too paranoid, while someone else may think this
-barely scratches the surface. Security is just like driving on a highway --
+barely scratches the surface. Security is just like driving on the highway --
 anyone going slower than you is an idiot, while anyone driving faster than you
-is a crazy person. These guidelines are merely a basic set of highway safety
+is a crazy person. These guidelines are merely a basic set of core safety
 rules that is neither exhaustive, nor a replacement for experience, vigilance,
 and common sense.
 
@@ -29,7 +29,7 @@ Each section is split into two areas:
 
 ## Severity levels
 
-The items in the checklist include the severity level, which we hope will help
+The items in each checklist include the severity level, which we hope will help
 guide your decision:
 
 - _(CRITICAL)_ items should definitely be high on the consideration list.
@@ -43,7 +43,7 @@ guide your decision:
   workstation security, but will probably require a lot of adjustment to the
   way you interact with your operating system.
 
-Remember, these are only guidelines. If you feel the severity levels do not
+Remember, these are only guidelines. If you feel these severity levels do not
 reflect your project's commitment to security, you should adjust them as you
 see fit.
 
@@ -69,9 +69,9 @@ plus there is a pretty high degree of certainty that state security agencies
 have ways to defeat it (probably by design), but having SecureBoot is better
 than having nothing at all.
 
-Alternatively, you may set up [Anti Evil Maid][1] which offers more wholesome
-protection against the type of attacks that SecureBoot is supposed to prevent,
-but it will require more effort to set up and maintain.
+Alternatively, you may set up [Anti Evil Maid][1] which offers a more
+wholesome protection against the type of attacks that SecureBoot is supposed
+to prevent, but it will require more effort to set up and maintain.
 
 #### Firewire, thunderbolt, and ExpressCard ports
 
@@ -147,39 +147,41 @@ what you should consider when picking a distribution to use.
 
 #### SELinux, AppArmor, and GrSecurity/PaX
 
-Mandatory Access Controls (MAC) or Role-Based Access Controls are an extension
-of the basic user/group security mechanism used in legacy POSIX systems. Most
-distributions these days either already come bundled with a MAC/RBAC
-implementation (Fedora, Ubuntu), or provide a mechanism to add it via an
-optional post-installation step (Gentoo, Arch, Debian). Obviously, it is highly
-advised that you pick a distribution that comes pre-configured with a MAC/RBAC
-system, but if you have strong feelings about a distribution that doesn't come
-with one enabled by default, do plan to configure it post-installation.
+Mandatory Access Controls (MAC) or Role-Based Access Controls (RBAC) are an
+extension of the basic user/group security mechanism used in legacy POSIX
+systems. Most distributions these days either already come bundled with a
+MAC/RBAC implementation (Fedora, Ubuntu), or provide a mechanism to add it via
+an optional post-installation step (Gentoo, Arch, Debian). Obviously, it is
+highly advised that you pick a distribution that comes pre-configured with a
+MAC/RBAC system, but if you have strong feelings about a distribution that
+doesn't have one enabled by default, do plan to configure it
+post-installation.
 
 Distributions that do not provide any MAC/RBAC mechanisms should be strongly
-avoided, as traditional POSIX user- and group-based security mechanisms should
-be considered insufficient in this day and age. If you would like to start out
+avoided, as traditional POSIX user- and group-based security should be
+considered insufficient in this day and age. If you would like to start out
 with a MAC/RBAC workstation, AppArmor and PaX are generally considered easier
-to learn than SELinux. Furthermore, on a workstation, where there are few or no
-externally listening daemons, and where user-run applications pose the highest
-risk, GrSecurity/PaX will _probably_ offer more security benefits than SELinux.
+to learn than SELinux. Furthermore, on a workstation, where there are few or
+no externally listening daemons, and where user-run applications pose the
+highest risk, GrSecurity/PaX will _probably_ offer more security benefits than
+SELinux.
 
 #### Distro security bulletins
 
-Most widely used distributions have a mechanism to deliver security bulletins
-to its users, but if you are fond of something esoteric, check whether the
-developers have a documented mechanism of alerting the users about security
-vulnerabilities and patches. Absence of such mechanism is a major warning sign
-that the distribution is not mature enough to be considered for a primary admin
-workstation.
+Most of the widely used distributions have a mechanism to deliver security
+bulletins to their users, but if you are fond of something esoteric, check
+whether the developers have a documented mechanism of alerting the users about
+security vulnerabilities and patches. Absence of such mechanism is a major
+warning sign that the distribution is not mature enough to be considered for a
+primary admin workstation.
 
 #### Timely and trusted security updates
 
-Most widely used distributions deliver security updates, but is worth checking
-to ensure that critical package updates are provided in a timely fashion. Avoid
-using spin-offs and "community rebuilds" for this reason, as they routinely
-delay security updates due to having to wait for the upstream distribution to
-release it first.
+Most of the widely used distributions deliver regular security updates, but is
+worth checking to ensure that critical package updates are provided in a
+timely fashion. Avoid using spin-offs and "community rebuilds" for this
+reason, as they routinely delay security updates due to having to wait for the
+upstream distribution to release it first.
 
 You'll be hard-pressed to find a distribution that does not use cryptographic
 signatures on packages, updates metadata, or both. That being said, fairly
@@ -226,11 +228,11 @@ All distributions are different, but here are general guidelines:
 Unless you are using self-encrypting hard drives, it is important to configure
 your installer to fully encrypt all the disks that will be used for storing
 your data and your system files. It is not sufficient to simply encrypt the
-user directory via auto-mounting cryptfs loop files (I'm looking at you,
-Ubuntu), as this offers no protection for system binaries or swap, which is
-likely to contain a slew of sensitive data. The recommended encryption strategy
-is to encrypt the LVM device, so only one passphrase is required during the
-boot process.
+user directory via auto-mounting cryptfs loop files (I'm looking at you, older
+versions of Ubuntu), as this offers no protection for system binaries or swap,
+which is likely to contain a slew of sensitive data. The recommended
+encryption strategy is to encrypt the LVM device, so only one passphrase is
+required during the boot process.
 
 The `/boot` partition will always remain unencrypted, as the bootloader needs
 to be able to actually boot the kernel before invoking LUKS/dm-crypt. The
@@ -262,15 +264,15 @@ passphrases and keep them in a safe place away from your work desk.
 
 #### Root, user passwords and the admin group
 
-I recommend that you use the same passphrase for your root password as you use
-for your LUKS encryption (unless you share your laptop with other trusted
-people who should be able to unlock the drives, but shouldn't be able to become
-root). If you are the sole user of the laptop, then having your root password
-be different from your LUKS password has no meaningful security advantages.
-Generally, you can use the same passphrase for your UEFI administration, disk
-encryption, and root account -- knowing any of these will give an attacker full
-control of your system anyway, so there is little security benefit to have them
-be different on a single-user workstation.
+We recommend that you use the same passphrase for your root password as you
+use for your LUKS encryption (unless you share your laptop with other trusted
+people who should be able to unlock the drives, but shouldn't be able to
+become root). If you are the sole user of the laptop, then having your root
+password be different from your LUKS password has no meaningful security
+advantages.  Generally, you can use the same passphrase for your UEFI
+administration, disk encryption, and root account -- knowing any of these will
+give an attacker full control of your system anyway, so there is little
+security benefit to have them be different on a single-user workstation.
 
 You should have a different, but equally strong password for your regular user
 account that you will be using for day-to-day tasks. This user should be member
@@ -395,9 +397,9 @@ configuration changes, etc). If you are not willing to take these steps and
 adjust how you do things on your own workstation, these tools will introduce
 hassle without any tangible security benefit.
 
-I do recommend that you install `rkhunter` and run it nightly. It's fairly easy
-to learn and use, and though it will not deter a sophisticated attacker, it may
-help you catch your own mistakes.
+We do recommend that you install `rkhunter` and run it nightly. It's fairly
+easy to learn and use, and though it will not deter a sophisticated attacker,
+it may help you catch your own mistakes.
 
 ## Personal workstation backups
 
@@ -475,8 +477,8 @@ sometimes they are limited to allowing one to read local browser storage,
 steal active sessions from other tabs, capture input entered into the browser,
 etc. Using two different browsers, one for work/high security sites, and
 another for everything else will help prevent minor compromises from giving
-attackers access to the whole proverbial cookie jar. The main inconvenience
-will be the amount of memory consumed by two different browser processes.
+attackers access to the whole cookie jar. The main inconvenience will be the
+amount of memory consumed by two different browser processes.
 
 Here's what we recommend:
 
@@ -490,16 +492,16 @@ this browser for accessing any other sites except select few.
 You should install the following Firefox add-ons:
 
 - [ ] NoScript _(CRITICAL)_
-  - NoScript prevents active content from loading, unless specifically
-    whitelisted. It is a great hassle to use with your default browser
+  - NoScript prevents active content from loading, except from user
+    whitelisted domains. It is a great hassle to use with your default browser
     (though offers really good security benefits), so we recommend only
     enabling it on the browser you use to access work-related sites.
 
 - [ ] Ghostery _(CRITICAL)_
   - Ghostery will prevent most external trackers and ad platforms from being
-    loaded on the pages, which will help avoid compromises on these tracking
-    sites from affecting your browser (trackers and ad sites are very commonly
-    targeted by attackers, as they allow rapid infection of thousands of systems
+    loaded, which will help avoid compromises on these tracking sites from
+    affecting your browser (trackers and ad sites are very commonly targeted
+    by attackers, as they allow rapid infection of thousands of systems
     worldwide).
 
 - [ ] HTTPS Everywhere _(CRITICAL)_
@@ -510,8 +512,9 @@ You should install the following Firefox add-ons:
 - [ ] Certificate Patrol _(MODERATE)_
   - This tool will alert you if the site you're accessing has recently changed
     their TLS certificates -- especially if it wasn't nearing expiration dates
-    or if it is now using a different certification authority. Note, that this
-    will generate a lot of false-positives.
+    or if it is now using a different certification authority. It helps
+    alert you if someone is trying to man-in-the-middle your connection,
+    but generates a lot of benign false-positives.
 
 You should leave Firefox as your default browser for opening links, as
 NoScript will prevent most active content from loading or executing.
@@ -534,12 +537,12 @@ indicate that this is your "untrusted sites" browser.
 
 This is a similar recommendation to the above, except you will add an extra
 step of running Chrome inside a dedicated VM that you access via a fast
-protocol that allows you to share clipboards and forwards sound events (e.g.
+protocol, allowing you to share clipboards and forward sound events (e.g.
 Spice or RDP). This will add an excellent layer of isolation between the
 untrusted browser and the rest of your work environment, ensuring that
-attackers who manage to fully compromise your browser will then have to then
-break out of the VM isolation layer in order to get to the rest of your
-system.
+attackers who manage to fully compromise your browser will then have to
+additionally break out of the VM isolation layer in order to get to the rest
+of your system.
 
 This is a surprisingly workable configuration, but requires a lot of RAM and
 fast processors that can handle the increased load. It will also require an
@@ -572,8 +575,9 @@ especially for critical applications.
 ##### In-browser password manager
 
 Every browser has a mechanism for saving passwords that is fairly secure and
-can sync with vendor-provided cloud storage by first encrypting the data with
-a passphrase. However, this mechanism has important disadvantages:
+can sync with vendor-maintained cloud storage while keeping the data encrypted
+with a user-provided passphrase. However, this mechanism has important
+disadvantages:
 
 1. It does not work across browsers
 2. It does not offer any way of sharing credentials with team members
@@ -585,29 +589,26 @@ search engines.
 
 ##### Standalone password manager
 
-One of the major drawbacks of any password manager that is integrated with
+One of the major drawbacks of any password manager that comes integrated with
 the browser is the fact that it's part of the application that is most likely
 to be attacked by intruders. If this makes you uncomfortable (and it should),
 you may choose to have two different password managers -- one for websites
-that is integrated into your browser, and one as a standalone application. The
-latter can be used to store high-risk credentials such as root passwords,
-database passwords, other shell account credentials, etc.
+that is integrated into your browser, and one that runs as a standalone
+application. The latter can be used to store high-risk credentials such as
+root passwords, database passwords, other shell account credentials, etc.
 
 It may be particularly useful to have such tool for sharing superuser account
-credentials with other members of your team. The best is, obviously, not to
-have shared account credentials at all and manage superuser access via
-role-based tools such as sudo and group membership. However, not all
-systems are easily managed that way, so having a way to securely pass account
-credentials to other members of your team may be very handy.
+credentials with other members of your team (server root passwords, ILO
+passwords, database admin passwords, bootloader passwords, etc).
 
 A few tools can help you:
 
 - [KeePassX][8], which improves team sharing in version 2
 - [Pass][9], which uses text files and PGP and integrates with git
 - [Django-Pstore][10], which uses GPG to share credentials between admins
-- [Hiera-Eyaml][11], if you are already using Puppet for your infrastructure,
-  this may be a handy way to track your server/service credentials as part of
-  your encrypted Hiera data store
+- [Hiera-Eyaml][11], which, if you are already using Puppet for your
+  infrastructure, may be a handy way to track your server/service credentials
+  as part of your encrypted Hiera data store
 
 ### Securing SSH and PGP private keys
 
@@ -615,7 +616,7 @@ Personal encryption keys, including SSH and PGP private keys, are going to be
 the most prized items on your workstation -- something the attackers will be
 most interested in obtaining, as that would allow them to further attack your
 infrastructure or impersonate you to other admins. You should take extra steps
-to ensure that they are well protected against theft.
+to ensure that your private keys are well protected against theft.
 
 #### Checklist
 
@@ -633,17 +634,18 @@ several manufacturers that offer OpenPGP capable devices:
 - [Kernel Concepts][12], where you can purchase both the OpenPGP compatible
   smartcards and the USB readers, should you need one.
 - [Yubikey NEO][13], which offers OpenPGP smartcard functionality in addition
-  to other features.
+  to many other cool features (U2F, PIV, HOTP, etc).
 
 It is also important to make sure that the master PGP key is not stored on the
 main workstation, and only subkeys are used. The master key will only be
 needed when signing someone else's keys or creating new subkeys -- operations
 which do not happen very frequently. You may follow [the Debian's subkeys][14]
-guide to learn how to move your master key to removable storage.
+guide to learn how to move your master key to removable storage and how to
+create subkeys.
 
 You should then configure your gnupg agent to act as ssh agent and use the
 smartcard-based PGP Auth key to act as your ssh private key. We publish a
-[detailed guide][15] on how to do that using either a smartcard reader or
+[detailed guide][15] on how to do that using either a smartcard reader or a
 Yubikey NEO.
 
 If you are not willing to go that far, at least make sure you have a strong
@@ -667,14 +669,16 @@ maximize your workstation security.
 
 SELinux is a Mandatory Access Controls (MAC) extension to core POSIX
 permissions functionality. It is mature, robust, and has come a long way since
-its initial roll-out, but most people to this day repeat the outdated mantra
-of "just turn it off."
+its initial roll-out. Regardless, many sysadmins to this day repeat the
+outdated mantra of "just turn it off."
 
 That being said, SELinux will have limited security benefits on the
 workstation, as most applications you will be running as a user are going to
 be running unconfined. It does provide enough net benefit to warrant leaving
 it on, as it will likely help prevent an attacker from escalating privileges
 to gain root-level access via a vulnerable daemon service.
+
+Our recommendation is to leave it on and enforcing.
 
 ##### Never `setenforce 0`
 
@@ -684,14 +688,15 @@ off SELinux for the entire system, while what you really want is to
 troubleshoot a particular application or daemon.
 
 Instead of `setenforce 0` you should be using `semanage permissive -a
-somedomain_t` to put only that domain into permissive mode. First, find out
+[somedomain_t]` to put only that domain into permissive mode. First, find out
 which domain is causing troubles by running `ausearch`:
 
     ausearch -ts recent -m avc
 
-and then look for `scontext=` line, like so:
+and then look for `scontext=` (source SELinux context) line, like so:
 
     scontext=staff_u:staff_r:gpg_pinentry_t:s0-s0:c0.c1023
+                             ^^^^^^^^^^^^^^
 
 This tells you that the domain being denied is `gpg_pinentry_t`, so if you
 want to troubleshoot the application, you should add it to permissive domains:
@@ -699,19 +704,24 @@ want to troubleshoot the application, you should add it to permissive domains:
     semange permissive -a gpg_pinentry_t
 
 This will allow you to use the application and collect the rest of the AVCs,
-which you can then use in conjunction with `audit2allow`.
+which you can then use in conjunction with `audit2allow` to write a local
+policy. Once that is done and you see no new AVC denials, you can remove that
+domain from permissive by running:
+
+    semanage permissive -d gpg_pinentry_t
 
 ##### Use your workstation as SELinux role staff_r
 
-SELinux comes with a concept of roles, which will prohibit or grant certain
-privileges based on the role associated with the user account. As an
+SELinux comes with a native implementation of roles that prohibit or grant
+certain privileges based on the role associated with the user account. As an
 administrator, you should be using the `staff_r` role, which will restrict
-access to many configuration and hardware directories, unless you first
-perform `sudo`.
+access to many configuration and other security-sensitive files, unless you
+first perform `sudo`.
 
-By default, accounts are created as `unconfined_r`, which will run most
-applications you execute without any SELinux constraints. To switch your
-account to the `staff_r` role, run the following command:
+By default, accounts are created as `unconfined_r` and most applications you
+execute will run unconfined, without any (or with only very few) SELinux
+constraints. To switch your account to the `staff_r` role, run the following
+command:
 
     usermod -Z staff_u [username]
 
