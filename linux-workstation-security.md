@@ -561,13 +561,15 @@ fully isolated VMs.
 - [ ] Use a password manager that supports team sharing _(MODERATE)_
 - [ ] Use a separate password manager for non-website accounts _(PARANOID)_
 
+#### Considerations
+
 Using good, unique passwords should be a critical requirement for every member
 of your team. Credential theft is happening all the time -- either via
 compromised computers, stolen database dumps, remote site exploits, or any
 number of other means. No credentials should ever be reused across sites,
 especially for critical applications.
 
-#### In-browser password manager
+##### In-browser password manager
 
 Every browser has a mechanism for saving passwords that is fairly secure and
 can sync with vendor-provided cloud storage by first encrypting the data with
@@ -581,7 +583,7 @@ well-integrated into multiple browsers, work across platforms, and offer
 group sharing (usually as a paid service). Solutions can be easily found via
 search engines.
 
-#### Standalone password manager
+##### Standalone password manager
 
 One of the major drawbacks of any password manager that is integrated with
 the browser is the fact that it's part of the application that is most likely
@@ -609,15 +611,145 @@ A few tools can help you:
 
 ### Securing SSH and PGP private keys
 
+Personal encryption keys, including SSH and PGP private keys, are going to be
+the most prized items on your workstation -- something the attackers will be
+most interested in obtaining, as that would allow them to further attack your
+infrastructure or impersonate you to other admins. You should take extra steps
+to ensure that they are well protected against theft.
+
+#### Checklist
+
+- [ ] Strong passphrases are used to protect private keys _(CRITICAL)_
+- [ ] PGP Master key is stored on removable storage _(MODERATE)_
+- [ ] Auth, Sign and Encrypt Subkeys are stored on a smartcard device _(MODERATE)_
+- [ ] SSH is configured to use PGP Auth key as ssh private key _(MODERATE)_
+
+#### Considerations
+
+The best way to prevent private key theft is to use a smartcard to store your
+encryption private keys and never copy them onto the workstation. There are
+several manufacturers that offer OpenPGP capable devices:
+
+- [Kernel Concepts][12], where you can purchase both the OpenPGP compatible
+  smartcards and the USB readers, should you need one.
+- [Yubikey NEO][13], which offers OpenPGP smartcard functionality in addition
+  to other features.
+
+It is also important to make sure that the master PGP key is not stored on the
+main workstation, and only subkeys are used. The master key will only be
+needed when signing someone else's keys or creating new subkeys -- operations
+which do not happen very frequently. You may follow [the Debian's subkeys][14]
+guide to learn how to move your master key to removable storage.
+
+You should then configure your gnupg agent to act as ssh agent and use the
+smartcard-based PGP Auth key to act as your ssh private key. We publish a
+[detailed guide][15] on how to do that using either a smartcard reader or
+Yubikey NEO.
+
+If you are not willing to go that far, at least make sure you have a strong
+passphrase on both your PGP private key and your SSH private key, which will
+make it harder for attackers to steal and use them.
 
 ### SELinux on the workstation
 
-- [CRITICAL] Make sure SELinux is enforcing on your workstation
-- [CRITICAL] Never `setenforce 0`, use `semanage permissive -a somedomain_t`
-- [CRITICAL] Never blindly run `audit2allow`, always check
-- [MODERATE] Switch your account to SELinux user `staff_u` (use `usermod -Z`)
-- (use `sudo -r sysadm_r` when performing sudo)
+If you are using a distribution that comes bundled with SELinux (such as
+Fedora), here are some recommendation of how to make the best use of it to
+maximize your workstation security.
 
+#### Checklist
+
+- [ ] Make sure SELinux is enforcing on your workstation _(CRITICAL)_
+- [ ] Never blindly run `audit2allow -M`, always check _(CRITICAL)_
+- [ ] Never `setenforce 0` _(MODERATE)_
+- [ ] Switch your account to SELinux user `staff_u` _(MODERATE)_
+
+#### Considerations
+
+SELinux is a Mandatory Access Controls (MAC) extension to core POSIX
+permissions functionality. It is mature, robust, and has come a long way since
+its initial roll-out, but most people to this day repeat the outdated mantra
+of "just turn it off."
+
+That being said, SELinux will have limited security benefits on the
+workstation, as most applications you will be running as a user are going to
+be running unconfined. It does provide enough net benefit to warrant leaving
+it on, as it will likely help prevent an attacker from escalating privileges
+to gain root-level access via a vulnerable daemon service.
+
+##### Never `setenforce 0`
+
+It's tempting to use `setenforce 0` to flip SELinux into permissive mode
+on a temporary basis, but you should avoid doing that. This essentially turns
+off SELinux for the entire system, while what you really want is to
+troubleshoot a particular application or daemon.
+
+Instead of `setenforce 0` you should be using `semanage permissive -a
+somedomain_t` to put only that domain into permissive mode. First, find out
+which domain is causing troubles by running `ausearch`:
+
+    ausearch -ts recent -m avc
+
+and then look for `scontext=` line, like so:
+
+    scontext=staff_u:staff_r:gpg_pinentry_t:s0-s0:c0.c1023
+
+This tells you that the domain being denied is `gpg_pinentry_t`, so if you
+want to troubleshoot the application, you should add it to permissive domains:
+
+    semange permissive -a gpg_pinentry_t
+
+This will allow you to use the application and collect the rest of the AVCs,
+which you can then use in conjunction with `audit2allow`.
+
+##### Use your workstation as SELinux role staff_r
+
+SELinux comes with a concept of roles, which will prohibit or grant certain
+privileges based on the role associated with the user account. As an
+administrator, you should be using the `staff_r` role, which will restrict
+access to many configuration and hardware directories, unless you first
+perform `sudo`.
+
+By default, accounts are created as `unconfined_r`, which will run most
+applications you execute without any SELinux constraints. To switch your
+account to the `staff_r` role, run the following command:
+
+    usermod -Z staff_u [username]
+
+You should log out and log back in to enable the new role, at which point if
+you run `id -Z`, you'll see:
+
+    staff_u:staff_r:staff_t:s0-s0:c0.c1023
+
+When performing `sudo`, you should remember to add an extra flag to tell
+SELinux to transition to the "sysadmin" role. The command you want is:
+
+    sudo -i -r sysadm_r
+
+At which point `id -Z` will show:
+
+    staff_u:sysadm_r:sysadm_t:s0-s0:c0.c1023
+
+**WARNING**: you should be comfortable using `ausearch` and `audit2allow`
+before you make this switch, as it's possible some of your applications will
+no longer work when you're running as role `staff_r`. At the time of writing,
+the following popular applications are known to not work under `staff_r`
+without policy tweaks:
+
+- Chrome/Chromium
+- Skype
+- VirtualBox
+
+To switch back to `unconfined_r`, run the following command:
+
+    usermod -Z unconfined_u [username]
+
+and then log out and back in to get back into the comfort zone.
+
+## License
+This work is licensed under a
+[Creative Commons Attribution-ShareAlike 4.0 International License][0].
+
+[0]: http://creativecommons.org/licenses/by-sa/4.0/
 [1]: https://github.com/QubesOS/qubes-antievilmaid
 [2]: https://en.wikipedia.org/wiki/IEEE_1394#Security_issues
 [3]: https://qubes-os.org/
@@ -629,3 +761,8 @@ A few tools can help you:
 [9]: http://www.passwordstore.org/
 [10]: https://pypi.python.org/pypi/django-pstore
 [11]: https://github.com/TomPoulton/hiera-eyaml
+[12]: http://shop.kernelconcepts.de/
+[13]: https://www.yubico.com/products/yubikey-hardware/yubikey-neo/
+[14]: https://wiki.debian.org/Subkeys
+[15]: https://github.com/lfit/ssh-gpg-smartcard-config
+
