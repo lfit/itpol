@@ -306,6 +306,22 @@ either a smartcard reader or a Yubikey NEO.
 This will offer an extra benefit of adding [2-factor authentication][10] to
 your infrastructure access (yubikeys and smartcards are "something you have").
 
+As a server administrator, you can easily convert someone's GnuPG Auth key
+into an SSH public key. First, find out what their Auth keyid is by running
+`gpg --edit-key [email]` and looking for the "`Usage: A`" entry, e.g.:
+
+    sub  rsa2048/80A407E7
+     created: 2014-06-03  expires: never       usage: A
+
+Then, run `gpgkey2ssh` command with that key ID:
+
+    gpgkey2ssh 80A407E7
+
+This will produce the output that you can put into the `authorized_keys`
+file. This saves you the trouble of asking them to send you their ssh public
+key, and assures the key actually belongs to your team member since it's part
+of their trusted OpenPGP key.
+
 ## Checklist
 
 Here is a convenient checklist for your team to ensure that you have all these
