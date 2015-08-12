@@ -16,11 +16,11 @@ There are 3 core technologies you will be using:
 
 In this document we'll be looking at each technology purely in terms of
 securing communication between team members and will not judge them on any
-other merits. We'll look at three areas:
+other merits. We'll look at several core topics:
 
 1. Trusting emails from your teammates
-2. Trusting IM sessions
-3. Trusting git commits
+2. Trusting your IM sessions
+3. Trusting your git commits
 4. Releasing code trusted by the community
 
 ## Trusting email
@@ -83,31 +83,273 @@ Trust* to accomplish the same goal.
 - OpenPGP tools are difficult to learn and use, even by the technically
   inclined and educated.
 - There are almost no mail clients for portable devices that support reading or
-  sending OpenPGP-encrypted mail. Many that do support OpenPGP have
-  questionable or awkward GUI.
+  sending OpenPGP-encrypted mail. Those that do support OpenPGP have
+  questionable GUI or awkward UX.
 
 ### Understanding the OpenPGP Web of Trust
 
-### When to sign
+OpenPGP is only a useful tool when everyone involved in team communication
+understands how the web of trust works. Please see the following links for a
+couple of detailed explanations:
 
-### When to encrypt
+- [PGP Web of Trust: Core Concepts Behind Trusted Communication][5]
+- [PGP Web of Trust: How does it work?][6]
+
+### Using the Web of Trust in your team
+
+Once you understand the core concepts behind the OpenPGP Web of Trust, you'll
+have to actively enforce and maintain it. Nobody should get access to your
+infrastructure or be allowed to push code without being part of your web of
+trust.
+
+#### Spinning the web
+
+Web of trust is established via signing your teammate's keys and assigning
+them trust. The protocol calls for an in-person meeting where both parties
+present documents validating their identities and exchange key fingerprints.
+Here's an in-depth document describing the procedure:
+
+- https://www.phildev.net/pgp/gpgsigning.html
+
+##### Yes, but what if they are 12 timezones away?
+
+It is easy to set up a video session and have them show their identification
+papers to the camera. Obviously, this process is easier to subvert than with
+person-to-person meetings, but not by much. Unless you are an expert at
+identifying various foreign or out-of-state identification documents, it would
+be easy for an attacker to create a convincing driver's license that you've
+never seen before.
+
+At any rate, this protocol is less about identifying a person's state-issued
+identity, and more about creating a communication channel that is equally as
+trusted as a video session, a phone call, or an in-person meeting. If you are
+comfortable enough that the person at the other end of your video chat is who
+they say they are, and that they belong on your team, then you should feel
+comfortable enough to sign their key.
+
+##### Keysigning parties
+
+Chances are, large portions of your team will be attending the same events or
+even specially-organized hackfests. You should use this opportunity to
+strengthen your web of trust by holding "[keysigning parties][8]."
+
+### Sending trusted emails
+
+#### When to sign
+
+There are two distinct operations with each outgoing email, both for S/MIME
+and OpenPGP:
+
+- **Sign**, which signs your message in a way that proves to the recipient
+  that you were the one who sent it and that the message was not tampered with
+  in transit.
+- **Encrypt**, which encrypts your message so the contents cannot be read in
+  transit by mail relays.
+
+Best practice is to always sign your messages, unless you have a good reason
+not to (usually for plausible deniability reasons). For OpenPGP, the
+recommended mechanism for signatures is MIME-signing, as inline-signing tends
+to clutter the message with OpenPGP headers and footers, which may annoy your
+correspondents.
+
+#### When to encrypt
+
+You should only need to encrypt messages actually containing sensitive data
+that you do not wish others to know about (passwords and other account
+information, confidential details that should not leak to the public, etc).
+Chances are, your recipient has only configured their mail client to read
+encrypted emails on their workstation and not on their mobile device, so
+adopting a policy of "always encrypt by default" may annoy your recipients,
+especially if the contents are not confidential or sensitive (patches, lunch
+invitations, bikeshedding discussions, etc).
+
+**When encrypting, you should also sign the message** (unless you *do* need
+that plausible deniability). **Simply encrypting the message does not make it
+trusted**, as an enemy is also perfectly capable of encrypting a message to
+someone's public key and faking the "From:" header.
+
+If you receive an encrypted message that isn't also signed, be extra wary,
+as it may be a [spear phishing][7] attempt.
 
 ## Trusting IM sessions
 
+Almost all development teams use some kind of instant messaging solution in
+order to coordinate their activities in real time -- be it IRC, Hangouts,
+Slack, or any number of other means. If critical decisions are taken during
+such meetings, then you should ensure that they happen over trusted
+communication channels.
+
+### One-on-one chat
+
+There is no lack of clients for instant messaging, and while most of them will
+encrypt your conversations from the client to the server, the contents will
+still be seen in cleartext by the service providers, and most likely logged in
+some fashion. In some cases, these conversations can be later retrieved by
+attackers, so if you need to ensure that the provider does not know about the
+contents of your messages, you need to communicate via a protocol that offers
+point-to-point encryption and verification.
+
+The only widely used cross-client protocol for securing end-to-end
+communication is Off-The-Record messaging (OTR). It is easy to set up in most
+desktop clients, and there are several mobile clients available for
+communicating on the go (just search for "OTR" and you should be able to find
+them).
+
+As with email, merely encrypting your connections does nothing to assure that
+the person you are talking to is who they claim they are. You will need to
+verify your contacts via OTR's excellent verification protocols before you
+trust the chat session to be secure.
+
+You may choose not to bother with point-to-point encryption for chat sessions
+with your team members, but you should firmly establish as a matter of policy
+what kind of conversations are suitable for IM, and what should be only sent
+via secured email.
+
+**NOTE:** Google has, confusingly, called something else "Off-The-Record"
+conversations, which merely exclude your chat sessions from being logged in
+your inbox, but they are not point-to-point encrypted, and are still known to
+Google.
+
+### Group chat
+
+There is currently no widely used mechanisms to set up perfectly secure
+multi-user group chat sessions with point-to-point encryption. You may
+sidestep this limitation by running your own multi-user chat server (IRC,
+Jabber, HipChat) and requiring that everyone both authenticates and connects
+via a trusted protocol (both IRC and Jabber offer TLS), but you will still
+have to trust the administrators of that server not to log or misuse your
+data.
+
+Alternatively, simply establish a firm policy that only public conversations
+are allowed in group chat and everything else should happen over secure email
+exchange.
+
 ## Trusting git commits
 
-#### Signed-off by's
+You will *most likely* be using git in some fashion -- be it to track your
+code, your system's config management tree, etc. You can use OpenPGP to add a
+layer of trust to your tags and commits.
+
+#### Signed-off-by's
+
+First of all, *Signed commits* shouldn't be confused with *Signed-off-by:*
+lines in git commit messages. Despite sounding similar, the *Signed-off-by:*
+entries actually offer no guarantees that they were inserted there by those
+people. These are merely a way to track code provenance and code review
+chains, but offer no assurances.
 
 #### Signed tags and commits
 
+You can, however, create cryptographic signatures when committing code to a
+git repository, or when creating a tag, as a way to assure people who will be
+pulling these commits that the repository they are pulling from has not been
+tampered with by an attacker.
+
+The easiest is to just sign the tags -- which will help, however may not be
+sufficient depending on the nature of your project. More recent versions of
+git have introduced a way to sign each individual commit, which makes it
+significantly more difficult for an attacker to sneak in a malicious commit
+into someone's tree. However, without proper checking done by code
+maintainers, this will only make it tamper-evident, and not tamper-proof (in
+other words, someone may sneak in a malicious commit, and the most you'll be
+able to do is exonerate a trusted developer, but not prevent the compromise
+from happening).
+
+Signed commits also make merges and other branch operations more complicated,
+but not insurmountable. Please see the following in-depth document to learn
+more about how you can organize your workflow around signed git commits:
+
+- http://mikegerwitz.com/papers/git-horror-story
+
 ## Releasing code trusted by the community
+
+If you produce open-source code, you have to establish a way for the community
+to validate that the releases you put forward are trusted and have not been
+tampered with by attackers. If you are relying on the OpenPGP web of trust,
+you should designate one or several "release engineers" who will be
+responsible for creating detached OpenPGP signatures and making them available
+at the same download location as the rest of the code.
+
+Alternatively, you may choose to create a separate key that will be used for
+signing the releases, but in this case you should get several core members of
+your team to sign that key to indicate that it should be trusted by others.
+Special care should be taken to ensure that the release-signing key is kept
+secure, and preferably protected by a passphrase. If you choose to make it
+part of an automated process, make sure you don't expose the key to external
+entities.
+
+To create a detached signature for a tarball, use the following command:
+
+    gpg -ba tarball.tar.gz
+
+This will create a file called `tarball.tar.gz.asc` which should be uploaded
+to the release server.
+
+Alternatively, if you only release via git, you may simply use signed git
+tags and let packagers create their own tarballs from git.
 
 ## Securing infrastructure access
 
+You should rely on these trusted communication channels to grant access to
+your infrastructure -- be it shell access to the servers, git-over-ssh access
+with public keys, credentials to access VPN or shared services, etc.
+
+Most commonly, this will entail having someone send in their ssh public key,
+which should always be sent via signed email (no sense encrypting it, though).
+
 ### Using PGP keys with SSH
+
+Alternatively, you can use GnuPG with ssh to turn an OpenPGP Auth key into an
+ssh private key. We publish a [detailed guide][9] on how to do that using
+either a smartcard reader or a Yubikey NEO.
+
+This will offer an extra benefit of adding [2-factor authentication][10] to
+your infrastructure access (yubikeys and smartcards are "something you have").
+
+## Checklist
+
+Here is a convenient checklist for your team to ensure that you have all these
+aspects covered.
+
+- [ ] Every member of the team has a trusted PKI certificate
+  - [ ] If using X.509, the certificate is issued by a CA trusted by all
+        members of the team
+  - [ ] If using OpenPGP, each team member's key carries at least one,
+        preferably three signatures from other members of the team
+
+- [ ] Members of the team are able to send and receive encrypted, signed email
+  - [ ] Members of the team understand the necessity behind email security,
+        and agree to it as a requirement for discussing sensitive subjects
+  - [ ] Members of the team know how to verify cryptographic signatures to
+        establish that the email came from a trusted source and has not been
+        altered in transit
+
+- [ ] The team uses an agreed-upon IM client and protocol for secure, trusted
+      real-time communication with point-to-point encryption
+- [ ] The team uses an agreed-upon group chat mechanism and understands its
+      limitations and security risks
+- [ ] Members of the team know which subjects should be discussed only via
+      trusted and encrypted channels (security, accounts, confidential data,
+      etc), and never via public channels such as group chat or untrusted
+      IM and email
+
+- [ ] The team has an established workflow that makes use of cryptographic
+      features in git
+- [ ] The project has a defined mechanism for providing trusted releases
+      either via detached OpenPGP signatures, or via signed git tags
+- [ ] Access to infrastructure is granted via trusted communication channels
+
+## License
+This work is licensed under a
+[Creative Commons Attribution-ShareAlike 4.0 International License][0].
 
 [1]: https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP
 [2]: https://en.wikipedia.org/wiki/X.509
 [3]: https://en.wikipedia.org/wiki/S/MIME
 [4]: https://en.wikipedia.org/wiki/Off-the-Record_Messaging
-
+[5]: https://www.linux.com/learn/tutorials/760909-pgp-web-of-trust-core-concepts
+[6]: http://slides.com/mricon/pgp-web-of-trust
+[7]: https://en.wikipedia.org/wiki/Phishing#List_of_phishing_types
+[8]: https://en.wikipedia.org/wiki/Key_signing_party
+[9]: https://github.com/lfit/ssh-gpg-smartcard-config
+[10]: https://en.wikipedia.org/wiki/Two-factor_authentication
