@@ -755,6 +755,18 @@ To switch back to `unconfined_r`, run the following command:
 
 and then log out and back in to get back into the comfort zone.
 
+## Further reading
+
+The world of IT security is a rabitt hole with no bottom. If you would like to
+go deeper, or find out more about security features on your particular
+distribution, please check out the following links:
+
+- [Fedora Security Guide](https://docs.fedoraproject.org/en-US/Fedora/19/html/Security_Guide/index.html)
+- [CESG Ubuntu Security Guide](https://www.gov.uk/government/publications/end-user-devices-security-guidance-ubuntu-1404-lts)
+- [Debian Security Manual](https://www.debian.org/doc/manuals/securing-debian-howto/index.en.html)
+- [Arch Linux Security Wiki](https://wiki.archlinux.org/index.php/Security)
+- [Mac OSX Security](https://www.apple.com/support/security/guides/)
+
 ## License
 This work is licensed under a
 [Creative Commons Attribution-ShareAlike 4.0 International License][0].
