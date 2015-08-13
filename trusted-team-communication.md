@@ -2,8 +2,8 @@
 
 Establishing trusted communication between members of your team is paramount
 not only to avoid potential security problems associated with phishing and
-impersonation, but also to make it possible to exchange potentially sensitive
-information without having to rely on half-baked or insecure channels.
+impersonation, but also to make it possible to exchange sensitive information
+without relying on untrusted or insecure channels.
 
 You should establish trusted communication guidelines as early as possible,
 before you put down any code or bring up any servers.
@@ -44,28 +44,28 @@ Trust* to accomplish the same goal.
 - S/MIME is very well supported in desktop software, therefore
   barriers to entry and use will be lower than with OpenPGP.
 - Portable devices tend to have decent mail client support for S/MIME,
-  allowing to both read and write secure emails.
+  allowing to both read and send secure emails.
 
 #### Main downsides of S/MIME
 
 - Has poor acceptance in the open-source world, which relies a lot heavier on
   OpenPGP standards. If you will need to communicate with other teams of
-  developers across the open-source realm, chances are they will not be using
-  S/MIME and may ask you to to use OpenPGP instead.
+  developers across the open-source realm, chances are that they will not be
+  using S/MIME and may ask you to use OpenPGP instead.
 - Many globally trusted CAs only need someone to verify that they can receive
-  email sent to the email address being certified. If your team relies on
+  messages at the email address being certified. If your team relies on
   external CAs, your trusted communication will be as weak as the password on
-  some developer's inbox.
+  any given teammate's inbox.
 - If you do NOT rely on external CAs, then you will need to bring up and
-  maintain your own CA, which means extra work to ensure its security, plus
-  you will be placing ultimate trust into the person or persons maintaining
-  your CA infrastructure.
+  maintain your own CA infrastructure, which means extra work to ensure its
+  security, plus you will be placing ultimate trust into the person or persons
+  maintaining your CA systems.
 
 #### Main upsides of OpenPGP
 
 - Does not rely on external trust entities. Every member of the project will
-  maintain their own web of trust. You do not have to place ultimate trust
-  into the person who runs your CA infrastructure.
+  maintain their own web of trust. You do not have to run a CA, or place
+  ultimate trust into the person who runs your CA infrastructure.
 - OpenPGP is well accepted across open-source development teams for securing
   email communication, to a much greater degree than S/MIME.
 - OpenPGP is used in many free software areas beyond just securing email, for
@@ -95,6 +95,12 @@ couple of detailed explanations:
 - [PGP Web of Trust: Core Concepts Behind Trusted Communication][5]
 - [PGP Web of Trust: How does it work?][6]
 
+Main takeaways should be:
+
+- Never trust keys without any signatures on them
+- Only use keys listed as "fully valid" for encrypted correspondence
+- Use keyservers and refresh your public keys regularly
+
 ### Using the Web of Trust in your team
 
 Once you understand the core concepts behind the OpenPGP Web of Trust, you'll
@@ -105,20 +111,21 @@ trust.
 #### Spinning the web
 
 Web of trust is established via signing your teammate's keys and assigning
-them trust. The protocol calls for an in-person meeting where both parties
-present documents validating their identities and exchange key fingerprints.
-Here's an in-depth document describing the procedure:
+them owner-trust. The protocol calls for an in-person meeting where both
+parties present documents validating their identities and exchange key
+fingerprints. Here's an in-depth document describing the procedure:
 
 - https://www.phildev.net/pgp/gpgsigning.html
 
 ##### Yes, but what if they are 12 timezones away?
 
-It is easy to set up a video session and have them show their identification
-papers to the camera. Obviously, this process is easier to subvert than with
-person-to-person meetings, but not by much. Unless you are an expert at
-identifying various foreign or out-of-state identification documents, it would
-be easy for an attacker to create a convincing driver's license that you've
-never seen before.
+If the new addition to your team lives far away from everyone else and has no
+easy means of travel, then it is acceptable to set up a video session and have
+them show their identification papers to the camera. Obviously, this process
+is easier to subvert than with a person-to-person meeting, but not by much.
+Unless you are an expert at identifying various foreign or out-of-state
+identification documents, it would be easy for an attacker to print out and
+laminate a convincing driver's license or government ID.
 
 At any rate, this protocol is less about identifying a person's state-issued
 identity, and more about creating a communication channel that is equally as
@@ -149,7 +156,7 @@ and OpenPGP:
 Best practice is to always sign your messages, unless you have a good reason
 not to (usually for plausible deniability reasons). For OpenPGP, the
 recommended mechanism for signatures is MIME-signing, as inline-signing tends
-to clutter the message with OpenPGP headers and footers, which may annoy your
+to clutter the message with OpenPGP headers and footers and may annoy your
 correspondents.
 
 #### When to encrypt
@@ -159,8 +166,9 @@ that you do not wish others to know about (passwords and other account
 information, confidential details that should not leak to the public, etc).
 Chances are, your recipient has only configured their mail client to read
 encrypted emails on their workstation and not on their mobile device, so
-adopting a policy of "always encrypt by default" may annoy your recipients,
-especially if the contents are not confidential or sensitive (patches, lunch
+adopting a policy of "always encrypt by default" may annoy your recipients
+when they can't read your message from the comfort of their couch, especially
+if the contents are not confidential or sensitive (chitchat, lunch
 invitations, bikeshedding discussions, etc).
 
 **When encrypting, you should also sign the message** (unless you *do* need
@@ -173,52 +181,50 @@ as it may be a [spear phishing][7] attempt.
 
 ## Trusting IM sessions
 
-Almost all development teams use some kind of instant messaging solution in
-order to coordinate their activities in real time -- be it IRC, Hangouts,
-Slack, or any number of other means. If critical decisions are taken during
-such meetings, then you should ensure that they happen over trusted
-communication channels.
+Almost all teams use some kind of instant messaging mechanism in order to
+coordinate their activities in real time -- be it IRC, Hangouts, Slack, or any
+number of other means. If critical decisions are taken during such meetings,
+then you should ensure that they happen over trusted communication channels.
 
-### One-on-one chat
+### One-on-one messaging
 
 There is no lack of clients for instant messaging, and while most of them will
 encrypt your conversations from the client to the server, the contents will
 still be seen in cleartext by the service providers, and most likely logged in
 some fashion. In some cases, these conversations can be later retrieved by
 attackers, so if you need to ensure that the provider does not know about the
-contents of your messages, you need to communicate via a protocol that offers
-point-to-point encryption and verification.
+contents of your messages, you must take steps to communicate via a protocol
+that offers point-to-point encryption and verification.
 
 The only widely used cross-client protocol for securing end-to-end
 communication is Off-The-Record messaging (OTR). It is easy to set up in most
-desktop clients, and there are several mobile clients available for
-communicating on the go (just search for "OTR" and you should be able to find
-them).
+desktop clients, and there are several mobile apps available for communicating
+on the go, just search for "OTR" and you should be able to find them (e.g.
+SecureChat, IM+).
 
 As with email, merely encrypting your connections does nothing to assure that
 the person you are talking to is who they claim they are. You will need to
 verify your contacts via OTR's excellent verification protocols before you
 trust the chat session to be secure.
 
-You may choose not to bother with point-to-point encryption for chat sessions
-with your team members, but you should firmly establish as a matter of policy
-what kind of conversations are suitable for IM, and what should be only sent
-via secured email.
+If you choose not to bother with point-to-point encryption for chat sessions
+with your team members, then you should firmly establish, as a matter of
+policy, what kind of conversations are suitable for IM, and what should be
+only sent via secured email.
 
 **NOTE:** Google has, confusingly, called something else "Off-The-Record"
 conversations, which merely exclude your chat sessions from being logged in
-your inbox, but they are not point-to-point encrypted, and are still known to
+your Inbox, but they are not point-to-point encrypted, and are still known to
 Google.
 
-### Group chat
+### Group messaging
 
 There is currently no widely used mechanisms to set up perfectly secure
 multi-user group chat sessions with point-to-point encryption. You may
 sidestep this limitation by running your own multi-user chat server (IRC,
 Jabber, HipChat) and requiring that everyone both authenticates and connects
-via a trusted protocol (both IRC and Jabber offer TLS), but you will still
-have to trust the administrators of that server not to log or misuse your
-data.
+via a trusted protocol (i.e. TLS), but you will still have to trust the
+administrators of that server not to log or misuse your data.
 
 Alternatively, simply establish a firm policy that only public conversations
 are allowed in group chat and everything else should happen over secure email
@@ -248,12 +254,12 @@ tampered with by an attacker.
 The easiest is to just sign the tags -- which will help, however may not be
 sufficient depending on the nature of your project. More recent versions of
 git have introduced a way to sign each individual commit, which makes it
-significantly more difficult for an attacker to sneak in a malicious commit
-into someone's tree. However, without proper checking done by code
+significantly more difficult for an attacker to sneak in malicious code
+into someone's tree. However, without proper checking done by project
 maintainers, this will only make it tamper-evident, and not tamper-proof (in
 other words, someone may sneak in a malicious commit, and the most you'll be
 able to do is exonerate a trusted developer, but not prevent the compromise
-from happening).
+from going out to your users).
 
 Signed commits also make merges and other branch operations more complicated,
 but not insurmountable. Please see the following in-depth document to learn
@@ -280,13 +286,13 @@ entities.
 
 To create a detached signature for a tarball, use the following command:
 
-    gpg -ba tarball.tar.gz
+    gpg -ba tarball.tar.xz
 
-This will create a file called `tarball.tar.gz.asc` which should be uploaded
+This will create a file called `tarball.tar.xz.asc` which should be uploaded
 to the release server.
 
 Alternatively, if you only release via git, you may simply use signed git
-tags and let packagers create their own tarballs from git.
+tags and let packagers create their own tarballs from git itself.
 
 ## Securing infrastructure access
 
@@ -317,10 +323,10 @@ Then, run `gpgkey2ssh` command with that key ID:
 
     gpgkey2ssh 80A407E7
 
-This will produce the output that you can put into the `authorized_keys`
-file. This saves you the trouble of asking them to send you their ssh public
-key, and assures the key actually belongs to your team member since it's part
-of their trusted OpenPGP key.
+This will produce the output that you can use for the `authorized_keys` file.
+This saves you the trouble of asking them to send you their ssh public key,
+and assures that the key actually belongs to your team member since it's part
+of their trusted OpenPGP master key.
 
 ## Checklist
 
