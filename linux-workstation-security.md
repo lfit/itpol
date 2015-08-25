@@ -497,12 +497,12 @@ You should install the following Firefox add-ons:
     (though offers really good security benefits), so we recommend only
     enabling it on the browser you use to access work-related sites.
 
-- [ ] Ghostery _(CRITICAL)_
-  - Ghostery will prevent most external trackers and ad platforms from being
-    loaded, which will help avoid compromises on these tracking sites from
-    affecting your browser (trackers and ad sites are very commonly targeted
-    by attackers, as they allow rapid infection of thousands of systems
-    worldwide).
+- [ ] Privacy Badger _(CRITICAL)_
+  - EFF's Privacy Badger will prevent most external trackers and ad platforms
+    from being loaded, which will help avoid compromises on these tracking
+    sites from affecting your browser (trackers and ad sites are very commonly
+    targeted by attackers, as they allow rapid infection of thousands of
+    systems worldwide).
 
 - [ ] HTTPS Everywhere _(CRITICAL)_
   - This EFF-developed Add-on will ensure that most of your sites are accessed
@@ -529,7 +529,7 @@ project, and Chrome is Google's proprietary binary build based on it (insert
 the usual paranoid caution about not using it for anything you don't want
 Google to know about).
 
-It is recommended that you install **Ghostery** and **HTTPS Everywhere**
+It is recommended that you install **Privacy Badger** and **HTTPS Everywhere**
 extensions in Chrome as well and give it a distinct theme from Firefox to
 indicate that this is your "untrusted sites" browser.
 
