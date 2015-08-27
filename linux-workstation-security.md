@@ -757,7 +757,7 @@ and then log out and back in to get back into the comfort zone.
 
 ## Further reading
 
-The world of IT security is a rabitt hole with no bottom. If you would like to
+The world of IT security is a rabbit hole with no bottom. If you would like to
 go deeper, or find out more about security features on your particular
 distribution, please check out the following links:
 
