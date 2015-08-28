@@ -75,12 +75,12 @@ to prevent, but it will require more effort to set up and maintain.
 
 #### Firewire, thunderbolt, and ExpressCard ports
 
-Firewire is a silly standard that, by design, allows any connecting device full
+Firewire is a standard that, by design, allows any connecting device full
 direct memory access to your system ([see Wikipedia][2]). Thunderbolt and
-ExpressCard are guilty of the same sin, though some later implementations of
-Thunderbolt attempt to mitigate this vulnerability. It is best if the system
-you are getting has none of these ports, but it is not critical, as they
-usually can be turned off via UEFI or disabled in the kernel itself.
+ExpressCard are guilty of the same, though some later implementations of
+Thunderbolt attempt to limit the scope of memory access. It is best if the
+system you are getting has none of these ports, but it is not critical, as
+they usually can be turned off via UEFI or disabled in the kernel itself.
 
 #### TPM Chip
 
