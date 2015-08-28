@@ -136,7 +136,7 @@ what you should consider when picking a distribution to use.
 
 ### Checklist
 
-- [ ] Has a robust MAC/RBAC implementation (SELinux/AppArmor/PaX) _(CRITICAL)_
+- [ ] Has a robust MAC/RBAC implementation (SELinux/AppArmor/Grsecurity) _(CRITICAL)_
 - [ ] Publishes security bulletins _(CRITICAL)_
 - [ ] Provides timely security patches _(CRITICAL)_
 - [ ] Provides cryptographic verification of packages _(CRITICAL)_
