@@ -189,7 +189,7 @@ widely used distributions have been known to go for years before introducing
 this basic security measure (Arch, I'm looking at you), so this is a thing
 worth checking.
 
-#### Distros supporing UEFI and SecureBoot
+#### Distros supporting UEFI and SecureBoot
 
 Check that the distribution supports UEFI and SecureBoot. Find out whether it
 requires importing an extra key or whether it signs its boot kernels with a key
