@@ -555,6 +555,32 @@ See [Qubes-OS project][3], which strives to provide a high-security
 workstation environment via compartmentalizing your applications into separate
 fully isolated VMs.
 
+#### 4: Separate Firefox profiles for each security context
+
+This is an alternative to the two-browser scenario which only requires
+Firefox and allows any number of environments (work, testing web
+applications, webmail and social networks, random browsing, etc.)
+
+Each Firefox profile will have a completely independent configuration,
+including history, cookies, cache, add-ons, network, and privacy and
+security settings, and they can run simultaneously in separate processes. No
+browser data will be shared among the profiles and the process isolation
+will provide an extra barrier against compromises.
+
+Notice that data saved by binary plugins (e.g. Adobe Flash) will still be
+shared among the several profiles (and also across any other browser using
+them). It is recommended to disable the plugins in the most sensitive
+profiles and set them as click-to-run in the others. It is also recommended
+to prevent Flash from saving local data by making its data directory read
+only.
+
+To create a new profile, you should call Firefox passing the option
+`--ProfileManager` and to open the profile selector once another instance is
+already running, call it with the option `--new-instance`. From a usability
+perspective, it is recommended to set each profile to a different theme or
+color scheme, minimizing the risk of confusion when alternating among them.
+
+
 ### Password managers
 
 #### Checklist
