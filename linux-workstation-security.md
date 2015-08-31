@@ -234,13 +234,14 @@ which is likely to contain a slew of sensitive data. The recommended
 encryption strategy is to encrypt the LVM device, so only one passphrase is
 required during the boot process.
 
-The `/boot` partition will always remain unencrypted, as the bootloader needs
-to be able to actually boot the kernel before invoking LUKS/dm-crypt. The
-kernel image itself should be protected against tampering with a cryptographic
-signature checked by SecureBoot.
-
-In other words, `/boot` should always be the only unencrypted partition on your
-system.
+The `/boot` partition will usually remain unencrypted, as the bootloader needs
+to be able to boot the kernel itself before invoking LUKS/dm-crypt. Some
+distributions support encrypting the `/boot` partition as well (e.g.
+[Arch][16]), and it is possible to do the same on other distros, but likely at
+the cost of complicating system updates. It is not critical to encrypt
+`/boot` if your distro of choice does not natively support it, as the kernel
+image itself leaks no private data and will be protected against tampering
+with a cryptographic signature checked by SecureBoot.
 
 #### Choosing good passphrases
 
@@ -787,4 +788,4 @@ This work is licensed under a
 [13]: https://www.yubico.com/products/yubikey-hardware/yubikey-neo/
 [14]: https://wiki.debian.org/Subkeys
 [15]: https://github.com/lfit/ssh-gpg-smartcard-config
-
+[16]: http://www.pavelkogan.com/2014/05/23/luks-full-disk-encryption/
