@@ -27,23 +27,22 @@ Each section is split into two areas:
 - The checklist that can be adapted to your project's needs
 - Free-form list of considerations that explain what dictated these decisions
 
-## Severity levels
+## Priority levels
 
-The items in each checklist include the severity level, which we hope will help
-guide your decision:
+The items in each checklist include the priority level, which we hope will
+help guide your decision:
 
-- _(CRITICAL)_ items should definitely be high on the consideration list.
+- _(ESSENTIAL)_ items should definitely be high on the consideration list.
   If not implemented, they will introduce high risks to your workstation
   security.
-- _(MODERATE)_ items will improve your security posture, but are less
-  important, especially if they interfere too much with your workflow.
-- _(LOW)_ items may improve the overall security, but may not be worth the
-  convenience trade-offs.
-- _(PARANOID)_ is reserved for items we feel will dramatically improve your
-  workstation security, but will probably require a lot of adjustment to the
+- _(NICE)_ to have items will improve the overall security, but will
+  affect how you interact with your work environment, and probably require
+  learning new habits or unlearning old ones.
+- _(PARANOID)_ is reserved for items we feel will significantly improve your
+  workstation security, but will require a lot of adjustment to the
   way you interact with your operating system.
 
-Remember, these are only guidelines. If you feel these severity levels do not
+Remember, these are only guidelines. If you feel these priority levels do not
 reflect your project's commitment to security, you should adjust them as you
 see fit.
 
@@ -54,9 +53,9 @@ this section addresses core considerations when choosing a work system.
 
 ### Checklist
 
-- [ ] System supports SecureBoot _(CRITICAL)_
-- [ ] System has no firewire, thunderbolt or ExpressCard ports _(MODERATE)_
-- [ ] System has a TPM chip _(LOW)_
+- [ ] System supports SecureBoot _(ESSENTIAL)_
+- [ ] System has no firewire, thunderbolt or ExpressCard ports _(NICE)_
+- [ ] System has a TPM chip _(NICE)_
 
 ### Considerations
 
@@ -97,10 +96,10 @@ with OS installation.
 
 ### Checklist
 
-- [ ] UEFI boot mode is used (not legacy BIOS) _(CRITICAL)_
-- [ ] Password is required to enter UEFI configuration _(CRITICAL)_
-- [ ] SecureBoot is enabled _(CRITICAL)_
-- [ ] UEFI-level password is required to boot the system _(LOW)_
+- [ ] UEFI boot mode is used (not legacy BIOS) _(ESSENTIAL)_
+- [ ] Password is required to enter UEFI configuration _(ESSENTIAL)_
+- [ ] SecureBoot is enabled _(ESSENTIAL)_
+- [ ] UEFI-level password is required to boot the system _(NICE)_
 
 ### Considerations
 
@@ -136,12 +135,12 @@ what you should consider when picking a distribution to use.
 
 ### Checklist
 
-- [ ] Has a robust MAC/RBAC implementation (SELinux/AppArmor/Grsecurity) _(CRITICAL)_
-- [ ] Publishes security bulletins _(CRITICAL)_
-- [ ] Provides timely security patches _(CRITICAL)_
-- [ ] Provides cryptographic verification of packages _(CRITICAL)_
-- [ ] Fully supports UEFI and SecureBoot _(CRITICAL)_
-- [ ] Has robust native full disk encryption support _(CRITICAL)_
+- [ ] Has a robust MAC/RBAC implementation (SELinux/AppArmor/GrSecurity) _(ESSENTIAL)_
+- [ ] Publishes security bulletins _(ESSENTIAL)_
+- [ ] Provides timely security patches _(ESSENTIAL)_
+- [ ] Provides cryptographic verification of packages _(ESSENTIAL)_
+- [ ] Fully supports UEFI and SecureBoot _(ESSENTIAL)_
+- [ ] Has robust native full disk encryption support _(ESSENTIAL)_
 
 ### Considerations
 
@@ -160,11 +159,11 @@ post-installation.
 Distributions that do not provide any MAC/RBAC mechanisms should be strongly
 avoided, as traditional POSIX user- and group-based security should be
 considered insufficient in this day and age. If you would like to start out
-with a MAC/RBAC workstation, AppArmor and PaX are generally considered easier
-to learn than SELinux. Furthermore, on a workstation, where there are few or
-no externally listening daemons, and where user-run applications pose the
-highest risk, GrSecurity/PaX will _probably_ offer more security benefits than
-SELinux.
+with a MAC/RBAC workstation, AppArmor and GrSecurity/PaX are generally
+considered easier to learn than SELinux. Furthermore, on a workstation, where
+there are few or no externally listening daemons, and where user-run
+applications pose the highest risk, GrSecurity/PaX will offer more security
+benefits than just SELinux.
 
 #### Distro security bulletins
 
@@ -214,12 +213,12 @@ All distributions are different, but here are general guidelines:
 
 ### Checklist
 
-- [ ] Use full disk encryption (LUKS) with a robust passphrase _(CRITICAL)_
-- [ ] Make sure swap is also encrypted _(CRITICAL)_
-- [ ] Require a password to edit bootloader (can be same as LUKS) _(CRITICAL)_
-- [ ] Set up a robust root password (can be same as LUKS) _(CRITICAL)_
-- [ ] Use an unprivileged account, part of administrators group _(CRITICAL)_
-- [ ] Set up a robust user-account password, different from root _(CRITICAL)_
+- [ ] Use full disk encryption (LUKS) with a robust passphrase _(ESSENTIAL)_
+- [ ] Make sure swap is also encrypted _(ESSENTIAL)_
+- [ ] Require a password to edit bootloader (can be same as LUKS) _(ESSENTIAL)_
+- [ ] Set up a robust root password (can be same as LUKS) _(ESSENTIAL)_
+- [ ] Use an unprivileged account, part of administrators group _(ESSENTIAL)_
+- [ ] Set up a robust user-account password, different from root _(ESSENTIAL)_
 
 ### Considerations
 
@@ -256,6 +255,13 @@ Examples of good passphrases (yes, you can use spaces):
 - nature abhors roombas
 - 12 in-flight Jebediahs
 - perdon, tengo flatulence
+
+Weak passphrases are combinations of words you're likely to see in published
+works or anywhere else in real life, such as:
+
+- Mary had a little lamb
+- you're a wizard, Harry
+- to infinity and beyond
 
 You can also stick with non-vocabulary passwords that are at least 10-12
 characters long, if you prefer that to typing passphrases.
@@ -305,15 +311,15 @@ document such as this one. However, here are some steps you should take:
 
 ### Checklist
 
-- [ ] Globally disable firewire and thunderbolt modules _(CRITICAL)_
-- [ ] Check your firewalls to ensure all incoming ports are filtered _(CRITICAL)_
-- [ ] Make sure root mail is forwarded to an account you check _(CRITICAL)_
-- [ ] Check to ensure sshd service is disabled by default _(MODERATE)_
-- [ ] Set up an automatic OS update schedule, or update reminders _(MODERATE)_
-- [ ] Configure the screensaver to auto-lock after a period of inactivity _(MODERATE)_
-- [ ] Set up logwatch _(MODERATE)_
-- [ ] Install and use rkhunter _(LOW)_
-- [ ] Install an Intrusion Detection System _(PARANOID)_
+- [ ] Globally disable firewire and thunderbolt modules _(ESSENTIAL)_
+- [ ] Check your firewalls to ensure all incoming ports are filtered _(ESSENTIAL)_
+- [ ] Make sure root mail is forwarded to an account you check _(ESSENTIAL)_
+- [ ] Set up an automatic OS update schedule, or update reminders _(ESSENTIAL)_
+- [ ] Check to ensure sshd service is disabled by default _(NICE)_
+- [ ] Configure the screensaver to auto-lock after a period of inactivity _(NICE)_
+- [ ] Set up logwatch _(NICE)_
+- [ ] Install and use rkhunter _(NICE)_
+- [ ] Install an Intrusion Detection System _(NICE)_
 
 ### Considerations
 
@@ -409,8 +415,8 @@ manner.
 
 ### Checklist
 
-- [ ] Set up encrypted workstation backups to external storage _(CRITICAL)_
-- [ ] Use zero-knowledge backup tools for cloud backups _(MODERATE)_
+- [ ] Set up encrypted workstation backups to external storage _(ESSENTIAL)_
+- [ ] Use zero-knowledge backup tools for off-site/cloud backups _(NICE)_
 
 ### Considerations
 
@@ -422,9 +428,9 @@ without having to worry about such things like bandwidth and upstream speeds
 upload/download speeds). Needless to say, this hard drive needs to be in itself
 encrypted (again, via LUKS), or you should use a backup tool that creates
 encrypted backups, such as `duplicity` or its GUI companion, `deja-dup`. I
-recommend using the latter with a good randomly generated passphrase, stored in
-your password manager. If you travel with your laptop, leave this drive at home
-to have something to come back to in case your laptop is lost or stolen.
+recommend using the latter with a good randomly generated passphrase, stored
+in a safe offline place. If you travel with your laptop, leave this drive at
+home to have something to come back to in case your laptop is lost or stolen.
 
 In addition to your home directory, you should also back up `/etc` and
 `/var/log` for various forensic purposes.
@@ -470,7 +476,7 @@ There are several ways you can reduce the impact of a compromised browser, but
 the truly effective ways will require significant changes in the way you
 operate your workstation.
 
-#### 1: Use two different browsers
+#### 1: Use two different browsers _(ESSENTIAL)_
 
 This is the easiest to do, but only offers minor security benefits. Not all
 browser compromises give an attacker full unfettered access to your system --
@@ -492,25 +498,25 @@ this browser for accessing any other sites except select few.
 
 You should install the following Firefox add-ons:
 
-- [ ] NoScript _(CRITICAL)_
+- [ ] NoScript _(ESSENTIAL)_
   - NoScript prevents active content from loading, except from user
     whitelisted domains. It is a great hassle to use with your default browser
     (though offers really good security benefits), so we recommend only
     enabling it on the browser you use to access work-related sites.
 
-- [ ] Privacy Badger _(CRITICAL)_
+- [ ] Privacy Badger _(ESSENTIAL)_
   - EFF's Privacy Badger will prevent most external trackers and ad platforms
     from being loaded, which will help avoid compromises on these tracking
     sites from affecting your browser (trackers and ad sites are very commonly
     targeted by attackers, as they allow rapid infection of thousands of
     systems worldwide).
 
-- [ ] HTTPS Everywhere _(CRITICAL)_
+- [ ] HTTPS Everywhere _(ESSENTIAL)_
   - This EFF-developed Add-on will ensure that most of your sites are accessed
     over a secure connection, even if a link you click is using http:// (great
     to avoid a number of attacks, such as [SSL-strip][7]).
 
-- [ ] Certificate Patrol _(MODERATE)_
+- [ ] Certificate Patrol _(NICE)_
   - This tool will alert you if the site you're accessing has recently changed
     their TLS certificates -- especially if it wasn't nearing expiration dates
     or if it is now using a different certification authority. It helps
@@ -534,14 +540,14 @@ It is recommended that you install **Privacy Badger** and **HTTPS Everywhere**
 extensions in Chrome as well and give it a distinct theme from Firefox to
 indicate that this is your "untrusted sites" browser.
 
-#### 2: Use two different browsers, one inside a dedicated VM
+#### 2: Use two different browsers, one inside a dedicated VM _(NICE)_
 
 This is a similar recommendation to the above, except you will add an extra
-step of running Chrome inside a dedicated VM that you access via a fast
-protocol, allowing you to share clipboards and forward sound events (e.g.
-Spice or RDP). This will add an excellent layer of isolation between the
-untrusted browser and the rest of your work environment, ensuring that
-attackers who manage to fully compromise your browser will then have to
+step of running the "everything else" browser inside a dedicated VM that you
+access via a fast protocol, allowing you to share clipboards and forward sound
+events (e.g.  Spice or RDP). This will add an excellent layer of isolation
+between the untrusted browser and the rest of your work environment, ensuring
+that attackers who manage to fully compromise your browser will then have to
 additionally break out of the VM isolation layer in order to get to the rest
 of your system.
 
@@ -550,7 +556,7 @@ fast processors that can handle the increased load. It will also require an
 important amount of dedication on the part of the admin who will need to
 adjust their work practices accordingly.
 
-#### 3: Fully separate your work and play environments via virtualization
+#### 3: Fully separate your work and play environments via virtualization _(PARANOID)_
 
 See [Qubes-OS project][3], which strives to provide a high-security
 workstation environment via compartmentalizing your applications into separate
@@ -560,10 +566,10 @@ fully isolated VMs.
 
 #### Checklist
 
-- [ ] Use a password manager _(CRITICAL_)
-- [ ] Use unique passwords on unrelated sites _(CRITICAL)_
-- [ ] Use a password manager that supports team sharing _(MODERATE)_
-- [ ] Use a separate password manager for non-website accounts _(PARANOID)_
+- [ ] Use a password manager _(ESSENTIAL)
+- [ ] Use unique passwords on unrelated sites _(ESSENTIAL)_
+- [ ] Use a password manager that supports team sharing _(NICE)_
+- [ ] Use a separate password manager for non-website accounts _(NICE)_
 
 #### Considerations
 
@@ -621,10 +627,10 @@ to ensure that your private keys are well protected against theft.
 
 #### Checklist
 
-- [ ] Strong passphrases are used to protect private keys _(CRITICAL)_
-- [ ] PGP Master key is stored on removable storage _(MODERATE)_
-- [ ] Auth, Sign and Encrypt Subkeys are stored on a smartcard device _(MODERATE)_
-- [ ] SSH is configured to use PGP Auth key as ssh private key _(MODERATE)_
+- [ ] Strong passphrases are used to protect private keys _(ESSENTIAL)_
+- [ ] PGP Master key is stored on removable storage _(NICE)_
+- [ ] Auth, Sign and Encrypt Subkeys are stored on a smartcard device _(NICE)_
+- [ ] SSH is configured to use PGP Auth key as ssh private key _(NICE)_
 
 #### Considerations
 
@@ -653,6 +659,14 @@ If you are not willing to go that far, at least make sure you have a strong
 passphrase on both your PGP private key and your SSH private key, which will
 make it harder for attackers to steal and use them.
 
+### Hibernate or shut down, do not suspend
+
+When a system is suspended, the RAM contents are kept on the memory chips and
+can be read by an attacker (known as the [Cold Boot Attack][17]). If you are
+going away from your system for an extended period of time, such as at the end
+of the day, it is best to shut it down or hibernate it instead of suspending
+it or leaving it on.
+
 ### SELinux on the workstation
 
 If you are using a distribution that comes bundled with SELinux (such as
@@ -661,10 +675,10 @@ maximize your workstation security.
 
 #### Checklist
 
-- [ ] Make sure SELinux is enforcing on your workstation _(CRITICAL)_
-- [ ] Never blindly run `audit2allow -M`, always check _(CRITICAL)_
-- [ ] Never `setenforce 0` _(MODERATE)_
-- [ ] Switch your account to SELinux user `staff_u` _(MODERATE)_
+- [ ] Make sure SELinux is enforcing on your workstation _(ESSENTIAL)_
+- [ ] Never blindly run `audit2allow -M`, always check _(ESSENTIAL)_
+- [ ] Never `setenforce 0` _(NICE)_
+- [ ] Switch your account to SELinux user `staff_u` _(NICE)_
 
 #### Considerations
 
@@ -789,3 +803,4 @@ This work is licensed under a
 [14]: https://wiki.debian.org/Subkeys
 [15]: https://github.com/lfit/ssh-gpg-smartcard-config
 [16]: http://www.pavelkogan.com/2014/05/23/luks-full-disk-encryption/
+[17]: https://en.wikipedia.org/wiki/Cold_boot_attack
