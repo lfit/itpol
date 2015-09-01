@@ -566,7 +566,7 @@ fully isolated VMs.
 
 #### Checklist
 
-- [ ] Use a password manager _(ESSENTIAL)
+- [ ] Use a password manager _(ESSENTIAL)_
 - [ ] Use unique passwords on unrelated sites _(ESSENTIAL)_
 - [ ] Use a password manager that supports team sharing _(NICE)_
 - [ ] Use a separate password manager for non-website accounts _(NICE)_
