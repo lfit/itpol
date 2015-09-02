@@ -1,9 +1,9 @@
-# Linux Foundation IT Policies
+# Useful IT Policies
 
 In this repository we provide generalized IT policies adapted from those used
-by the Linux Foundation IT staff in hopes that they will come in handy for
-other organizations, and especially for open-source projects who rely on
-volunteer admin efforts to manage their infrastructure.
+internally by our IT staff in hopes that they will come in handy for other
+organizations, and especially for open-source projects who rely on volunteer
+admin efforts to manage their infrastructure.
 
 We invite all others to participate, share and donate back their knowledge and
 expertise to help create a library of checklists and best practice documents
