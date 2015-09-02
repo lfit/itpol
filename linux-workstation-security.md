@@ -1,16 +1,22 @@
 # Linux workstation security checklist
 
-This is a set of recommendations used by the Linux Foundation for their systems
-administrators. All of LF employees are remote workers and we use this set of
-guidelines to ensure that a sysadmin's system passes core security requirements
-in order to reduce the risk of it becoming an attack vector against the rest
-of our infrastructure.
+### Target audience
+
+This document is aimed at systems administrators who use a Linux desktop as
+their main workstation.
+
+If your systems adminstrators are remote workers, you may use this
+set of guidelines to help ensure that their workstations pass core security
+requirements in order to reduce the risk that they become attack vectors
+against the rest of your IT infrastructure.
 
 Even if your systems administrators are not remote workers, chances are that
 they perform a lot of their work either from a portable laptop in a work
 environment, or set up their home systems to access the work infrastructure
 for after-hours/emergency support. In either case, you can adapt this set of
 recommendations to suit your environment.
+
+### Limitations
 
 This, by no means, is an exhaustive "workstation hardening" document, but
 rather an attempt at a set of baseline recommendations to avoid most glaring
@@ -22,12 +28,14 @@ is a crazy person. These guidelines are merely a basic set of core safety
 rules that is neither exhaustive, nor a replacement for experience, vigilance,
 and common sense.
 
+### Structure
+
 Each section is split into two areas:
 
 - The checklist that can be adapted to your project's needs
 - Free-form list of considerations that explain what dictated these decisions
 
-## Priority levels
+#### Checklist priority levels
 
 The items in each checklist include the priority level, which we hope will
 help guide your decision:
