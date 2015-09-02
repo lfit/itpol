@@ -2,10 +2,10 @@
 
 ### Target audience
 
-This document is aimed at systems administrators who use a Linux desktop as
-their main workstation.
+This document is aimed at teams of systems administrators who use Linux
+workstations to access and manage your project's IT infrastructure.
 
-If your systems adminstrators are remote workers, you may use this
+If your systems administrators are remote workers, you may use this
 set of guidelines to help ensure that their workstations pass core security
 requirements in order to reduce the risk that they become attack vectors
 against the rest of your IT infrastructure.
