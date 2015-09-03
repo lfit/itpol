@@ -28,6 +28,11 @@ is a crazy person. These guidelines are merely a basic set of core safety
 rules that is neither exhaustive, nor a replacement for experience, vigilance,
 and common sense.
 
+We're sharing this document as a way to
+[bring the benefits of open-source collaboration to IT policy documentation][18]. If
+you find it useful, we hope you'll contribute to its development by making a fork for
+your own organization and sharing your improvements. 
+
 ### Structure
 
 Each section is split into two areas:
@@ -812,3 +817,4 @@ This work is licensed under a
 [15]: https://github.com/lfit/ssh-gpg-smartcard-config
 [16]: http://www.pavelkogan.com/2014/05/23/luks-full-disk-encryption/
 [17]: https://en.wikipedia.org/wiki/Cold_boot_attack
+[18]: http://www.linux.com/news/featured-blogs/167-amanda-mcpherson/850607-linux-foundation-sysadmins-open-source-their-it-policies
