@@ -195,10 +195,10 @@ timely fashion. Avoid using spin-offs and "community rebuilds" for this
 reason, as they routinely delay security updates due to having to wait for the
 upstream distribution to release it first.
 
-You'll be hard-pressed to find a distribution that does not use cryptographic
+These days, it is hard to find a distribution that does not use cryptographic
 signatures on packages, updates metadata, or both. That being said, fairly
 widely used distributions have been known to go for years before introducing
-this basic security measure (Arch, I'm looking at you), so this is a thing
+this basic security measure (Arch, I'm looking at you), so this is something
 worth checking.
 
 #### Distros supporting UEFI and SecureBoot
