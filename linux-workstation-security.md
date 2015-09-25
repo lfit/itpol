@@ -729,7 +729,7 @@ and then look for `scontext=` (source SELinux context) line, like so:
 This tells you that the domain being denied is `gpg_pinentry_t`, so if you
 want to troubleshoot the application, you should add it to permissive domains:
 
-    semange permissive -a gpg_pinentry_t
+    semanage permissive -a gpg_pinentry_t
 
 This will allow you to use the application and collect the rest of the AVCs,
 which you can then use in conjunction with `audit2allow` to write a local
