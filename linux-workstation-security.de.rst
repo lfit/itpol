@@ -7,25 +7,27 @@ Zielgruppe
 
 Dieses Dokument richtet sich an Teams von Systemadministratoren, die 
 Linux-Workstations verwenden, um in ihrem Projekt auf IT-Infrastruktur
-zuzugreifen und zu verwalten.
+zuzugreifen und diese zu verwalten.
 
-Systemadministratoren können diesen Satz von Richtlinien verwenden, um
-sicherzustellen, dass ihre Arbeitsplätze grundlegenden Sicherheitsanforderungen
-entsprechen, die das Risiko, ein Angriffsvektor gegen die gesamte
-IT-Infrastruktur zu sein, reduzieren.
+Systemadministratoren können diese Richtlinien verwenden, um sicherzustellen,
+dass ihre Arbeitsplätze grundlegenden Sicherheitsanforderungen entsprechen, die
+das Risiko, ein Angriffsvektor gegen die gesamte IT-Infrastruktur zu sein,
+reduzieren.
 
 Einschränkungen
 ===============
 
 Dies ist kein umfassendes Dokument zum Härten von Workstations, sondern der
 Versuch, mit einer Reihe von Empfehlungen die krassesten Sicherheitsfehler zu
-vermeiden, ohne zu viel Unannehmlichkeiten einzuführen. Manche werden dieses
+vermeiden, ohne zu viele Unannehmlichkeiten einzuführen. Manche werden dieses
 Dokument lesen und denken, wir sind paranoid; während wir für andere kaum an
-der Oberfläche kratzen. Diese Richtlinien sollen lediglich eine Reihe grundlege der Fehler vermeiden helfen, ohne ein Ersatz für Erfahrung, Wachsamkeit und
-gesunden Menschenverstand zu sein.
+der Oberfläche kratzen. Diese Richtlinien sollen lediglich eine Reihe
+grundlegender Fehler vermeiden helfen, ohne ein Ersatz für Erfahrung,
+Wachsamkeit und gesunden Menschenverstand zu sein.
 
-von IT-Richtlinien zu übertragen. Gerne können Sie dieses Dokument für Ihre
-Organisation kopieren und uns Ihre Verbesserungen mitteilen.
+Wir teilen dieses Dokument, um die Vorteile von Open-Source auf die
+Dokumentation von IT-Richtlinien zu übertragen. Gerne können Sie dieses Dokument
+für Ihre Organisation kopieren und uns Ihre Verbesserungen mitteilen.
 
 Struktur
 ========
@@ -33,24 +35,25 @@ Struktur
 Jeder Abschnitt ist in zwei verschiedene Bereiche unterteilt:
 
 #. Die Checkliste, die Ihren Projektanforderungen angepasst werden kann.
-#. Überlegungen, die erklären, wiew es zu diesen Entscheidungen kam.
+#. Überlegungen, die erklären, wie es zu diesen Entscheidungen kam.
 
 Die Checkliste unterscheidet zwischen den folgenden drei Prioritätsstufen:
 
 wesentlich
     Diese Aufgaben sollten auf jeden Fall umgesetzt werden.
 
-    Falls sie nicht umgesetzt sind,  besteht ein hohes Risiko bzgl. der
+    Falls sie nicht umgesetzt sind, besteht ein hohes Risiko bzgl. der
     Sicherheit Ihrer Workstation.
 
 wünschenswert
     Aufgaben, die die allgemeine Sicherheit Ihrer Workstation verbessern, die
     jedoch neue Arbeitsweisen erfordern.
+
 paranoid
     Aufgaben, die die Sicherheit Ihrer Workstation verbessern, jedoch mit
     erheblichem Aufwand bei der Umsetzung verbunden sind.
 
-Denken Sie bitte daran, dass es sich im folgenden nur um Richtlinien handelt,
+Denken Sie bitte daran, dass es sich im Folgenden nur um Richtlinien handelt,
 die Sie entsprechend Ihrem Sicherheitsniveau anpassen sollten, genau so wie Sie
 für richtig halten.
 
@@ -79,7 +82,7 @@ vor, wie z.B. gegen Rootkits, *Evil Maid* und andere Bootkits etc. Es wird
 keinen hinreichenden Schutz vor versierten Angreifern und staatlichen
 Sicherheitsbehörden bieten, es ist jedoch besser als gar nichts.
 
-Alternativ können  Sie auch `Anti Evil Maid
+Alternativ können Sie auch `Anti Evil Maid
 <https://github.com/QubesOS/qubes-antievilmaid>`_ einrichten, das einen besseren
 Schutz gegen diese Art von Angriffen bietet. Es erfordert jedoch einen höheren
 Aufwand bei der Einrichtung und Pflege.
@@ -124,7 +127,7 @@ Checkliste
 UEFI und SecureBoot
 ~~~~~~~~~~~~~~~~~~~
 
-UEFI  bietet eine Menge Vorteile, die ein älterer BIOS nicht bietet. Die meisten
+UEFI bietet eine Menge Vorteile, die ein älterer BIOS nicht bietet. Die meisten
 modernen Systeme haben einen aktivierten UEFI-Modus.
 
 Stellen Sie sicher, dass ein starkes Passwort verwendet wird, um den UEFI-
@@ -148,9 +151,9 @@ Wenn Sie Ihre Workstation häufiger booten, können Sie auch eine LUKS-Passphras
 3. Wahl der Distribution
 ========================
 
-Vemutlich werden Sie bei einer der weit verbreiteten Distributionen wie Fedora
-Ubuntu, Arch, Debian, oder einer ihrer Spin-offs landen. In jedem Fall sollten
-Sie das Folgende beachten, bevor Sie eine Distribution entscheiden.
+Vermutlich werden Sie bei einer der weit verbreiteten Distributionen wie Fedora
+Ubuntu, Arch, Debian, oder einer ihrer Ableger landen. In jedem Fall sollten
+Sie das Folgende beachten, bevor Sie sich für eine Distribution entscheiden.
 
 Checkliste
 ----------
@@ -159,7 +162,7 @@ Checkliste
   (SELinux/AppArmor/grsecurity). (wesentlich)
 * ☐ publiziert Sicherheitsmitteilungen. (wesentlich)
 * ☐ bietet rechtzeitige Sicherheits-Patches. (wesentlich)
-* ☐ bietet die verschlüsselte Verifizierung von Paketen. (wesentlich)
+* ☐ bietet die kryptographische Verifizierung von Paketen. (wesentlich)
 * ☐ bietet volle Unterstützung für UEFI und SecureBoot. (wesentlich)
 * ☐ bietet robuste, native und vollständige Festplattenverschlüsselung.
   (wesentlich)
@@ -193,7 +196,7 @@ Die meisten der weit verbreiteten Distributionen teilen ihren Nutzern
 zuverlässig sicherheitsrelevante Informationen mit. Bei etwas exotischeren
 Installationen sollte jedoch überprüft werden, ob die Distribution hierfür eine
 zuverlässige Alarmierung der Benutzer über Sicherheitslücken und Patches
-implementiert hat. Fehlt ein solcher Mechanismus, ist das ein wichtiges
+umgesetzt hat. Fehlt ein solcher Mechanismus, ist das ein wichtiges
 Warnsignal, dass die Distribution noch nicht ausgereift ist. 
 
 Rechtzeitige und vertrauenswürdige Sicherheits-Updates
@@ -201,7 +204,7 @@ Rechtzeitige und vertrauenswürdige Sicherheits-Updates
 
 Die meisten der weit verbreiteten Distributionen liefern regelmäßige
 Sicherheits-Updates. Sie unterscheiden sich jedoch deutlich in der Art und
-Weise, wie diese Pakete bereitgestellt werden. Vermeiden Sie daher Spin-offs und
+Weise, wie diese Pakete bereitgestellt werden. Vermeiden Sie daher Ableger und
 *Community Rebuilds*, da sich dort üblicherweise die Sicherheitsupdates
 verzögern.
 
@@ -234,7 +237,7 @@ höheren Kosten.
 4. Installation
 ===============
 
-Alle Distributionen sind unterschiedlich, aber hier sind allgemeinen
+Alle Distributionen sind unterschiedlich, aber hier sind allgemeine
 Richtlinien:
 
 Checkliste
@@ -248,7 +251,7 @@ Checkliste
   kann dasselbe wie LUKS sein. (wesentlich)
 * ☐ Verwenden Sie ein robustes Root-Passwort. Es kann dasselbe wie LUKS
   sein. (wesentlich)
-* ☐ Verwenden Sie ein unprivilegiertes Konto, das  Teil der Gruppe
+* ☐ Verwenden Sie ein unprivilegiertes Konto, das Teil der Gruppe
   *administrators* ist (wesentlich)
 * ☐ Verwenden Sie für dieses Konto ein robustes Passwort, das sich vom Root-
   Passwort unterscheidet (wesentlich)
@@ -288,7 +291,7 @@ Länge, so dass die einzige wirkliche Einschränkung Ihr Paranoia-Niveau ist.
 
 Wenn Sie Ihr System häufig booten, werden Sie wahrscheinlich mindestens zwei
 verschiedene Passwörter eingeben müssen: eins, um LUKS zu entsperren und ein
-anderes, um  sich anzumelden.  In diesem Fall werden Sie vermutlich mit langen
+anderes, um sich anzumelden. In diesem Fall werden Sie vermutlich mit langen
 Passphrasen nicht glücklich werden. Vermutlich empfehlen sich hier Passwörter
 mit höherer Entropie. Jedoch sollten auch diese nie weniger als 12 Zeichen lang
 sein.
@@ -323,7 +326,7 @@ sich ggf. erinnern müssen als:
 * **Benutzer** für:
 
   * das Benutzerkonto und ``sudo``
-  * das Master-Passwort des Passwort-Manager
+  * das Master-Passwort des Passwort-Managers
 
 ``Rkhunter`` und IDS
 ~~~~~~~~~~~~~~~~~~~~
@@ -352,12 +355,11 @@ erkennen.
 
 Die Härtung der Sicherheit nach der Installation ist stark von der Distribution
 abhängig weswegen wir an dieser Stelle keine detaillierten Anweisungen geben
-können sondern nur allgemeine. Allerdings sind hier einige Schritte, die Sie
-beachten sollten:
+können sondern nur allgemeine. Hier einige Schritte, die Sie beachten sollten:
 
-* ☐ Global Firewire und Thunderbolt deaktivieren (wesentlich)
+* ☐ Firewire und Thunderbolt global deaktivieren (wesentlich)
 * ☐ Überprüfen Sie alle eingehenden Ports in Ihrer Ihre Firewall um
-  sicherzustellen, dass  diese gefiltert werden (wesentlich)
+  sicherzustellen, dass diese gefiltert werden (wesentlich)
 * ☐ Stellen Sie sicher, dass ``root``-Mails an ein Konto weitergeleitet werden,
   das regelmäßig überprüft wird (wesentlich)
 * ☐ Richten Sie einen Zeitplan für automatische OS-Updates oder Update-
@@ -366,7 +368,7 @@ beachten sollten:
   (wünschenswert)
 * ☐ Konfigurieren Sie den Bildschirmschoner so, dass er automatisch nach
   einer gewissen Zeit der Inaktivität die Eingabe sperrt (wünschenswert)
-* ☐ Richten Sie ``logwatch`` ein x (wünschenswert)
+* ☐ Richten Sie ``logwatch`` ein (wünschenswert)
 * ☐ Installieren und verwenden Sie ``rkhunter`` (Rootkit Hunter) (wünschenswert)
 * ☐ Installieren Sie ein Intrusion Detection System (wünschenswert)
 
@@ -388,58 +390,60 @@ gesetzt.
 Root-Mail
 ~~~~~~~~~
 
-Standardmäßig wird die Root-Mail auf dem System nur gespeichert und neigt
-dazu, nie gelesen werden. Stellen Sie in ``/etc/aliases`` sicher, dass Root-
-Mail an eine Mailbox weitergeleitet wird, die tatsächlich gelesen wird, damit Sie
-wichtige Systemmeldungen und Berichte nicht verpassen::
+Standardmäßig werden Root-Mails auf dem System nur gespeichert und man neigt
+dazu, diese nie zu lesen. Stellen Sie in ``/etc/aliases`` sicher, dass
+Root-Mails an eine Mailbox weitergeleitet werden, die tatsächlich gelesen wird,
+damit Sie wichtige Systemmeldungen und Berichte nicht verpassen::
 
     # Person who should get root’s mail
     root:          sue@cusy.io
 
-Führen Sie nach dieser Änderung ``sudo newaliases``  aus und testen Sie
+Führen Sie nach dieser Änderung ``sudo newaliases`` aus und testen Sie
 anschließend, ob die Mails auch tatsächlich ausgeliefert werden, da einige E-
 Mail-Provider Mails aus nicht vorhandenen oder nicht routebaren Domain-
 Namen ablehnen. Wenn dies der Fall ist, müssen Sie Ihre E-Mail-Konfiguration
-anpassen, bis dies tatsächlich funktioniert.
+anpassen.
 
-Firewalls, sshd und listening daemons
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firewalls, sshd und listening Dienste
+Firewalls, SSH- und andere Dienste
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Die Standardeinstellungen der Firewall vieler Distribution lässt eingehende sshd-
-Ports zu. Sofern Sie keinen zwingenden Grund für eingehende ssh-Verbindungen
-haben, sollten Sie diese Verbindung deaktivieren::
+Die Standardeinstellungen der Firewall vieler Distributionen lässt eingehende
+SSH-Verbindungen zu. Sofern Sie keinen zwingenden Grund für eingehende
+SSH-Verbindungen haben, sollten Sie den SSH-Dienst deaktivieren::
 
+    $ sudo systemctl disable sshd.service
     $ sudo systemctl stop sshd.service
 
-Dies hindert Sie nicht daran, vorübergehend den ``sshd``-Service zuzulassen,
-wenn Sie ihn benötigen.
+Dies hindert Sie nicht daran, vorübergehend den SSH-Dienst zu starten, wenn Sie
+ihn benötigen.
 
-Allgemeiner sollte Ihr System keine offenen Ports haben, an denen ein Daemon
+Allgemeiner sollte Ihr System keine offenen Ports haben, an denen ein Dienst
 auf Anfragen lauscht. Dies schützt Sie besser vor Zero-Day-Exploits.
 
 Automatische Updates oder Benachrichtigungen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wir empfehlen automatische Updates, da selten die eigenen Routinen besser sind
+Wir empfehlen automatische Updates, da die eigenen Abläufe selten besser sind
 als diejenigen der jeweiligen Distribution. Zumindest sollten Sie jedoch
 automatische Benachrichtigungen über verfügbare Updates aktivieren. Und auch
 dann sollten Sie alle ausstehenden Updates so schnell wie möglich anwenden,
-auch wenn etwas nicht speziell als *Sicherheitsupdate* markiert ist oder einen
+auch wenn etwas nicht speziell als *Sicherheitsupdate* markiert ist oder keinen
 zugehörigen CVE-Code aufweist. Alle Bugs haben das Potenzial,
 Sicherheitslücken zu sein.
 
 Logs beobachten
 ~~~~~~~~~~~~~~~
 
-Sie sollten ein großes Interesse haben an dem, was auf Ihrem System passiert.
-Aus diesem Grund sollten Sie ``logwatch``  installieren und konfigurieren.
-Sie sollten sich tägliche Berichte über alle  Aktivitäten zusenden lassen, um
+Sie sollten ein großes Interesse an dem haben, was auf Ihrem System passiert.
+Aus diesem Grund sollten Sie ``logwatch`` installieren und konfigurieren.
+Sie sollten sich tägliche Berichte über alle Aktivitäten zusenden lassen, um
 informiert zu sein, was auf Ihrem System passiert. Dies wird zwar keinen
 dedizierten Angriff verhindern, erhöht aber dennoch die Sicherheit auf Ihrem
 System.
 
 Beachten Sie, dass viele ``systemd``-Distributionen nicht mehr automatisch
-einen Syslog-Server installieren, so dass Sie ggf. einen eigenen  ``rsyslog``-
+einen Syslog-Server installieren, so dass Sie ggf. einen eigenen ``rsyslog``-
 Server installieren und aktivieren müssen, um sicherzustellen, dass ``/var/log``
 nicht leer ist, bevor ``logwatch`` von Nutzen sein kann.
 
@@ -450,7 +454,7 @@ Checkliste
 ----------
 
 * ☐ Richten Sie verschlüsselte Backups auf externen Speichern ein (wesentlich)
-* ☐ Verwenden Sie  Zero-Knowledge-Backup-Werkzeuge für Remote-Backups
+* ☐ Verwenden Sie Zero-Knowledge-Backup-Werkzeuge für Remote-Backups
   (wünschenswert)
 
 Überlegungen
@@ -486,16 +490,15 @@ einrichten, das nur die wichtigsten Dateien kopiert und große Datenmengen
 vermeidet wie z.B. Browser-Cache, Downloads etc.
 
 Alternativ können Sie auch ein Zero-Knowledge-Backup-Tool verwenden, wie z.B.
-*SpiderOak*, das über zusätzliche nützliche Funktionen verfügt, wie zum
-Beispiel die Synchronisation von Daten zwischen mehreren Systemen und
-Plattformen.
+*SpiderOak*, das über zusätzliche nützliche Funktionen, wie zum Beispiel die
+Synchronisation von Daten zwischen mehreren Systemen und Plattformen, verfügt.
 
 7. Best Practices
 =================
 
 Die folgenden Best Practices sind sicher nicht umfassend. Sie versuchen
 vielmehr praktische Ratschläge zu geben, die unseres Erachtens eine
-tragfähige Balance zwischen Sicherheit und Benutzerfreundlichkeit finden.
+tragfähige Balance zwischen Sicherheit und Benutzerfreundlichkeit halten.
 
 Web-Browser
 -----------
@@ -542,7 +545,7 @@ arbeiten.
           (diese werden häufig genutzt um schnell tausende von Systemen zu
           infizieren.)
       HTTPS Everywhere (wesentlich)
-          Dieses von der  EFF entwickelte Add-on sorgt dafür, dass auf die
+          Dieses von der EFF entwickelte Add-on sorgt dafür, dass auf die
           meisten Ihrer Websites über eine sichere Verbindung zugegriffen
           wird, auch wenn ein Link als Protokoll ``http://`` angibt. Dies hilft um
           eine Reihe von Angriffen zu vermeiden wie z.B. `SSL-strip
@@ -555,7 +558,7 @@ arbeiten.
           einer Man-in-the-Middle-Attacke, aber erzeugt auch eine Menge
           Fehlalarme.
 
-      Sie sollten als Standardbrowser für das Öffnen von Links  Firefox als
+      Sie sollten als Standardbrowser für das Öffnen von Links Firefox als
       Standard-Browser verwenden, da NoScript das Nachladen oder
       Ausführen von Inhalten meist zuverlässig verhindert.
 
@@ -587,7 +590,7 @@ arbeiten.
    Websites und dem Rest Ihrer Arbeitsumgebung.
 
    Dies erfordert jedoch einen deutlich erhöhten Aufwand, da nun auch
-   die VM gepflegt werden muss. Zudem wird deutlich mehr  RAM und
+   die VM gepflegt werden muss. Zudem wird deutlich mehr RAM und
    schnelle Prozessoren erwartet, um die erhöhte Last zu bewältigen.
 
 #. Volle Trennung der Arbeitsumgebung durch Virtualisierung (paranoid)
@@ -713,7 +716,7 @@ gespeichert wird und nur Subkeys verwendet werden. Der Hauptschlüssel wird
 nur dann benötigt, wenn Schlüssel anderer Personen signiert oder neue
 Unterschlüssel erstellt werden sollen – Operationen, die nicht sehr häufig
 vorkommen. Wie ein Hauptschlüssel auf dem Wechselspeicher erstellt und
-Unterschlüssel erstellt werden ist gut in  `Using OpenPGP subkeys in Debian
+Unterschlüssel erstellt werden ist gut in `Using OpenPGP subkeys in Debian
 development <https://wiki.debian.org/Subkeys>`_ beschrieben.
 
 Anschließend sollten Sie dann Ihren GnuPG-Agenten als SSH-Agenten
@@ -752,12 +755,12 @@ Checkliste
 
 SELinux ist eine Mandatory Access Control (MAC)-Erweiterung der POSIX-
 Berechtigungen. Es ist ausgereift und robust. Dennoch empfehlen viele
-Sysadmins bis heute,  »es einfach abzuschalten«.
+Sysadmins bis heute, »es einfach abzuschalten«.
 
 Davon abgesehen hat SELinux nur begrenzte Sicherheitsvorteile auf einer
 Workstation, da die meisten Anwendungen von Ihnen als Benutzer ausgeführt
 werden wird und daher uneingeschränkt laufen werden. Dennoch kann es
-voraussichtlich verhindern, dass ein Angreifer die errungenen  Privilegien
+voraussichtlich verhindern, dass ein Angreifer die errungenen Privilegien
 eskalieren und Root-Level-Zugriff über einen verwundbaren Daemon Service
 gewinnen kann.
 
@@ -768,7 +771,7 @@ Nie ``setenforce 0`` verwenden
 
 Zwar mag es verlockend sein, ``setenforce 0`` zu verwenden um den
 Freigabemodus von SELinux zu verlassen, aber das sollten Sie tunlichst
-vermeiden, da hierdurch  SELinux für das gesamte System im Wesentlichen
+vermeiden, da hierdurch SELinux für das gesamte System im Wesentlichen
 abgeschaltet wird. Meist wollen Sie hingegen nur eine bestimmte Anwendung
 oder einen Daemon ausnehmen.
 
@@ -791,7 +794,7 @@ dass Sie diese Anwendung freigeben wollen mit::
     semanage permissive -a gpg_pinentry_t
 
 Dies ermöglicht Ihnen, die Anwendung zu verwenden und den Rest der AVCs
-zu sammeln, die Sie dann zusammen mit ``audit2allow``  verwenden können,
+zu sammeln, die Sie dann zusammen mit ``audit2allow`` verwenden können,
 um eine lokale Richtlinie zu schreiben. Sobald dies geschehen ist und keine
 neuen AVC-Denials entdeckt werden, können Sie diese Domäne aus den
 Freigaben entfernen mit::
@@ -802,10 +805,10 @@ Verwenden Sie Ihre Workstation als SELinux-Rolle ``staff_r``
 ````````````````````````````````````````````````````````````
 
 SELinux kommt mit einer nativen Implementierung von Rollen, die bestimmte
-Privilegien  gewähren oder verbieten, basierend auf der Rolle, die dem
+Privilegien gewähren oder verbieten, basierend auf der Rolle, die dem
 Benutzerkonto zugeordnet ist. Als Administrator sollten Sie die Rolle ``staff_r``
 verwenden, die Ihnen den Zugriff auf viele Konfigurations- und
-sicherheitsrelevante Dateien beschränkt,  bis Sie zum ersten Mal ``sudo``
+sicherheitsrelevante Dateien beschränkt, bis Sie zum ersten Mal ``sudo``
 aufrufen.
 
 Üblicherweise werden Konten erstellt als ``unconfined_r`` und die meisten
