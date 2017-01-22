@@ -1,5 +1,7 @@
 # Linux workstation security checklist
 
+Updated: 2017-01-23
+
 ### Target audience
 
 This document is aimed at teams of systems administrators who use Linux
@@ -28,10 +30,10 @@ is a crazy person. These guidelines are merely a basic set of core safety
 rules that is neither exhaustive, nor a replacement for experience, vigilance,
 and common sense.
 
-We're sharing this document as a way to
-[bring the benefits of open-source collaboration to IT policy documentation][18]. If
-you find it useful, we hope you'll contribute to its development by making a fork for
-your own organization and sharing your improvements. 
+We're sharing this document as a way to [bring the benefits of open-source
+collaboration to IT policy documentation][18]. If you find it useful, we hope
+you'll contribute to its development by making a fork for your own
+organization and sharing your improvements.
 
 ### Structure
 
@@ -270,7 +272,9 @@ Examples of good passphrases (yes, you can use spaces):
 - perdon, tengo flatulence
 
 Weak passphrases are combinations of words you're likely to see in published
-works or anywhere else in real life, such as:
+works or anywhere else in real life, and you should avoid using them, as
+attackers are starting to include such simple passphrases into their
+brute-force strategies. Examples of passphrases to avoid:
 
 - Mary had a little lamb
 - you're a wizard, Harry
@@ -452,7 +456,8 @@ Above all, avoid copying your home directory onto any unencrypted storage, even
 as a quick way to move your files around between systems, as you will most
 certainly forget to erase it once you're done, exposing potentially private or
 otherwise security sensitive data to snooping hands -- especially if you keep
-that storage media in the same bag with your laptop.
+that storage media in the same bag with your laptop or in your office desk
+drawer.
 
 #### Selective zero-knowledge backups off-site
 
@@ -474,7 +479,27 @@ adopt. It is most certainly non-exhaustive, but rather attempts to offer
 practical advice that strikes a workable balance between security and overall
 usability.
 
-### Browsing
+### Graphical environment
+
+The venerable X protocol was conceived and implemented for a wholly different
+era of personal computing and lacks important security features that should be
+considered essential on a networked workstation. To give a few examples:
+
+- Any X application has access to full screen contents
+- Any X application can register to receive all keystrokes, regardless into
+  which window they are typed
+
+A sufficiently severe browser vulnerability means attackers get automatic
+access to what is effectively a builtin keylogger and screen recorder and
+can watch and capture everything you type into your root terminal sessions.
+
+You should strongly consider switching to a more modern platform like Wayland,
+even if this means using many of your existing applications through an X11
+protocol wrapper. With Fedora starting to default to Wayland for all
+applications, we can hope that most software will soon stop requiring the
+legacy X11 layer.
+
+### Browsers
 
 There is no question that the web browser will be the piece of software with
 the largest and the most exposed attack surface on your system. It is a tool
@@ -553,44 +578,64 @@ It is recommended that you install **Privacy Badger** and **HTTPS Everywhere**
 extensions in Chrome as well and give it a distinct theme from Firefox to
 indicate that this is your "untrusted sites" browser.
 
-#### 2: Use two different browsers, one inside a dedicated VM _(NICE)_
+#### 2: Use firejail _(ESSENTIAL)_
 
-This is a similar recommendation to the above, except you will add an extra
-step of running the "everything else" browser inside a dedicated VM that you
-access via a fast protocol, allowing you to share clipboards and forward sound
-events (e.g.  Spice or RDP). This will add an excellent layer of isolation
-between the untrusted browser and the rest of your work environment, ensuring
-that attackers who manage to fully compromise your browser will then have to
-additionally break out of the VM isolation layer in order to get to the rest
-of your system.
+[Firejail][19] is a project that uses Linux namespaces and seccomp-bpf to
+create a sandbox around Linux applications. It is an excellent way to help
+build additional protection between the browser and the rest of your system.
+You can use Firejail to create separate isolated instances of Firefox to
+use for different purposes -- for work, for personal but trusted sites (such
+as banking), and one more for casual browsing (social media, etc).
 
-This is a surprisingly workable configuration, but requires a lot of RAM and
-fast processors that can handle the increased load. It will also require an
-important amount of dedication on the part of the admin who will need to
-adjust their work practices accordingly.
+Firejail is most effective on Wayland, unless you use X11-isolation mechanisms
+(the `--x11` flag). To start using Firejail with Firefox, please refer to the
+documentation provided by the project:
+
+- [Firefox Sandboxing Guide][20]
 
 #### 3: Fully separate your work and play environments via virtualization _(PARANOID)_
 
-See [Qubes-OS project][3], which strives to provide a high-security
+See [QubesOS project][3], which strives to provide a "reasonably secure"
 workstation environment via compartmentalizing your applications into separate
-fully isolated VMs.
+fully isolated VMs. You may also investigate [SubgraphOS][24] that achieves
+similar goals using container technology (currently in Alpha).
+
+### Use Fido U2F for website 2-factor authentication
+
+[Fido U2F][22] is a standard developed specifically to provide a mechanism for
+2-factor authentication *and* combat credential phishing. Regular OTP
+(one-time password) mechanisms are ineffective in the case where the attacker
+is able to trick you into submitting your password and token into a malicious
+site masquerading as a legitimate service. The U2F protocol will store site
+authentication data on the USB token that will prevent you from accidentally
+giving an attacker both your password and your one-time token if you try to
+use it on anything other than the legitimate website.
+
+See this site for a curated list of services providing Fido U2F support:
+
+- [dongleauth.info][23]
+
+Note, that not all browsers currently support U2F-capable hardware tokens, and
+if you use sandboxes or virtualization-based isolation around your browser,
+you may have to work extra hard to enable USB pass-through from the
+application to your USB token.
 
 ### Password managers
 
 #### Checklist
 
 - [ ] Use a password manager _(ESSENTIAL)_
-- [ ] Use unique passwords on unrelated sites _(ESSENTIAL)_
+- [ ] Use unique, randomly generated passwords on unrelated sites _(ESSENTIAL)_
 - [ ] Use a password manager that supports team sharing _(NICE)_
 - [ ] Use a separate password manager for non-website accounts _(NICE)_
 
 #### Considerations
 
-Using good, unique passwords should be a critical requirement for every member
-of your team. Credential theft is happening all the time -- either via
-compromised computers, stolen database dumps, remote site exploits, or any
-number of other means. No credentials should ever be reused across sites,
-especially for critical applications.
+Using strong, unique, randomly generated passwords should be a critical
+requirement for every member of your team. Credential theft is happening all
+the time -- either via compromised computers, stolen database dumps, remote
+site exploits, or any number of other means. No credentials should be reused
+across different sites, ever.
 
 ##### In-browser password manager
 
@@ -653,8 +698,9 @@ several manufacturers that offer OpenPGP capable devices:
 
 - [Kernel Concepts][12], where you can purchase both the OpenPGP compatible
   smartcards and the USB readers, should you need one.
-- [Yubikey NEO][13], which offers OpenPGP smartcard functionality in addition
+- [Yubikey][13], which offers OpenPGP smartcard functionality in addition
   to many other cool features (U2F, PIV, HOTP, etc).
+- [NitroKey][21], which is based on open-source software and hardware
 
 It is also important to make sure that the master PGP key is not stored on the
 main workstation, and only subkeys are used. The master key will only be
@@ -812,9 +858,15 @@ This work is licensed under a
 [10]: https://pypi.python.org/pypi/django-pstore
 [11]: https://github.com/TomPoulton/hiera-eyaml
 [12]: http://shop.kernelconcepts.de/
-[13]: https://www.yubico.com/products/yubikey-hardware/yubikey-neo/
+[13]: https://www.yubico.com/products/yubikey-hardware/
 [14]: https://wiki.debian.org/Subkeys
 [15]: https://github.com/lfit/ssh-gpg-smartcard-config
 [16]: http://www.pavelkogan.com/2014/05/23/luks-full-disk-encryption/
 [17]: https://en.wikipedia.org/wiki/Cold_boot_attack
 [18]: http://www.linux.com/news/featured-blogs/167-amanda-mcpherson/850607-linux-foundation-sysadmins-open-source-their-it-policies
+[19]: https://firejail.wordpress.com/
+[20]: https://firejail.wordpress.com/documentation-2/firefox-guide/
+[21]: https://www.nitrokey.com/
+[22]: https://en.wikipedia.org/wiki/Universal_2nd_Factor
+[23]: http://www.dongleauth.info/
+[24]: https://subgraph.com/sgos/
