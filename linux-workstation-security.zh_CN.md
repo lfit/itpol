@@ -467,7 +467,7 @@ SELinux 带有角色（role）的原生实现，基于用户帐户相关角色�
 
 IT 安全的世界是一个没有底的兔子洞。如果你想深入，或者找到你的具体发行版更多的安全特性，请查看下面这些链接：
 
-- [Fedora 安全指南](https://docs.fedoraproject.org/en-US/Fedora/19/html/Security_Guide/index.html)
+- [Fedora 安全指南](https://docs-old.fedoraproject.org/en-US/Fedora/19/html/Security_Guide/index.html)
 - [CESG Ubuntu 安全指南](https://www.gov.uk/government/publications/end-user-devices-security-guidance-ubuntu-1404-lts)
 - [Debian 安全手册](https://www.debian.org/doc/manuals/securing-debian-howto/index.en.html)
 - [Arch Linux 安全维基](https://wiki.archlinux.org/index.php/Security)
