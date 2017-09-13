@@ -18,7 +18,7 @@ Einschränkungen
 ===============
 
 Dies ist kein umfassendes Dokument zum Härten von Workstations, sondern der
-Versuch, mit einer Reihe von Empfehlungen die krassesten Sicherheitsfehler zu
+Versuch, mit einer Reihe von Empfehlungen die gravierensten Sicherheitsfehler zu
 vermeiden, ohne zu viele Unannehmlichkeiten einzuführen. Manche werden dieses
 Dokument lesen und denken, wir sind paranoid; während wir für andere kaum an
 der Oberfläche kratzen. Diese Richtlinien sollen lediglich eine Reihe
