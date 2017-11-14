@@ -1,6 +1,6 @@
 # Linux workstation security checklist
 
-Updated: 2017-01-23
+Updated: 2017-11-15
 
 ### Target audience
 
@@ -71,6 +71,7 @@ this section addresses core considerations when choosing a work system.
 - [ ] System supports SecureBoot _(ESSENTIAL)_
 - [ ] System has no firewire, thunderbolt or ExpressCard ports _(NICE)_
 - [ ] System has a TPM chip _(NICE)_
+- [ ] System has disabled Intel ME chip _(PARANOID)_
 
 ### Considerations
 
@@ -103,6 +104,28 @@ separately from the core processor, which can be used for additional platform
 security (such as to store full-disk encryption keys), but is not normally used
 for day-to-day workstation operation. At best, this is a nice-to-have, unless
 you have a specific need to use TPM for your workstation security.
+
+#### Intel Management Engine (IME)
+
+Almost every computer with an Intel processor ships with a fully integrated
+management platform chip called the Intel Management Engine (IME). Its purpose
+is to make it easier for device fleet administrators to provision and enroll
+systems, remotely track the device's location, power and network status, and
+even trigger such events as full remote system wipe in case of theft. This
+chip runs a MINIX operating system and comes with a builtin web server.
+
+Unfortunately, with great power come great vulnerabilities. Intel ME chips
+have been demonstrated to be vulnerable to both [local and remote
+attacks][26], allowing perpetrators to take full control over systems with
+Intel ME engine available. Any system with an enabled IME chip should be
+considered potentially vulnerable, especially if it has not received
+manufacturer firmware updates.
+
+There are [some laptop manufacturers][27] that have started providing systems
+with the Intel ME chip disabled, and it may be possible to manually disable
+the IME by using a tool such as [me_cleaner][25], though you should be mindful
+that it is an involved process and that disabling the IME may void the
+manufacturer support warranty (or even be against your employer policy).
 
 ## Pre-boot environment
 
@@ -870,3 +893,6 @@ This work is licensed under a
 [22]: https://en.wikipedia.org/wiki/Universal_2nd_Factor
 [23]: http://www.dongleauth.info/
 [24]: https://subgraph.com/sgos/
+[25]: https://github.com/corna/me_cleaner
+[26]: https://en.wikipedia.org/wiki/Intel_Active_Management_Technology#Known_vulnerabilities_and_exploits
+[27]: https://puri.sm/posts/purism-librem-laptops-completely-disable-intel-management-engine/
