@@ -561,6 +561,10 @@ this browser for accessing any other sites except select few.
 
 You should install the following Firefox add-ons:
 
+- [ ] uMatrix _(ESSENTIAL)_
+  - uMatrix gives you control over the requests that websites make to other 
+    websites.
+
 - [ ] NoScript _(ESSENTIAL)_
   - NoScript prevents active content from loading, except from user
     whitelisted domains. It is a great hassle to use with your default browser
@@ -587,7 +591,7 @@ You should install the following Firefox add-ons:
     but generates a lot of benign false-positives.
 
 You should leave Firefox as your default browser for opening links, as
-NoScript will prevent most active content from loading or executing.
+NoScript/uMatrix will prevent most active content from loading or executing.
 
 ##### Chrome/Chromium for everything else
 
