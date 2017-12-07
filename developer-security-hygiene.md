@@ -28,7 +28,8 @@ project.
 Each section is split into two areas:
 
 - The checklist that can be adapted to your project's needs
-- Free-form list of considerations that explain what dictated these decisions
+- Free-form list of considerations that explain what dictated these decisions,
+  together with configuration instructions
 
 #### Checklist priority levels
 
@@ -76,7 +77,7 @@ environment:
   integrity of downloaded releases before integrating them into their own
   distributed downloads.
 - Free Software projects routinely rely on PGP signatures within the code
-  itself in order to track provenance and verify integrity of code commits
+  itself in order to track provenance and verify integrity of code committed
   by project developers.
 
 This is very similar to developer certificates/code signing mechanisms used by
@@ -210,11 +211,11 @@ GnuPG and gpg:
   standard
 - The command-line tool for GnuPG is called "**gpg**"
 
-Today, the term "PGP" is almost always used to mean "the OpenPGP standard,"
-not the original commercial software, and therefore "PGP" and "OpenPGP" are
-interchangeable. The terms "GnuPG" and "gpg" should only be used when
-referring to the tools, not to the output they produce or OpenPGP features
-they implement. For example:
+Today, the term "PGP" is almost universally used to mean "the OpenPGP
+standard," not the original commercial software, and therefore "PGP" and
+"OpenPGP" are interchangeable. The terms "GnuPG" and "gpg" should only be used
+when referring to the tools, not to the output they produce or OpenPGP
+features they implement. For example:
 
 - PGP (not GnuPG or GPG) key
 - PGP (not GnuPG or GPG) signature
@@ -239,23 +240,25 @@ always using GnuPG v.2.
 
 First, run:
 
-    gpg --version | head -1
+    $ gpg --version | head -n1
 
 If you see `gpg (GnuPG) 1.4.x`, then you are using GnuPG v.1. Try the `gpg2`
 command:
 
-    gpg2 --version | head -1
+    $ gpg2 --version | head -n1
 
 If you see `gpg (GnuPG) 2.x.x`, then you are good to go. This guide will
-assume you have the version 2.2 of GnuPG (or later).
+assume you have the version 2.2 of GnuPG (or later). If you are using version
+2.0 of GnuPG, some of the commands in this guide will not work, and you should
+consider installing the latest 2.2 version of GnuPG.
 
-##### Making sure you always use GnuPG2
+##### Making sure you always use GnuPG v.2
 
 If you have both `gpg` and `gpg2` commands, you should make sure you are
-always using GnuPG v2, not the legacy version. You can make sure of it by
+always using GnuPG v2, not the legacy version. You can make sure of this by
 setting the alias:
 
-    alias gpg='/usr/bin/gpg2'
+    $ alias gpg=gpg2
 
 You can put that in your `.bashrc` to make sure it's always loaded whenever
 you use the gpg commands.
@@ -279,10 +282,10 @@ is important to understand the following:
 2. At creation time, we assign functional limitations to each key by
    giving it specific capabilities.
 3. A PGP key can have 4 capabilities.
-   - **[S]** Key can be used for signing
-   - **[E]** Key can be used for encryption
-   - **[A]** Key can be used for authentication
-   - **[C]** Key can be used for certifying other keys
+   - **[S]** key can be used for signing
+   - **[E]** key can be used for encryption
+   - **[A]** key can be used for authentication
+   - **[C]** key can be used for certifying other keys
 4. A single key may have multiple capabilities.
 
 The key carrying the **[C]** (certify) capability is considered the "master"
@@ -305,16 +308,16 @@ your master passphrase.
 
 ##### Primary identity
 
-An identity is basically in the same format as the From field in emails:
+An identity is basically in the same format as the "From" field in emails:
 
     Alice Engineer <alice.engineer@example.org>
 
-You can create new identities and revoke old ones, and you can also change
-which identity is your "primary" one at a later time. Since the primary
-identity is shown in all GnuPG operations, you should pick an
-address/description that is both professional and the most likely one to be
-used for PGP-enforced communication, such as your work address or the address
-you use for signing off on project commits.
+You can create new identities, revoke old ones, and change which identity is
+your "primary" one at any time. Since the primary identity is shown in all
+GnuPG operations, you should pick a name and address that are both
+professional and the most likely ones to be used for PGP-enforced
+communication, such as your work address or the address you use for signing
+off on project commits.
 
 ##### Passphrase
 
@@ -326,28 +329,23 @@ is why it is important to set up a good passphrase.
 
 A good guideline for a strong passphrase is 3-4 words from a rich or mixed
 dictionary that are not quotes from popular sources (songs, books, slogans).
-You won't need to type the **[C]** key passphrase very frequently, so it does
-not need to be easy to type, just easy to remember.
+You'll be using this passphrase fairly frequently, so it should be both easy
+to type and easy to remember.
 
 ##### Algorithm and key strength
 
-Even though GnuPG has supported Elliptic Curve crypto for a while now, we'll be
-sticking to RSA keys, at least for a little while longer. While it is possible
-to start using ED25519 keys right now, it is possible that you will come
-across tools and hardware devices that will not be able to handle them
+Even though GnuPG has had support for Elliptic Curve crypto for a while now,
+we'll be sticking to RSA keys, at least for a little while longer. While it is
+possible to start using ED25519 keys right now, it is likely that you will
+come across tools and hardware devices that will not be able to handle them
 correctly.
-
-For this reason, we will be generating RSA keys. For our master key, we'll use
-4096 bits, and for our subkeys we'll stick to 2048 bits -- it is easy enough
-to replace subkeys with stronger ones, but the master key must live on for a
-long time.
 
 #### Generate the master key
 
-To generate your key, issue the following command, putting in the right values
-instead of Alice Engineer:
+To generate your new master key, issue the following command, putting in the
+right values instead of Alice Engineer:
 
-    gpg --quick-generate-key 'Alice Engineer <alice@example.org>' rsa4096 cert
+    $ gpg --quick-generate-key 'Alice Engineer <alice@example.org>' rsa4096 cert
 
 A dialog will pop up asking to enter the passphrase. Then, you may need to
 move your mouse around or type on some keys to generate enough entropy until
@@ -360,7 +358,7 @@ Review the output of the command, it will be something like this:
     uid                      Alice Engineer <alice@example.org>
 
 Note the long string on the 2nd line -- that is the full fingerprint of your
-newly generated key. Key ID can be represented in three different forms:
+newly generated key. Key IDs can be represented in three different forms:
 
 - **fingerprint**, a full 40-character key identifier
 - **long**, last 16-characters of the fingerprint (`AAAABBBBCCCCDDDD`)
@@ -379,31 +377,31 @@ of Trust and collect key signatures from other project developers -- you
 should create a hardcopy backup of your private key. This is supposed to be a
 "last resort" measure in case all other backup mechanisms have failed.
 
-The best way to create a printable hardcopy of your private key is using
+The best way to create a printable hardcopy of your private key is using the
 `paperkey` software written for this very purpose. Paperkey is available on
-all Linux distros, as well installable via `brew install paperkey` on Macs.
+all Linux distros, as well as installable via `brew install paperkey` on Macs.
 
 Run the following command, replacing `[fpr]` with the full fingerprint of your
 key:
 
-    gpg --export-secret-key [fpr] | paperkey > /tmp/key-backup.txt
+    $ gpg --export-secret-key [fpr] | paperkey > /tmp/key-backup.txt
 
 The output will be in a format that is easy to OCR or input by hand, should
 you ever need to recover it. Print out that file, then take a pen and write
 the key passphrase on the margin of the paper. This is a required step because
 the key printout is still encrypted with the passphrase, and if you ever
 change the passphrase on your key, you will not remember what it used to be
-when you had first created it -- guaranteed.
+when you had first created it -- *guaranteed*.
 
 Put the resulting printout and the hand-written passphrase into an envelope
 and store in a secure and well-protected place that is away from your home,
 such as your bank vault.
 
 **NOTE ON PRINTERS**: Long gone are days when printers were dumb devices
-connected to the computer's parallel port. These days they have full operating
-systems, hard drives, and cloud integration. Since the key content we send to
-the printer will be encrypted with the passphrase, this is a fairly safe
-operation, but use your best paranoid judgement.
+connected to your computer's parallel port. These days they have full
+operating systems, hard drives, and cloud integration. Since the key content
+we send to the printer will be encrypted with the passphrase, this is a fairly
+safe operation, but use your best paranoid judgement.
 
 #### Add relevant identities
 
@@ -414,26 +412,27 @@ not your school alumni address).
 
 The command is (put the full key fingerprint instead of `[fpr]`):
 
-    gpg --quick-add-uid [fpr] 'Alice Engineer <allie@example.net>'
+    $ gpg --quick-add-uid [fpr] 'Alice Engineer <allie@example.net>'
 
 You can review the IDs you've already added using:
 
-    gpg --list-key [fpr] | grep ^uid
+    $ gpg --list-key [fpr] | grep ^uid
 
 ##### Pick the primary UID
 
 GnuPG will make the latest UID you add as your primary UID, so if that is
 different from what you want, you should fix it back:
 
-    gpg --quick-set-primary-uid [fpr] 'Alice Engineer <alice@example.org>'
+    $ gpg --quick-set-primary-uid [fpr] 'Alice Engineer <alice@example.org>'
 
 ## Generating PGP subkeys
 
 ### Checklist
 
-- [ ] Generate a 2048-bit Encryption key _(ESSENTIAL)_
-- [ ] Generate a 2048-bit Signing key _(ESSENTIAL)_
-- [ ] Generate a 2048-bit Authentication key _(NICE)_
+- [ ] Generate a 2048-bit Encryption subkey _(ESSENTIAL)_
+- [ ] Generate a 2048-bit Signing subkey _(ESSENTIAL)_
+- [ ] Generate a 2048-bit Authentication subkey _(NICE)_
+- [ ] Upload your public keys to a PGP keyserver _(ESSENTIAL)_
 
 ### Considerations
 
@@ -445,17 +444,17 @@ but also for pragmatic reasons. If we ever find ourselves in a world where
 fundamental problems with the RSA protocol and longer 4096-bit keys will not
 make much difference.
 
-#### Create the Sign and Encrypt subkeys
+#### Create the subkeys
 
 To create the subkeys, run:
 
-    gpg --quick-add-key [fpr] rsa2048 encr
-    gpg --quick-add-key [fpr] rsa2048 sign
+    $ gpg --quick-add-key [fpr] rsa2048 encr
+    $ gpg --quick-add-key [fpr] rsa2048 sign
 
 You can also create the Authentication key, which will allow you to use your
 PGP key for ssh purposes (covered in other guides):
 
-    gpg --quick-add-key [fpr] rsa2048 auth
+    $ gpg --quick-add-key [fpr] rsa2048 auth
 
 You can review your key information using `gpg --list-key [fpr]`:
 
@@ -466,6 +465,23 @@ You can review your key information using `gpg --list-key [fpr]`:
     sub   rsa2048 2017-12-06 [E]
     sub   rsa2048 2017-12-06 [S]
 
+#### Upload your public keys to the keyserver
+
+Your key creation is complete, so now you need to make it easier for others to
+find it by uploading it to one of the public keyservers. (Do not do this step
+if you're just messing around and aren't planning on actually using the key
+you've created, as this just litters keyservers with useless data.)
+
+    $ gpg --send-key [fpr]
+
+If this command does not succeed, you can try specifying a keyserver on a port
+that is most likely to work:
+
+    $ gpg --keyserver hkp://pgp.mit.edu:80 --send-key [fpr]
+
+Most keyservers communicate with each-other, so your key information will
+eventually synchronize to all the others.
+
 ## Moving your master key to offline storage
 
 ### Checklist
@@ -473,21 +489,32 @@ You can review your key information using `gpg --list-key [fpr]`:
 - [ ] Prepare encrypted detachable storage _(ESSENTIAL)_
 - [ ] Back up your GnuPG directory _(ESSENTIAL)_
 - [ ] Remove the master key from your home directory _(NICE)_
+- [ ] Remove the revocation certificate from your home directory _(NICE)_
+
+### Considerations
+
+Why would you want to remove your master **[C]** key from your home directory?
+This is generally done to prevent your master key from being stolen or
+accidentally leaked. Private keys are tasty targets for malicious actors -- we
+know this from several successful malware attacks that scanned users' home
+directories and uploaded any private key content found there.
+
+It would be very damaging to a developer to have their PGP keys stolen -- in
+the Free Software world this is often tantamount to identity theft. Removing
+private keys from your home directory helps protect you from such events.
 
 #### Back up your GnuPG directory
+
+**!!!Do not skip this step!!!**
 
 It is important to have a readily available backup of your PGP keys should you
 need to recover them (this is different from the disaster-level preparedness
 we did with `paperkey`).
 
-**This step is especially important if you are going to remove your master key
-or use smartcard hardware. Do not skip this step!**
-
 #### Prepare detachable encrypted storage
 
-Start by getting a detachable USB drive (preferably two) that you will use for
-backup purposes. They do not need to be large. You will first need to encrypt
-them:
+Start by getting a small USB "thumb" drive (preferably two) that you will use
+for backup purposes. You will first need to encrypt them:
 
 - [Apple instructions](https://support.apple.com/kb/PH25745)
 - [Linux instructions](https://help.ubuntu.com/community/EncryptedFilesystemsOnRemovableStorage)
@@ -503,12 +530,317 @@ gets mounted under `/media/disk`, under Mac it's `/Volumes`).
 
 Once you know the full mount path, copy your entire GnuPG directory there:
 
-    cp -rp $HOME/.gnupg [/media/disk/some/path]/gnupg-backup
+    $ cp -rp $HOME/.gnupg [/media/disk/name]/gnupg-backup
 
 You should now test to make sure it still works:
 
-    gpg --homedir=[/media/disk/some/path]/gnupg-backup --list-key [fpr]
+    $ gpg --homedir=[/media/disk/name]/gnupg-backup --list-key [fpr]
 
 If you don't get any errors, then you should be good to go. Unmount the USB
-drive, label it accordingly so you don't blow it away next time you need to
-use a quick USB drive, and put in a safe place.
+drive, distinctly label it so you don't blow it away next time you need to use
+a random USB drive, and put in a safe place -- but not too far away, because
+you'll need to use it every now and again.
+
+#### Remove the master key
+
+Please see the previous section and make sure you have backed up your GnuPG
+directory in its entirety. What we are about to do will make your key useless
+if you do not have a usable backup!
+
+First, identify the keygrip of your master key:
+
+    $ gpg --with-keygrip --list-key [fpr]
+
+The output will be something like this:
+
+    pub   rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+          111122223333444455556666AAAABBBBCCCCDDDD
+          Keygrip = AAAA999988887777666655554444333322221111
+    uid           [ultimate] Alice Engineer <alice@example.org>
+    uid           [ultimate] Alice Engineer <allie@example.net>
+    sub   rsa2048 2017-12-06 [E]
+          Keygrip = BBBB999988887777666655554444333322221111
+    sub   rsa2048 2017-12-06 [S]
+          Keygrip = CCCC999988887777666655554444333322221111
+
+Find the keygrip entry that is beneath the `pub` line (right under the master
+key fingerprint). This will correspond directly to a file in your home
+`.gnupg` directory:
+
+    $ cd ~/.gnupg/private-keys-v1.d
+    $ ls
+    AAAA999988887777666655554444333322221111.key
+    BBBB999988887777666655554444333322221111.key
+    CCCC999988887777666655554444333322221111.key
+
+All you have to do is simply remove the `.key` file that corresponds to the
+master keygrip:
+
+    $ cd ~/.gnupg/private-keys-v1.d
+    $ rm AAAA999988887777666655554444333322221111.key
+
+If you issue the `--list-secret-keys` command, it will show that the master
+key is missing (the `#` indicates it is not available):
+
+    $ gpg --list-secret-keys
+    sec#  rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+          111122223333444455556666AAAABBBBCCCCDDDD
+    uid           [ultimate] Alice Engineer <alice@example.org>
+    uid           [ultimate] Alice Engineer <allie@example.net>
+    ssb   rsa2048 2017-12-06 [E]
+    ssb   rsa2048 2017-12-06 [S]
+
+#### Remove the revocation certificate
+
+Another file you should remove (but keep in backups) is the revocation
+certificate that was automatically created with your master key. A revocation
+certificate allows someone to permanently mark your key as revoked, meaning it
+can no longer be used or trusted for any purpose. You would normally use it to
+revoke a key that, for some reason, you can no longer control -- for example,
+if you had lost the passphrase.
+
+Just as with the master key, if a revocation certificate leaks into malicious
+hands, it can be used to destroy your developer digital identity, so it's
+better to remove it from your home directory.
+
+    cd ~/.gnupg/openpgp-revocs.d
+    rm [fpr].rev
+
+## Move the subkeys to a hardware device
+
+### Checklist
+
+- [ ] Get a GnuPG-compatible hardware device _(NICE)_
+- [ ] Configure the device to work with GnuPG _(NICE)_
+- [ ] Set the user and admin PINs _(NICE)_
+- [ ] Move your subkeys to the device _(NICE)_
+
+### Considerations
+
+Even though the master key is now safe from being leaked or stolen, the
+subkeys are still in the home directory. Anyone who manages to get their hands
+on those will be able to decrypt your communication or fake your signatures
+(if they know the passphrase, that is).
+
+The best way to completely protect your keys is to move them to a specialized
+hardware device that is capable of smartcard operations.
+
+#### The benefits of smartcards
+
+A smartcard contains a cryptographic chip that is capable of storing private
+keys and performing crypto operations directly on the card itself. Because the
+key contents never leave the smartcard, the operating system of the computer
+into which you plug in the hardware device is not able to retrieve the
+private keys themselves. This is very different from the encrypted USB storage
+device we used earlier for backup purposes -- while that USB device is plugged
+in and decrypted, the operating system is still able to access the private key
+contents. Using external encrypted USB media is not a substitute to having a
+smartcard-capable device.
+
+Some other benefits of smartcards:
+
+- they are relatively cheap and easy to obtain
+- they are small and easy to carry with you
+- they can be used with multiple devices
+- many of them are tamper-resistant (depends on manufacturer)
+
+#### Available smartcard devices
+
+Smartcards started out embedded into actual wallet-sized cards, which earned
+them their name. You can still buy and use GnuPG-capable smartcards, and they
+remain one of the cheapest available devices you can get. However, actual
+smartcards have one important downside: they require a smartcard reader, and
+very few laptops come with one.
+
+For this reason, manufacturers have started providing small USB devices, the
+size of a USB thumb drive or smaller, that either have the microsim-sized
+smartcard pre-inserted, or that simply implement the smartcard protocol
+features on the internal chip. Here are a few recommendations:
+
+- [Nitrokey Start](https://shop.nitrokey.com/shop/product/nitrokey-start-6):
+  Open hardware and Free Software: one of the cheapest options for GnuPG use,
+  but with fewest extra security features
+- [Nitrokey Pro](https://shop.nitrokey.com/shop/product/nitrokey-pro-3):
+  Similar to the Nitrokey Start, but is tamper-resistant and offers more
+  security features (see the U2F section of the guide)
+- [Yubikey 4](https://www.yubico.com/product/yubikey-4-series/): Proprietary
+  hardware and software, but cheaper than Nitrokey Pro and comes available
+  in the USB-C form that is more useful with newer laptops; also offers
+  additional security features such as U2F
+
+Our recommendation is to pick a device that is capable of both smartcard
+functionality and U2F, which means either a Nitrokey Pro, or a Yubikey 4.
+
+#### Configuring your smartcard device
+
+Your smartcard device should Just Work (TM) the moment you plug it into any
+modern Linux or Mac workstation. You can verify it by running:
+
+    $ gpg --card-status
+
+If you didn't get an error, but a full listing of the card details, then you
+are good to go. Unfortunately, troubleshooting all possible reasons why things
+may not be working for you is way beyond the scope of this guide. If you are
+having trouble getting the card to work with GnuPG, please seek support via
+your operating system's usual support channels.
+
+##### PINs don't have to be numbers
+
+Note, that despite having the name "PIN" (and implying that it must be a
+"number"), neither the user PIN nor the admin PIN on the card need to be
+numbers.
+
+Your device will probably have default user and admin PINs set up when it
+arrives. For Yubikeys, these are `123456` and `12345678` respectively. If
+those don't work for you, please check any accompanying documentation
+that came with your device.
+
+##### Quick setup
+
+To configure your smartcard, you will need to use the GnuPG menu system, as
+there are no convenient command-line switches:
+
+    $ gpg --card-edit
+    ...
+    gpg/card> admin
+    Admin commands are allowed
+    gpg/card> passwd
+
+You should set the user PIN (1), Admin PIN (3), and the Reset Code (4). Please
+make sure to record and store these in a safe place -- especially the Admin
+PIN and the Reset Code (which allows you to completely wipe the smartcard).
+You so rarely need to use the Admin PIN, that you will inevitably forget what
+it is if you do not record it.
+
+Getting back to the main card menu, you can also set other values (such as
+name, sex, login data, etc, but it's not necessary and will additionally leak
+information about your smartcard should you lose it).
+
+#### Moving the subkeys to your smartcard
+
+Exit the card menu (using "q") and save all changes. Next, let's move your
+subkeys onto the smartcard. You will need both your key passphrase and the
+admin PIN of the card for most operations. Remember, that `[fpr]` stands for
+the full 40-character fingerprint of your key.
+
+    $ gpg --edit-key [fpr]
+
+    Secret subkeys are available.
+
+    pub  rsa4096/AAAABBBBCCCCDDDD
+         created: 2017-12-07  expires: 2019-12-07  usage: C
+         trust: ultimate      validity: ultimate
+    ssb  rsa2048/1111222233334444
+         created: 2017-12-07  expires: never       usage: E
+    ssb  rsa2048/5555666677778888
+         created: 2017-12-07  expires: never       usage: S
+    [ultimate] (1). Alice Engineer <alice@example.org>
+    [ultimate] (2)  Alice Engineer <allie@example.net>
+
+    gpg>
+
+Using `--edit-key` puts us into the menu mode again, and you will notice that
+the key listing is a little different. From here on, all commands are done
+from inside this menu mode, as indicated by `gpg>`.
+
+First, let's select the key we'll be putting onto the card -- you do this by
+typing `key 1` (it's the first one in the listing, our **[E]** subkey):
+
+    gpg> key 1
+
+The output should be subtly different:
+
+    pub  rsa4096/AAAABBBBCCCCDDDD
+         created: 2017-12-07  expires: 2019-12-07  usage: C
+         trust: ultimate      validity: ultimate
+    ssb* rsa2048/1111222233334444
+         created: 2017-12-07  expires: never       usage: E
+    ssb  rsa2048/5555666677778888
+         created: 2017-12-07  expires: never       usage: S
+    [ultimate] (1). Alice Engineer <alice@example.org>
+    [ultimate] (2)  Alice Engineer <allie@example.net>
+
+Notice the `*` that is next to the `ssb` line corresponding to the key -- it
+indicates that the key is currently "selected". It works as a toggle, meaning
+that if you type `key 1` again, the `*` will disappear and the key will not be
+selected any more.
+
+Now, let's move that key onto the smartcard:
+
+    gpg> keytocard
+    Please select where to store the key:
+       (2) Encryption key
+    Your selection? 2
+
+Since it's our **[E]** key, it makes sense to put it into the Encryption slot.
+When you submit your selection, you will be prompted first for your key
+passphrase, and then for the admin PIN. If the command returns without an
+error, your key has been moved.
+
+**Important**: Now type `key 1` again to unselect the first key, and `key 2`
+to select the **[S]** key:
+
+    gpg> key 1
+    gpg> key 2
+    gpg> keytocard
+    Please select where to store the key:
+       (1) Signature key
+       (3) Authentication key
+    Your selection? 1
+
+You can use the **[S]** key both for Signature and Authentication, but we want
+to make sure it's in the Signature slot, so choose (1). Once again, if your
+command returns without an error, then the operation was successful.
+
+Finally, if you created an **[A]** key, you can move it to the card as well,
+making sure first to unselect `key 2`. Once you're done, choose "q":
+
+    gpg> q
+    Save changes? (y/N) y
+
+Saving the changes will remove the keys you moved to the card from your home
+directory (but it's okay, because we have them in our backups should we need
+to do this again for a replacement smartcard).
+
+##### Verifying that the keys were moved
+
+If you perform `--list-secret-keys` now, you will see a subtle difference in
+the output:
+
+    $ gpg --list-secret-keys
+    sec#  rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+          111122223333444455556666AAAABBBBCCCCDDDD
+    uid           [ultimate] Alice Engineer <alice@example.org>
+    uid           [ultimate] Alice Engineer <allie@example.net>
+    ssb>  rsa2048 2017-12-06 [E]
+    ssb>  rsa2048 2017-12-06 [S]
+
+The `>` in the `ssb>` output indicates that the subkey is only available on a
+smartcard. If you go back into your secret keys directory and look at the
+contents there, you will notice that the `.key` files there have been replaced
+with stubs:
+
+    $ cd ~/.gnupg/private-keys-v1.d
+    $ strings *.key
+
+The output should contain `shadowed-private-key` to indicate that these files
+are only stubs and the actual content is on the smartcard.
+
+#### Verifying that the smartcard is functioning
+
+To verify that the smartcard is working as intended, you can create a
+signature:
+
+    $ echo "Hello world" | gpg --clearsign > /tmp/test.asc
+    $ gpg --verify /tmp/test.asc
+
+This should ask for your smartcard PIN on your first command, and then show
+"Good signature" after you run `gpg --verify`.
+
+Congratulations, you have successfully made it extremely difficult to steal
+your digital developer identity!
+
+### TODO: Extending expiration date
+### TODO: Revoking subkeys
+
+
