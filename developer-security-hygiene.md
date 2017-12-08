@@ -482,6 +482,17 @@ that is most likely to work:
 Most keyservers communicate with each-other, so your key information will
 eventually synchronize to all the others.
 
+##### Upload your public key to GitHub
+
+If you use GitHub in your development (and who doesn't?), you should upload
+your key following the instructions they have provided:
+
+- [Adding a PGP key to your GitHub account](https://help.github.com/articles/adding-a-new-gpg-key-to-your-github-account/)
+
+To generate the public key file to paste in, just run:
+
+    $ gpg --export --armor [fpr]
+
 ## Moving your master key to offline storage
 
 ### Checklist
@@ -842,5 +853,228 @@ your digital developer identity!
 
 ### TODO: Extending expiration date
 ### TODO: Revoking subkeys
+### TODO: Configure gpg-agent
+### TODO: Configure TOFU policy
 
+## Using PGP with Git
 
+### Checklist
+
+- [ ] Understand signed tags, commits, and pushes _(ESSENTIAL)_
+- [ ] Configure git to use your key _(ESSENTIAL)_
+- [ ] Learn how tag signing and verification works _(ESSENTIAL)_
+- [ ] Configure git to always sign annotated tags _(NICE)_
+- [ ] Learn how commit signing and verification works _(ESSENTIAL)_
+- [ ] Configure git to always sign commits _(NICE)_
+
+### Considerations
+
+Git implements multiple levels of integration with PGP, first starting with
+signed tags, then introducing signed commits, and finally adding support for
+signed pushes.
+
+#### Understanding Git Hashes
+
+Git is a complicated beast, but you need to know what a "hash" is in order to
+have a good grasp on how PGP integrates with it. We'll narrow it down to two
+kinds of hashes: tree hashes and commit hashes.
+
+##### Tree hashes
+
+Every time you commit a change to a repository, git calculates checksum hashes
+of all objects in it -- contents (blobs), directories (trees), file names and
+permissions, etc, for each subdirectory in the repository. It only does this
+for trees and blobs that have changed, so as not to re-checksum the entire
+tree unnecessarily if only a small part of it was touched.
+
+Then it calculates the checksum of the toplevel directory, which will
+inevitably be different if any part of the repository has changed.
+
+##### Commit hashes
+
+Once the tree hash has been created, git will calculate the commit hash, which
+will list the following information about the repository and the change being
+made:
+
+- the checksum hash of the tree
+- the checksum hash of the tree before the change (parent)
+- information about the author (name, email, time of authorship)
+- information about the committer (name, email, time of commit)
+- the commit message
+
+##### Hashing function
+
+At the time of writing, git uses the SHA1 hashing mechanism to calculate
+checksums, though work is under way to transition to a stronger algorithm that
+is more resistant to collisions. Note, that git already includes collision
+avoidance routines, so it is believed that a successful collision attack
+against git remains impractical.
+
+#### Annotated tags and tag signatures
+
+Git tags allow developers to mark specific commits in the history of each git
+repository. Tags can be lightweight that are more or less just a pointer at a
+specific commit, or they can be annotated, which becomes its own object in the
+git tree. An annotated tag object contains all of the following information:
+
+- the checksum hash of the commit being tagged
+- the tag name
+- the information about the tagger (name, email, time of tagging)
+- the tag message
+
+A PGP-signed tag is simply an annotated tag with all these contents wrapped
+around in a PGP signature. When a developer signs their git tag, they
+effectively assure you of the following:
+
+- who they are (and why you should trust them)
+- what the state of their repository was at the time of signing:
+  - the tag includes the hash of the commit
+    - the commit hash includes the hash of the toplevel tree
+      - which includes hashes of all files and subtrees
+    - it also includes all information about authorship
+    - including exact times when changes were made
+
+When you clone a git repository and verify a signed tag, this gives you
+assurances that _all contents in the repositry are exactly the same as the
+contents of the repository on the developer's computer at the time of
+signing_.
+
+#### Signed commits
+
+Signed commits are very similar to signed tags, except that the contents of
+the commit object are PGP-signed instead of the contents of the tag object. A
+commit signature also gives you full verifiable information about the state of
+the developer's tree at the time the signature was made.
+
+#### Signed pushes
+
+This is included here for completeness' sake, since this functionality needs
+to be enabled on the server receiving the push before it does anything useful.
+As we saw above, PGP-signing a git object gives verifiable information about
+the developer's git tree, but not about their *intent* for that tree.
+
+For example, you can be working on an experimental branch in your repository
+trying out a promising cool feature, but after you submit your work for
+review, someone finds a nasty bug in your code. Since your commits are
+properly signed, someone can take the branch containing your nasty bug and
+push it into master, introducing a vulnerability that was never intended to be
+in production. Since the commit is properly signed with your key, everything
+looks legitimate and your reputation is questioned when the bug is discovered.
+
+Ability to enforce PGP-signatures during `git push` was added in order to
+enforce the *intent* of the commit, and not merely certify what the commit is.
+
+#### Configure git to use your PGP key
+
+If you only have one secret key in your keyring, then you don't really need to
+do anything extra, as it becomes your default key.
+
+However, if you happen to have multiple keys, you can tell git which key
+should be used (`[fpr]` is the fingerprint of your key):
+
+    $ git config --global user.signingKey [fpr]
+
+**NOTE**: If you have a distinct `gpg2` command, then you should tell git to
+always use it instead of the legacy `gpg` from version 1:
+
+    $ git config --global gpg.program gpg2
+
+#### How to work with signed tags
+
+To create a signed tag, simply pass the `-s` switch to the tag command:
+
+    $ git tag -s [tagname]
+
+Our recommendation is to always sign git tags, as this allows other developers
+to ensure that the git repository they are working with has not been
+maliciously altered (e.g. to introduce backdoors).
+
+##### How to verify signed tags
+
+To verify a signed tag, simply pass the `-v` switch to the tag command:
+
+    $ git tag -v [tagname]
+
+If you are verifying someone else's git tag, then you will need to import
+their PGP key. Please refer to the "maintaining the project keyring" section
+below.
+
+##### Verifying at pull time
+
+If you are pulling a tag from another fork of the project repository, git
+should automatically verify the signature at the tip you're pulling and show
+you the results during the merge operation:
+
+    $ git pull [url] tags/sometag
+
+The merge message will contain something like this:
+
+    Merge tag 'sometag' of [url]
+
+    [Tag message]
+
+    # gpg: Signature made [...]
+    # gpg: Good signature from [...]
+
+#### Configure git to always sign annotated tags
+
+Chances are, if you're creating an annotated tag, you'll want to sign it. To
+force git to always sign annotated tags, you can set a global configuration
+option:
+
+    $ git config --global tag.forceSignAnnotated true
+
+Alternatively, you can just train your muscle memory to always pass the `-s`
+switch:
+
+    $ git tag -asm "Tag message" tagname
+
+#### How to work with signed commits
+
+It is easy to create signed commits, but it is much more difficult to
+incorporate them into your workflow. Most projects use signed commits as a
+cryptographically-verifiable "Committed-by:" line that records code
+provenance -- the commits are rarely verified by others except when tracking
+down project history.
+
+To create a signed commit, you just need to pass the `-S` flag to the `git
+commit` command:
+
+    $ git commit -S
+
+Our recommendation is to always sign commits and to require them of all
+project members, regardless of whether anyone is verifying them.
+
+##### How to verify signed commits
+
+To verify a single commit you can use `verify-commit`:
+
+    $ git verify-commit [hash]
+
+You can also look at the repository log and request that all commit signatures
+are verified and shown:
+
+    $ git log --pretty=short --show-signatures
+
+##### Verifying commits during git merge
+
+If all members of your project sign their commits, you can enforce signature
+checking at merge time (and then sign the resulting merge commit itself using
+the `-S` flag):
+
+    $ git merge --verify-signatures -S merged-branch
+
+Note, that this will break if there is even one commit that is not signed or
+does not pass verification. As it is often the case, technology is the easy
+part here, but the human side of the equation is what makes it difficult.
+
+##### If your project uses mailing lists for patch management
+
+If your project uses a mailing list for submitting and processing patches,
+then there is little use in signing commits, because all signature information
+will be lost when sent through that medium. It is still useful to sign your
+commits, just so others can refer to your publicly hosted git trees for
+reference, but the upstream developer will not benefit from it in a direct
+way.
+
+You can still sign the emails containing the patches, though.
