@@ -7,9 +7,9 @@ Updated: 2017-12-01
 This document is aimed at developers working on free software projects. It
 covers the following topics:
 
-1. Basic introduction to PGP and Git
-2. PGP key best practices
-3. Basic workstation security
+1. PGP key best practices
+2. Basic introduction to PGP and Git
+3. Basic workstation security best practices
 
 We use the term "Free" as in "Freedom," but this guide can also be used for
 developing non-free or source-available ("Open Source") software. If you write
@@ -137,7 +137,7 @@ To verify the signature:
 Frequently, encrypted messages are also signed with the sender's own PGP key.
 This should be the default whenever using encrypted messaging, as encryption
 without authentication is not very meaningful (unless you are a whistleblower
-or a secret agent).
+or a secret agent and need plausible deniability).
 
 ### Understanding Key Identities
 
@@ -176,11 +176,11 @@ not to an impostor (Eve). In PGP, this certainty is called "key validity:"
 
 #### Web of Trust (WoT) vs. Trust on First Use (TOFU)
 
-PGP uses a trust delegation mechanism known as the "Web of Trust." At its
-core, this is an attempt to replace the need for centralized Certification
+PGP incorporates a trust delegation mechanism known as the "Web of Trust." At
+its core, this is an attempt to replace the need for centralized Certification
 Authorities of the HTTPS/TLS world. Instead of various software makers
-dictating who should be your trusted certification authorities, PGP leaves
-this responsibility to each user.
+dictating who should be your trusted certifying entity, PGP leaves this
+responsibility to each user.
 
 Unfortunately, very few people understand how the Web of Trust works, and even
 fewer bother to keep it going. It remains an important aspect of the OpenPGP
@@ -196,7 +196,7 @@ trust the changed key or not.
 Similarly, the first time you import someone's PGP key, it is assumed to be
 trusted. If at any point in the future GnuPG comes across another key with the
 same identity, both the previously imported key and the new key will be marked
-as invalid and you will need to manually figure out which one to trust.
+as invalid and you will need to manually figure out which one to keep.
 
 In this guide, we will be using the TOFU trust model.
 
@@ -315,7 +315,7 @@ An identity is basically in the same format as the "From" field in emails:
 You can create new identities, revoke old ones, and change which identity is
 your "primary" one at any time. Since the primary identity is shown in all
 GnuPG operations, you should pick a name and address that are both
-professional and the most likely ones to be used for PGP-enforced
+professional and the most likely ones to be used for PGP-protected
 communication, such as your work address or the address you use for signing
 off on project commits.
 
@@ -343,7 +343,7 @@ correctly.
 #### Generate the master key
 
 To generate your new master key, issue the following command, putting in the
-right values instead of Alice Engineer:
+right values instead of "Alice Engineer:"
 
     $ gpg --quick-generate-key 'Alice Engineer <alice@example.org>' rsa4096 cert
 
@@ -368,14 +368,15 @@ You should avoid using 8-character "short key IDs" as they are not
 sufficiently unique.
 
 At this point, I suggest you open a text editor, copy the fingerprint of your
-new key and paste it there. You'll need to use it for the next few steps.
+new key and paste it there. You'll need to use it for the next few steps, so
+having it close by will be handy.
 
 #### Back up your master key
 
 For disaster recovery purposes -- and especially if you intend to use the Web
 of Trust and collect key signatures from other project developers -- you
-should create a hardcopy backup of your private key. This is supposed to be a
-"last resort" measure in case all other backup mechanisms have failed.
+should create a hardcopy backup of your private key. This is supposed to be
+the "last resort" measure in case all other backup mechanisms have failed.
 
 The best way to create a printable hardcopy of your private key is using the
 `paperkey` software written for this very purpose. Paperkey is available on
@@ -388,14 +389,14 @@ key:
 
 The output will be in a format that is easy to OCR or input by hand, should
 you ever need to recover it. Print out that file, then take a pen and write
-the key passphrase on the margin of the paper. This is a required step because
-the key printout is still encrypted with the passphrase, and if you ever
-change the passphrase on your key, you will not remember what it used to be
-when you had first created it -- *guaranteed*.
+the key passphrase on the margin of the paper. **This is a required step**
+because the key printout is still encrypted with the passphrase, and if you
+ever change the passphrase on your key, you will not remember what it used to
+be when you had first created it -- *guaranteed*.
 
 Put the resulting printout and the hand-written passphrase into an envelope
-and store in a secure and well-protected place that is away from your home,
-such as your bank vault.
+and store in a secure and well-protected place, preferably away from your
+home, such as your bank vault.
 
 **NOTE ON PRINTERS**: Long gone are days when printers were dumb devices
 connected to your computer's parallel port. These days they have full
@@ -482,6 +483,20 @@ that is most likely to work:
 Most keyservers communicate with each-other, so your key information will
 eventually synchronize to all the others.
 
+**NOTE ON PRIVACY:** Keyservers are completely public and therefore, by
+design, leak potentially private information about you, such as your full
+name, nicknames, and personal or work email addresses. If you sign other
+people's keys or someone signs yours, keyservers will additionally become
+leakers of your social connections. Once such personal information makes it to
+the keyservers, it becomes impossible to edit or delete. Even if you revoke a
+signature or identity, that does not delete them from your key record, just
+marks them as revoked -- making them stand out even more.
+
+That said, if you participate in software development on a public project, all
+of the above information is already public record, and therefore making it
+additionally available via a keyserver record does not result in net loss in
+privacy.
+
 ##### Upload your public key to GitHub
 
 If you use GitHub in your development (and who doesn't?), you should upload
@@ -524,7 +539,7 @@ we did with `paperkey`).
 
 #### Prepare detachable encrypted storage
 
-Start by getting a small USB "thumb" drive (preferably two) that you will use
+Start by getting a small USB "thumb" drive (preferably two!) that you will use
 for backup purposes. You will first need to encrypt them:
 
 - [Apple instructions](https://support.apple.com/kb/PH25745)
@@ -550,7 +565,8 @@ You should now test to make sure it still works:
 If you don't get any errors, then you should be good to go. Unmount the USB
 drive, distinctly label it so you don't blow it away next time you need to use
 a random USB drive, and put in a safe place -- but not too far away, because
-you'll need to use it every now and again.
+you'll need to use it every now and again for things like adding identities,
+extra subkeys, or adding signatures to other people's keys.
 
 #### Remove the master key
 
