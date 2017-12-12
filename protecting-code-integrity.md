@@ -1,6 +1,6 @@
-# Free software developer security hygiene
+# Protecting code integrity with PGP
 
-Updated: 2017-12-01
+Updated: 2017-12-15
 
 ### Target audience
 
@@ -8,20 +8,12 @@ This document is aimed at developers working on free software projects. It
 covers the following topics:
 
 1. PGP key best practices
-2. Basic introduction to PGP and Git
-3. Basic workstation security best practices
+2. Introduction to PGP and Git
 
 We use the term "Free" as in "Freedom," but this guide can also be used for
 developing non-free or source-available ("Open Source") software. If you write
 code that goes into public source repositories, you can benefit from getting
 acquainted with and following this guide.
-
-#### Topics NOT covered
-
-This is not a "how to write secure software" guide. Please check the resources
-on secure coding best practices that are available for the programming
-languages, libraries, and development environments used by your free software
-project.
 
 ### Structure
 
@@ -42,9 +34,6 @@ help guide your decision:
 - _(NICE)_ to have items will improve the overall security, but will affect how
   you interact with your work environment, and probably require learning new
   habits or unlearning old ones.
-- _(PARANOID)_ is reserved for items we feel will significantly improve your
-  security, but will require making equally significant adjustments to the way
-  you interact with your operating system.
 
 Remember, these are only guidelines. If you feel these priority levels do not
 reflect your project's commitment to security, you should adjust them as you
@@ -267,7 +256,7 @@ you use the gpg commands.
 
 ### Checklist
 
-- [ ] Generate the 4096-bit RSA master key _(ESSENTIAL)_
+- [ ] Generate a 4096-bit RSA master key _(ESSENTIAL)_
 - [ ] Back up the master key using paperkey _(ESSENTIAL)_
 - [ ] Add all relevant identities _(ESSENTIAL)_
 
@@ -434,6 +423,7 @@ different from what you want, you should fix it back:
 - [ ] Generate a 2048-bit Signing subkey _(ESSENTIAL)_
 - [ ] Generate a 2048-bit Authentication subkey _(NICE)_
 - [ ] Upload your public keys to a PGP keyserver _(ESSENTIAL)_
+- [ ] Set up a refresh cronjob _(ESSENTIAL)_
 
 ### Considerations
 
@@ -507,6 +497,20 @@ your key following the instructions they have provided:
 To generate the public key file to paste in, just run:
 
     $ gpg --export --armor [fpr]
+
+#### Set up a refresh cronjob
+
+You will need to regularly refresh the public keys on your keyring in order to
+get the latest changes on other people's keys.
+
+    $ crontab -e
+
+Add the following on a new line:
+
+    @daily /usr/bin/gpg2 --refresh >/dev/null 2>&1
+
+**NOTE**: check the full path to your `gpg` or `gpg2` command and use the `gpg2`
+command if regular `gpg` for you is the legacy GnuPG v.1.
 
 ## Moving your master key to offline storage
 
@@ -867,10 +871,66 @@ This should ask for your smartcard PIN on your first command, and then show
 Congratulations, you have successfully made it extremely difficult to steal
 your digital developer identity!
 
-### TODO: Extending expiration date
-### TODO: Revoking subkeys
-### TODO: Configure gpg-agent
-### TODO: Configure TOFU policy
+### Other common GnuPG operations
+
+Here is a quick reference for various common operations you'll need to do with
+your PGP key.
+
+In all of the below commands, the `[fpr]` is your key fingerprint.
+
+#### Mounting your master key offline storage
+
+You will need your master key for any of the operations below, so you will
+first need to mount your backup offline storage and tell GnuPG to use it.
+First, find out where the media got mounted, e.g. by looking at the output of
+the `mount` command. Then, locate the directory with the backup of your GnuPG
+directory and tell GnuPG to use that as its home:
+
+    $ export GNUPGHOME=/media/user/disks/somename/gnupg-backup
+    $ gpg --list-secret-keys
+
+You want to make sure that you see `sec` and not `sec#` in the output (the `#`
+means the key is not available).
+
+##### Updating your regular GnuPG working directory
+
+After you make any changes to your key using the offline storage, you will
+want to import these changes back into your regular working directory:
+
+    $ gpg --export | gpg --home ~/.gnupg --import
+    $ unset GNUPGHOME
+
+#### Extending key expiration date
+
+The master key we created has the default expiration date of 2 years from the
+date of creation. This is done both for security reasons and to make obsolete
+keys eventually disappear from keyservers.
+
+To extend the expiry date on your key by another year, just run:
+
+    $ gpg --quick-set-expire [fpr] 1y
+
+You can also use a specific date if that is easier to remember (e.g. your
+birthday, Cinco de Mayo, or Canada Day):
+
+    $ gpg --quick-set-expire [fpr] 2020-07-01
+
+Remember to send the updated key back to keyservers:
+
+    $ gpg --send-key [fpr]
+
+#### Revoking identities
+
+If you need to revoke an identity (e.g. you changed employers and your old
+email address is no longer valid), you can use a one-liner:
+
+    $ gpg --quick-revoke-uid [fpr] 'Alice Engineer <aengineer@example.net>'
+
+You can also do the same with the menu mode using `gpg --edit-key [fpr]`.
+
+Once you are done, remember to send the updated key back to keyservers:
+
+    $ gpg --send-key [fpr]
 
 ## Using PGP with Git
 
@@ -882,6 +942,7 @@ your digital developer identity!
 - [ ] Configure git to always sign annotated tags _(NICE)_
 - [ ] Learn how commit signing and verification works _(ESSENTIAL)_
 - [ ] Configure git to always sign commits _(NICE)_
+- [ ] Configure gpg-agent options _(ESSENTIAL)_
 
 ### Considerations
 
@@ -897,14 +958,15 @@ kinds of hashes: tree hashes and commit hashes.
 
 ##### Tree hashes
 
-Every time you commit a change to a repository, git calculates checksum hashes
+Every time you commit a change to a repository, git records checksum hashes
 of all objects in it -- contents (blobs), directories (trees), file names and
 permissions, etc, for each subdirectory in the repository. It only does this
-for trees and blobs that have changed, so as not to re-checksum the entire
-tree unnecessarily if only a small part of it was touched.
+for trees and blobs that have changed with each commit, so as not to
+re-checksum the entire tree unnecessarily if only a small part of it was
+touched.
 
-Then it calculates the checksum of the toplevel directory, which will
-inevitably be different if any part of the repository has changed.
+Then it calculates and stores the checksum of the toplevel directory, which
+will inevitably be different if any part of the repository has changed.
 
 ##### Commit hashes
 
@@ -920,7 +982,7 @@ made:
 
 ##### Hashing function
 
-At the time of writing, git uses the SHA1 hashing mechanism to calculate
+At the time of writing, git still uses the SHA1 hashing mechanism to calculate
 checksums, though work is under way to transition to a stronger algorithm that
 is more resistant to collisions. Note, that git already includes collision
 avoidance routines, so it is believed that a successful collision attack
@@ -929,16 +991,17 @@ against git remains impractical.
 #### Annotated tags and tag signatures
 
 Git tags allow developers to mark specific commits in the history of each git
-repository. Tags can be lightweight that are more or less just a pointer at a
-specific commit, or they can be annotated, which becomes its own object in the
-git tree. An annotated tag object contains all of the following information:
+repository. Tags can be "lightweight" -- more or less just a pointer at a
+specific commit, or they can be "annotated," which becomes its own object in
+the git tree. An annotated tag object contains all of the following
+information:
 
 - the checksum hash of the commit being tagged
 - the tag name
-- the information about the tagger (name, email, time of tagging)
+- information about the tagger (name, email, time of tagging)
 - the tag message
 
-A PGP-signed tag is simply an annotated tag with all these contents wrapped
+A PGP-signed tag is simply an annotated tag with all these entries wrapped
 around in a PGP signature. When a developer signs their git tag, they
 effectively assure you of the following:
 
@@ -950,17 +1013,19 @@ effectively assure you of the following:
     - it also includes all information about authorship
     - including exact times when changes were made
 
-When you clone a git repository and verify a signed tag, this gives you
-assurances that _all contents in the repositry are exactly the same as the
-contents of the repository on the developer's computer at the time of
-signing_.
+When you clone a git repository and verify a signed tag, that gives you
+assurances that _all contents in the repository, including all of its
+history, are exactly the same as the contents of the repository on the
+developer's computer at the time of signing_.
 
 #### Signed commits
 
-Signed commits are very similar to signed tags, except that the contents of
-the commit object are PGP-signed instead of the contents of the tag object. A
-commit signature also gives you full verifiable information about the state of
-the developer's tree at the time the signature was made.
+Signed commits are very similar to signed tags -- the contents of the commit
+object are PGP-signed instead of the contents of the tag object. A commit
+signature also gives you full verifiable information about the state of the
+developer's tree at the time the signature was made. Tag signatures and commit
+PGP signatures provide exact same security assurances about the repository and
+its entire history.
 
 #### Signed pushes
 
@@ -1012,8 +1077,8 @@ To verify a signed tag, simply pass the `-v` switch to the tag command:
     $ git tag -v [tagname]
 
 If you are verifying someone else's git tag, then you will need to import
-their PGP key. Please refer to the "maintaining the project keyring" section
-below.
+their PGP key. Please refer to the "Trusted Team communication" document in
+the same repository for guidance on this topic.
 
 ##### Verifying at pull time
 
@@ -1048,18 +1113,20 @@ switch:
 #### How to work with signed commits
 
 It is easy to create signed commits, but it is much more difficult to
-incorporate them into your workflow. Most projects use signed commits as a
-cryptographically-verifiable "Committed-by:" line that records code
-provenance -- the commits are rarely verified by others except when tracking
-down project history.
+incorporate them into your workflow. Many projects use signed commits as a
+sort of "Committed-by:" line equivalent that records code provenance -- the
+signatures are rarely verified by others except when tracking down project
+history. In a sense, signed commits are used for "tamper evidence," and not to
+"tamper-proof" the repository.
 
 To create a signed commit, you just need to pass the `-S` flag to the `git
-commit` command:
+commit` command (it's capital `-S` due to collision with another flag):
 
     $ git commit -S
 
 Our recommendation is to always sign commits and to require them of all
-project members, regardless of whether anyone is verifying them.
+project members, regardless of whether anyone is verifying them (that can
+always come at a later time).
 
 ##### How to verify signed commits
 
@@ -1067,7 +1134,7 @@ To verify a single commit you can use `verify-commit`:
 
     $ git verify-commit [hash]
 
-You can also look at the repository log and request that all commit signatures
+You can also look at repository logs and request that all commit signatures
 are verified and shown:
 
     $ git log --pretty=short --show-signatures
@@ -1080,9 +1147,10 @@ the `-S` flag):
 
     $ git merge --verify-signatures -S merged-branch
 
-Note, that this will break if there is even one commit that is not signed or
-does not pass verification. As it is often the case, technology is the easy
-part here, but the human side of the equation is what makes it difficult.
+Note, that the merge will fail if there is even one commit that is not signed
+or does not pass verification. As it is often the case, technology is the easy
+part -- the human side of the equation is what makes adopting strict commit
+signing difficult.
 
 ##### If your project uses mailing lists for patch management
 
@@ -1090,7 +1158,108 @@ If your project uses a mailing list for submitting and processing patches,
 then there is little use in signing commits, because all signature information
 will be lost when sent through that medium. It is still useful to sign your
 commits, just so others can refer to your publicly hosted git trees for
-reference, but the upstream developer will not benefit from it in a direct
-way.
+reference, but the upstream project receiving your patches will not be able to
+verify them directly with git.
 
 You can still sign the emails containing the patches, though.
+
+#### Configure git to always sign commits
+
+You can tell git to always sign commits:
+
+    git config --global commit.gpgSign true
+
+Or you can train your muscle memory to always pass the -S flag to all git
+commit operations.
+
+#### Configure gpg-agent options
+
+The GnuPG agent is a helper tool that will start automatically whenever you
+use the `gpg` command and run on the background with the purpose of caching
+the private key passphrase. This way you only have to unlock your key once to
+use it repeatedly (very handy if you need to sign a bunch of git operations in
+an automated script without having to continuously retype your passphrase).
+
+There are two options you should know in order to tweak when the passphrase
+should be expired from cache:
+
+- `default-cache-ttl` (seconds): If you use the same key again before the
+  time-to-live expires, the countdown will reset for another period.
+  The default is 600 (10 minutes).
+- `max-cache-ttl` (seconds): Regardless of how recently you've used the key
+  since initial passphrase entry, if the maximum time-to-live countdown
+  expires, you'll have to enter the passphrase again. The default is 30
+  minutes.
+
+If you find either of these defaults too short (or too long), you can edit
+your `~/.gnupg/gpg-agent.conf` file to set your own values:
+
+    # set to 30 minutes for regular ttl, and 2 hours for max ttl
+    default-cache-ttl 1800
+    max-cache-ttl 7200
+
+##### Bonus: Using gpg-agent with ssh
+
+If you've created an **[A]** (Authentication) key and moved it to the
+smartcard, you can use it with ssh for adding 2-factor authentication for your
+ssh sessions. You just need to tell your environment to use the correct socket
+file for talking to the agent.
+
+First, add the following to your `~/.gnupg/gpg-agent.conf`:
+
+    enable-ssh-support
+
+Then, add this to your `.bashrc`:
+
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+
+You will need to kill existing `gpg-agent` sessions and start a new login
+session:
+
+    $ killall gpg-agent
+    $ bash
+    $ ssh-add -L
+
+The last command should list the SSH representation of your PGP Auth key (the
+comment should say `cardno:XXXXXXX` at the end to indicate it's coming from
+the smartcard).
+
+To enable key-based logins with ssh, just add the above output to
+`~/.ssh/authorized_keys` on remote systems you log in to. Congratulations,
+you've just made your ssh credentials extremely difficult to steal.
+
+As a bonus, you can get other people's PGP-based ssh keys from public
+keyservers, should you need to grant them ssh-based access to anything:
+
+    $ gpg --export-ssh-key [keyid]
+
+This can come in super handy if you need to allow developers access to git
+repositories over ssh.
+
+## TODO: Tarball release signatures
+
+## Further reading
+
+By this point you have accomplished the following important tasks:
+
+1. Created your developer identity and protected it using PGP cryptography.
+2. Configured your environment so your identity is not easily stolen by moving
+   your master key offline and your subkeys to an external hardware device.
+3. Configured your git environment to ensure that anyone using your project is
+   able to verify the integrity of the repository and its entire history.
+
+You are already in a good place, but you should also read up on the following
+topics:
+
+- How to secure your team communication (see the document in this repository).
+  Decisions regarding your project development and governance require just as
+  much careful protection as any committed code, if not so. Make sure that
+  your team communication is trusted and the integrity of all decisions is
+  verified.
+- How to secure your workstation (see the document in this repository). Your
+  goal is to minimize risky behaviour that would cause your project code to be
+  contaminated, or your developer identity to be stolen.
+- How to write secure code (see various documentation related to the
+  programming languages and libraries used by your project). Bad, insecure
+  code is still bad, insecure code even if there is a PGP signature on the
+  commit that introduced it.
