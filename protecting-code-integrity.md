@@ -693,14 +693,14 @@ features on the internal chip. Here are a few recommendations:
   but with fewest extra security features
 - [Nitrokey Pro](https://shop.nitrokey.com/shop/product/nitrokey-pro-3):
   Similar to the Nitrokey Start, but is tamper-resistant and offers more
-  security features (see the U2F section of the guide)
+  security features (but not U2F, see the Fido U2F section of the guide)
 - [Yubikey 4](https://www.yubico.com/product/yubikey-4-series/): Proprietary
   hardware and software, but cheaper than Nitrokey Pro and comes available
   in the USB-C form that is more useful with newer laptops; also offers
   additional security features such as U2F
 
 Our recommendation is to pick a device that is capable of both smartcard
-functionality and U2F, which means either a Nitrokey Pro, or a Yubikey 4.
+functionality and U2F, which, at the time of writing, means a Yubikey 4.
 
 #### Configuring your smartcard device
 
@@ -1236,7 +1236,107 @@ keyservers, should you need to grant them ssh-based access to anything:
 This can come in super handy if you need to allow developers access to git
 repositories over ssh.
 
-## TODO: Tarball release signatures
+## Protecting online accounts
+
+### Checklist
+
+- [ ] Get a U2F-capable device _(ESSENTIAL)_
+- [ ] Enable 2-factor authentication for your online accounts _(ESSENTIAL)_
+  - [ ] GitHub/GitLab
+  - [ ] Google
+  - [ ] Social Media
+- [ ] Use U2F as primary mechanism, with TOTP as fallback _(ESSENTIAL)_
+
+### Considerations
+
+You may have noticed how a lot of your online developer identity is tied to
+your email address. If someone can gain access to your mailbox, they would be
+able to do a lot of damage to you personally, and to your reputation as a free
+software developer. Protecting your email accounts is just as important as
+protecting your PGP keys.
+
+#### Two-factor authentication with Fido U2F
+
+[Two-factor
+authentication](https://en.wikipedia.org/wiki/Multi-factor_authentication) is
+a mechanism to improve account security by requiring a physical token in
+addition to a username and password. The goal is to make sure that even if
+someone steals your password (via keylogging, shoulder surfing, or other
+means), they still wouldn't be able to gain access to your account without
+having in their possession a specific pre-configured physical device.
+
+The most widely known mechanisms for 2-factor authentication are:
+
+- SMS-based verification
+- Time-based One-Time Passwords (TOTP) via a smartphone app
+- Hardware tokens supporting Fido U2F
+
+SMS-based verification is easiest to configure, but has the following
+important downsides: it is useless in areas without signal (e.g. building
+basements), and can be defeated if the attacker is able to intercept or divert
+SMS messages.
+
+TOTP-based multi-factor authentication offers more protection than SMS, but
+has important scaling hurdles (there's only so many tokens you can add to your
+smartphone app before finding the correct one becomes wearisome). Plus,
+there's no avoiding the fact that your secret key ends up stored on the
+smartphone itself, which is a complex, globally connected device with a very
+poor record of timely patching by the vendors.
+
+Most importantly, neither TOTP nor SMS methods protect you from phishing
+attacks -- if the phisher is able to obtain both your account password and
+2-factor token, they can replay them on the legitimate site and gain access to
+your account.
+
+[Fido U2F](https://en.wikipedia.org/wiki/Universal_2nd_Factor) is a standard
+developed specifically to provide a mechanism for 2-factor authentication
+*and* combat credential phishing. The U2F protocol will store site
+authentication data on the USB token that will prevent you from accidentally
+giving an attacker both your password and your one-time token if you try to
+use it on anything other than the legitimate website.
+
+Both Chrome and Firefox support U2F 2-factor authentication, and hopefully
+other browsers will soon follow.
+
+#### Get a token capable of Fido U2F
+
+There are [many options available](http://www.dongleauth.info/dongles/) for
+hardware tokens with Fido U2F support, but if you're already ordering a
+smartcard-capable physical token, then your best option is a Yubikey 4, which
+supports both.
+
+#### Enable 2-factor authentication on your online accounts
+
+You definitely want to enable this option on the email provider you are using
+(especially if it is Google, which has excellent support for U2F). Other sites
+where this should definitely be considered:
+
+- GitHub: it probably occurred to you when you uploaded your public key that
+  if anyone else is able to gain access to your account, they can replace your
+  key with their own. If you publish code on GitHub, you should take care of
+  your account security by protecting it with U2F-backed authentication.
+- GitLab: for the same reasons as above
+- Google: if you have a google account, you will be surprised how many places
+  allow to log in with Google authentication instead of site-backed
+  credentials.
+- Facebook: same as above, a lot of online sites offer the option to
+  authenticate using a Facebook account. You should protect your Facebook
+  account even if you do not use it.
+- Other sites, as you deem necessary. See
+  [dongleauth.info](http://www.dongleauth.info) for inspiration.
+
+#### Configure TOTP failover, if possible
+
+Many sites will allow you to configure multiple 2-factor mechanisms, and the
+recommended option is:
+
+- U2F token as the primary mechanism
+- TOTP phone app as the secondary mechanism
+
+This way, even if you lose your U2F token, you should be able to gain access
+to your account. Alternatively, you can enroll multiple U2F tokens (e.g.
+you can get another cheap token that only does U2F and use it for backup
+reasons).
 
 ## Further reading
 

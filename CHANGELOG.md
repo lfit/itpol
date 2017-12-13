@@ -1,3 +1,17 @@
+# 2017-12-15
+## Linux workstation security
+- Remove detailed SELinux instrusctions
+- Remove GrSecurity recommendation, as it's not available without subscription
+- Change NoScript to uMatrix recommendation
+- Add some Firejail usage quickies
+
+## Protecting code integrity with PGP
+- Add whole new doc on PGP and its use with Git. It is aimed at free software
+  developers and should be used alongside with the workstation security doc.
+
+## Trusted team communication
+- A fairly major rewrite in the works...
+
 # 2017-01-23
 ## Linux workstation security checklist
 

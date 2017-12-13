@@ -1,6 +1,6 @@
 # Linux workstation security checklist
 
-Updated: 2017-11-15
+Updated: 2017-12-15
 
 ### Target audience
 
@@ -122,10 +122,12 @@ considered potentially vulnerable, especially if it has not received
 manufacturer firmware updates.
 
 There are [some laptop manufacturers][27] that have started providing systems
-with the Intel ME chip disabled, and it may be possible to manually disable
-the IME by using a tool such as [me_cleaner][25], though you should be mindful
-that it is an involved process and that disabling the IME may void the
-manufacturer support warranty (or even be against your employer policy).
+with a lot of IME functionality disabled (it is not possible to disable the
+chip completely, as it would likely render the system unbootable). It is also
+possible to use a tool such as [me_cleaner][25] to significantly reduce the
+chip functionality on your own. You should be mindful that it is an involved
+process, and that disabling the IME may void the manufacturer support warranty
+(or even be against your employer policy).
 
 ## Pre-boot environment
 
@@ -561,12 +563,6 @@ this browser for accessing any other sites except select few.
 
 You should install the following Firefox add-ons:
 
-- [ ] NoScript _(ESSENTIAL)_
-  - NoScript prevents active content from loading, except from user
-    whitelisted domains. It is a great hassle to use with your default browser
-    (though offers really good security benefits), so we recommend only
-    enabling it on the browser you use to access work-related sites.
-
 - [ ] Privacy Badger _(ESSENTIAL)_
   - EFF's Privacy Badger will prevent most external trackers and ad platforms
     from being loaded, which will help avoid compromises on these tracking
@@ -579,15 +575,13 @@ You should install the following Firefox add-ons:
     over a secure connection, even if a link you click is using http:// (great
     to avoid a number of attacks, such as [SSL-strip][7]).
 
-- [ ] Certificate Patrol _(NICE)_
-  - This tool will alert you if the site you're accessing has recently changed
-    their TLS certificates -- especially if it wasn't nearing expiration dates
-    or if it is now using a different certification authority. It helps
-    alert you if someone is trying to man-in-the-middle your connection,
-    but generates a lot of benign false-positives.
-
-You should leave Firefox as your default browser for opening links, as
-NoScript will prevent most active content from loading or executing.
+- [ ] uMatrix _(NICE)_
+  - uMatrix prevents active content from third-party locations from being
+    loaded and executed. It is a hassle to use with your default browser
+    (though offers really good security benefits), so we recommend only
+    enabling it on the browser you use to access work-related sites.
+    Here's a [Video Overview](https://www.youtube.com/watch?v=TVozpo3zUBk) of
+    uMatrix.
 
 ##### Chrome/Chromium for everything else
 
@@ -600,8 +594,9 @@ the usual paranoid caution about not using it for anything you don't want
 Google to know about).
 
 It is recommended that you install **Privacy Badger** and **HTTPS Everywhere**
-extensions in Chrome as well and give it a distinct theme from Firefox to
-indicate that this is your "untrusted sites" browser.
+extensions in Chrome (and uMatrix, too, if you're comfortable with it), as
+well and give it a distinct theme from Firefox to indicate that this is your
+"untrusted sites" browser.
 
 #### 2: Use firejail _(ESSENTIAL)_
 
@@ -617,6 +612,16 @@ Firejail is most effective on Wayland, unless you use X11-isolation mechanisms
 documentation provided by the project:
 
 - [Firefox Sandboxing Guide][20]
+
+Most frequently, you'll just want to pass a `--private=directory` switch to
+separate your browsing profiles. You can create convenient aliases and add
+them to your `.bashrc`:
+
+    alias ff-perso="firejail --private=$HOME/.firejail/personal firefox -no-remote"
+    alias ff-work="firejail --private=$HOME/.firejail/work firefox -no-remote"
+
+Any downloaded files will be located in `~/.firejail/[name]/Downloads`. To
+upload files, you'll need to move them into that subdirectory first.
 
 #### 3: Fully separate your work and play environments via virtualization _(PARANOID)_
 
@@ -717,31 +722,9 @@ to ensure that your private keys are well protected against theft.
 
 #### Considerations
 
-The best way to prevent private key theft is to use a smartcard to store your
-encryption private keys and never copy them onto the workstation. There are
-several manufacturers that offer OpenPGP capable devices:
-
-- [Kernel Concepts][12], where you can purchase both the OpenPGP compatible
-  smartcards and the USB readers, should you need one.
-- [Yubikey][13], which offers OpenPGP smartcard functionality in addition
-  to many other cool features (U2F, PIV, HOTP, etc).
-- [NitroKey][21], which is based on open-source software and hardware
-
-It is also important to make sure that the master PGP key is not stored on the
-main workstation, and only subkeys are used. The master key will only be
-needed when signing someone else's keys or creating new subkeys -- operations
-which do not happen very frequently. You may follow [the Debian's subkeys][14]
-guide to learn how to move your master key to removable storage and how to
-create subkeys.
-
-You should then configure your gnupg agent to act as ssh agent and use the
-smartcard-based PGP Auth key to act as your ssh private key. We publish a
-[detailed guide][15] on how to do that using either a smartcard reader or a
-Yubikey NEO.
-
-If you are not willing to go that far, at least make sure you have a strong
-passphrase on both your PGP private key and your SSH private key, which will
-make it harder for attackers to steal and use them.
+Please see the "Protecting Code Integrity with PGP" document available in the
+same repository for introduction to PGP best practices and instructions on how
+to set up and use offline master and smartcard subkeys.
 
 ### Hibernate or shut down, do not suspend
 
