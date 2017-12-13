@@ -2,6 +2,8 @@
 
 Updated: 2017-12-15
 
+*Status: CURRENT, BETA*
+
 ### Target audience
 
 This document is aimed at developers working on free software projects. It

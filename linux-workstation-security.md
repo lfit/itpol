@@ -2,6 +2,8 @@
 
 Updated: 2017-12-15
 
+*Status: CURRENT*
+
 ### Target audience
 
 This document is aimed at teams of systems administrators who use Linux

@@ -1,5 +1,9 @@
 # Trusted Team Communication
 
+Updated: 2015-08-13
+
+*Status: OUTDATED*
+
 Establishing trusted communication between members of your team is paramount
 not only to avoid potential security problems associated with phishing and
 impersonation, but also to make it possible to exchange sensitive information
