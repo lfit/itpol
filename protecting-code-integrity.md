@@ -1257,43 +1257,44 @@ protecting your PGP keys.
 
 #### Two-factor authentication with Fido U2F
 
-[Two-factor
-authentication](https://en.wikipedia.org/wiki/Multi-factor_authentication) is
-a mechanism to improve account security by requiring a physical token in
+[Two-factor authentication](https://en.wikipedia.org/wiki/Multi-factor_authentication)
+is a mechanism to improve account security by requiring a physical token in
 addition to a username and password. The goal is to make sure that even if
 someone steals your password (via keylogging, shoulder surfing, or other
 means), they still wouldn't be able to gain access to your account without
-having in their possession a specific pre-configured physical device.
+having in their possession a specific physical device ("something you have"
+factor).
 
 The most widely known mechanisms for 2-factor authentication are:
 
 - SMS-based verification
-- Time-based One-Time Passwords (TOTP) via a smartphone app
+- Time-based One-Time Passwords (TOTP) via a smartphone app, such as
+  the "Google Authenticator" or similar solutions
 - Hardware tokens supporting Fido U2F
 
 SMS-based verification is easiest to configure, but has the following
-important downsides: it is useless in areas without signal (e.g. building
+important downsides: it is useless in areas without signal (e.g. most building
 basements), and can be defeated if the attacker is able to intercept or divert
 SMS messages.
 
 TOTP-based multi-factor authentication offers more protection than SMS, but
-has important scaling hurdles (there's only so many tokens you can add to your
-smartphone app before finding the correct one becomes wearisome). Plus,
+has important scaling downsides (there are only so many tokens you can add to
+your smartphone app before finding the correct one becomes a hurdle). Plus,
 there's no avoiding the fact that your secret key ends up stored on the
-smartphone itself, which is a complex, globally connected device with a very
-poor record of timely patching by the vendors.
+smartphone itself -- which is a complex, globally connected device that may or
+may not have been receiving timely security patches from the manufacturer.
 
 Most importantly, neither TOTP nor SMS methods protect you from phishing
 attacks -- if the phisher is able to obtain both your account password and
-2-factor token, they can replay them on the legitimate site and gain access to
-your account.
+the 2-factor token, they can replay them on the legitimate site and gain
+access to your account.
 
 [Fido U2F](https://en.wikipedia.org/wiki/Universal_2nd_Factor) is a standard
 developed specifically to provide a mechanism for 2-factor authentication
-*and* combat credential phishing. The U2F protocol will store site
-authentication data on the USB token that will prevent you from accidentally
-giving an attacker both your password and your one-time token if you try to
-use it on anything other than the legitimate website.
+*and* to combat credential phishing. The U2F protocol will store each site's
+unique key on the USB token and will prevent you from accidentally giving the
+attacker both your password and your one-time token if you try to use it on
+anything other than the legitimate website.
 
 Both Chrome and Firefox support U2F 2-factor authentication, and hopefully
 other browsers will soon follow.
@@ -1302,26 +1303,26 @@ other browsers will soon follow.
 
 There are [many options available](http://www.dongleauth.info/dongles/) for
 hardware tokens with Fido U2F support, but if you're already ordering a
-smartcard-capable physical token, then your best option is a Yubikey 4, which
+smartcard-capable physical device, then your best option is a Yubikey 4, which
 supports both.
 
 #### Enable 2-factor authentication on your online accounts
 
 You definitely want to enable this option on the email provider you are using
 (especially if it is Google, which has excellent support for U2F). Other sites
-where this should definitely be considered:
+where this functionality should be enabled are:
 
-- GitHub: it probably occurred to you when you uploaded your public key that
-  if anyone else is able to gain access to your account, they can replace your
-  key with their own. If you publish code on GitHub, you should take care of
-  your account security by protecting it with U2F-backed authentication.
-- GitLab: for the same reasons as above
-- Google: if you have a google account, you will be surprised how many places
-  allow to log in with Google authentication instead of site-backed
+- **GitHub**: it probably occurred to you when you uploaded your PGP public key
+  that if anyone else is able to gain access to your account, they can replace
+  your key with their own. If you publish code on GitHub, you should take care
+  of your account security by protecting it with U2F-backed authentication.
+- **GitLab**: for the same reasons as above.
+- **Google**: if you have a google account, you will be surprised how many
+  sites allow logging in with Google authentication instead of site-specific
   credentials.
-- Facebook: same as above, a lot of online sites offer the option to
-  authenticate using a Facebook account. You should protect your Facebook
-  account even if you do not use it.
+- **Facebook**: same as above, a lot of online sites offer the option to
+  authenticate using a Facebook account. You should 2-factor protect your
+  Facebook account even if you do not use it.
 - Other sites, as you deem necessary. See
   [dongleauth.info](http://www.dongleauth.info) for inspiration.
 
@@ -1333,10 +1334,10 @@ recommended option is:
 - U2F token as the primary mechanism
 - TOTP phone app as the secondary mechanism
 
-This way, even if you lose your U2F token, you should be able to gain access
-to your account. Alternatively, you can enroll multiple U2F tokens (e.g.
-you can get another cheap token that only does U2F and use it for backup
-reasons).
+This way, even if you lose your U2F token, you should be able to re-gain
+access to your account. Alternatively, you can enroll multiple U2F tokens
+(e.g. you can get another cheap token that only does U2F and use it for
+backup reasons).
 
 ## Further reading
 
@@ -1347,6 +1348,7 @@ By this point you have accomplished the following important tasks:
    your master key offline and your subkeys to an external hardware device.
 3. Configured your git environment to ensure that anyone using your project is
    able to verify the integrity of the repository and its entire history.
+4. Secured your online accounts using 2-factor authentication.
 
 You are already in a good place, but you should also read up on the following
 topics:
