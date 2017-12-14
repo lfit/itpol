@@ -1,6 +1,6 @@
 # Protecting code integrity with PGP
 
-Updated: 2017-12-15
+Updated: 2017-12-14
 
 *Status: CURRENT, BETA*
 
@@ -9,8 +9,9 @@ Updated: 2017-12-15
 This document is aimed at developers working on free software projects. It
 covers the following topics:
 
-1. PGP key best practices
-2. Introduction to PGP and Git
+1. PGP basics and best practices
+2. How to use PGP with Git
+3. How to protect your developer accounts
 
 We use the term "Free" as in "Freedom," but this guide can also be used for
 developing non-free or source-available ("Open Source") software. If you write
@@ -98,7 +99,8 @@ For encryption, PGP uses the public key of the owner to create a message that
 is only decryptable using the owner's private key:
 
 1. the sender generates a random encryption key ("session key")
-2. the sender encrypts the contents using the session key
+2. the sender encrypts the contents using that session key (using a symmetric
+   cipher)
 3. the sender encrypts the session key using the recipient's _public_ PGP key
 4. the sender sends both the encrypted contents and the encrypted session key
    to the recipient
@@ -162,10 +164,10 @@ not to an impostor (Eve). In PGP, this certainty is called "key validity:"
 - **Validity: full** -- means we are pretty sure this key belongs to Alice
 - **Validity: marginal** -- means we are *somewhat* sure this key belongs to
   Alice
-- **Validity: uknown** -- means there is no assurance at all that this key
+- **Validity: unknown** -- means there is no assurance at all that this key
   belongs to Alice
 
-#### Web of Trust (WoT) vs. Trust on First Use (TOFU)
+#### Web of Trust (WOT) vs. Trust on First Use (TOFU)
 
 PGP incorporates a trust delegation mechanism known as the "Web of Trust." At
 its core, this is an attempt to replace the need for centralized Certification
@@ -406,7 +408,7 @@ The command is (put the full key fingerprint instead of `[fpr]`):
 
     $ gpg --quick-add-uid [fpr] 'Alice Engineer <allie@example.net>'
 
-You can review the IDs you've already added using:
+You can review the UIDs you've already added using:
 
     $ gpg --list-key [fpr] | grep ^uid
 
@@ -434,8 +436,8 @@ be using for day-to-day work. We create 2048-bit keys because a lot of
 specialized hardware (we'll discuss this further) does not handle larger keys,
 but also for pragmatic reasons. If we ever find ourselves in a world where
 2048-bit RSA keys are not considered good enough, it will be because of
-fundamental problems with the RSA protocol and longer 4096-bit keys will not
-make much difference.
+fundamental breakthroughs in computing or mathematics and therefore longer
+4096-bit keys will not make much difference.
 
 #### Create the subkeys
 
@@ -445,7 +447,7 @@ To create the subkeys, run:
     $ gpg --quick-add-key [fpr] rsa2048 sign
 
 You can also create the Authentication key, which will allow you to use your
-PGP key for ssh purposes (covered in other guides):
+PGP key for ssh purposes:
 
     $ gpg --quick-add-key [fpr] rsa2048 auth
 
@@ -467,8 +469,8 @@ you've created, as this just litters keyservers with useless data.)
 
     $ gpg --send-key [fpr]
 
-If this command does not succeed, you can try specifying a keyserver on a port
-that is most likely to work:
+If this command does not succeed, you can try specifying the keyserver on a
+port that is most likely to work:
 
     $ gpg --keyserver hkp://pgp.mit.edu:80 --send-key [fpr]
 
@@ -486,7 +488,7 @@ marks them as revoked -- making them stand out even more.
 
 That said, if you participate in software development on a public project, all
 of the above information is already public record, and therefore making it
-additionally available via a keyserver record does not result in net loss in
+additionally available via keyservers does not result in a net loss in
 privacy.
 
 ##### Upload your public key to GitHub
@@ -496,14 +498,15 @@ your key following the instructions they have provided:
 
 - [Adding a PGP key to your GitHub account](https://help.github.com/articles/adding-a-new-gpg-key-to-your-github-account/)
 
-To generate the public key file to paste in, just run:
+To generate the public key output suitable to paste in, just run:
 
     $ gpg --export --armor [fpr]
 
 #### Set up a refresh cronjob
 
 You will need to regularly refresh the public keys on your keyring in order to
-get the latest changes on other people's keys.
+get the latest changes on other people's keys. You can set up a cronjob to do
+that:
 
     $ crontab -e
 
@@ -531,9 +534,10 @@ accidentally leaked. Private keys are tasty targets for malicious actors -- we
 know this from several successful malware attacks that scanned users' home
 directories and uploaded any private key content found there.
 
-It would be very damaging to a developer to have their PGP keys stolen -- in
-the Free Software world this is often tantamount to identity theft. Removing
-private keys from your home directory helps protect you from such events.
+It would be very damaging for any developer to have their PGP keys stolen --
+in the Free Software world this is often tantamount to identity theft.
+Removing private keys from your home directory helps protect you from such
+events.
 
 #### Back up your GnuPG directory
 
@@ -571,8 +575,8 @@ You should now test to make sure it still works:
 If you don't get any errors, then you should be good to go. Unmount the USB
 drive, distinctly label it so you don't blow it away next time you need to use
 a random USB drive, and put in a safe place -- but not too far away, because
-you'll need to use it every now and again for things like adding identities,
-extra subkeys, or adding signatures to other people's keys.
+you'll need to use it every now and again for things like editing identities,
+adding or revoking subkeys, or signing other people's keys.
 
 #### Remove the master key
 
@@ -734,7 +738,7 @@ To configure your smartcard, you will need to use the GnuPG menu system, as
 there are no convenient command-line switches:
 
     $ gpg --card-edit
-    ...
+    [...omitted...]
     gpg/card> admin
     Admin commands are allowed
     gpg/card> passwd
@@ -752,7 +756,7 @@ information about your smartcard should you lose it).
 #### Moving the subkeys to your smartcard
 
 Exit the card menu (using "q") and save all changes. Next, let's move your
-subkeys onto the smartcard. You will need both your key passphrase and the
+subkeys onto the smartcard. You will need both your PGP key passphrase and the
 admin PIN of the card for most operations. Remember, that `[fpr]` stands for
 the full 40-character fingerprint of your key.
 
@@ -794,7 +798,7 @@ The output should be subtly different:
     [ultimate] (2)  Alice Engineer <allie@example.net>
 
 Notice the `*` that is next to the `ssb` line corresponding to the key -- it
-indicates that the key is currently "selected". It works as a toggle, meaning
+indicates that the key is currently "selected." It works as a toggle, meaning
 that if you type `key 1` again, the `*` will disappear and the key will not be
 selected any more.
 
@@ -806,7 +810,7 @@ Now, let's move that key onto the smartcard:
     Your selection? 2
 
 Since it's our **[E]** key, it makes sense to put it into the Encryption slot.
-When you submit your selection, you will be prompted first for your key
+When you submit your selection, you will be prompted first for your PGP key
 passphrase, and then for the admin PIN. If the command returns without an
 error, your key has been moved.
 
@@ -831,7 +835,7 @@ making sure first to unselect `key 2`. Once you're done, choose "q":
     gpg> q
     Save changes? (y/N) y
 
-Saving the changes will remove the keys you moved to the card from your home
+Saving the changes will delete the keys you moved to the card from your home
 directory (but it's okay, because we have them in our backups should we need
 to do this again for a replacement smartcard).
 
@@ -848,8 +852,8 @@ the output:
     ssb>  rsa2048 2017-12-06 [E]
     ssb>  rsa2048 2017-12-06 [S]
 
-The `>` in the `ssb>` output indicates that the subkey is only available on a
-smartcard. If you go back into your secret keys directory and look at the
+The `>` in the `ssb>` output indicates that the subkey is only available on
+the smartcard. If you go back into your secret keys directory and look at the
 contents there, you will notice that the `.key` files there have been replaced
 with stubs:
 
@@ -875,7 +879,7 @@ your digital developer identity!
 
 ### Other common GnuPG operations
 
-Here is a quick reference for various common operations you'll need to do with
+Here is a quick reference for some common operations you'll need to do with
 your PGP key.
 
 In all of the below commands, the `[fpr]` is your key fingerprint.
@@ -892,7 +896,8 @@ directory and tell GnuPG to use that as its home:
     $ gpg --list-secret-keys
 
 You want to make sure that you see `sec` and not `sec#` in the output (the `#`
-means the key is not available).
+means the key is not available and you're still using your regular home
+directory location).
 
 ##### Updating your regular GnuPG working directory
 
@@ -908,12 +913,12 @@ The master key we created has the default expiration date of 2 years from the
 date of creation. This is done both for security reasons and to make obsolete
 keys eventually disappear from keyservers.
 
-To extend the expiry date on your key by another year, just run:
+To extend the expiration on your key by a year from current date, just run:
 
     $ gpg --quick-set-expire [fpr] 1y
 
 You can also use a specific date if that is easier to remember (e.g. your
-birthday, Cinco de Mayo, or Canada Day):
+birthday, January 1st, or Canada Day):
 
     $ gpg --quick-set-expire [fpr] 2020-07-01
 
@@ -967,13 +972,13 @@ for trees and blobs that have changed with each commit, so as not to
 re-checksum the entire tree unnecessarily if only a small part of it was
 touched.
 
-Then it calculates and stores the checksum of the toplevel directory, which
-will inevitably be different if any part of the repository has changed.
+Then it calculates and stores the checksum of the toplevel tree, which will
+inevitably be different if any part of the repository has changed.
 
 ##### Commit hashes
 
 Once the tree hash has been created, git will calculate the commit hash, which
-will list the following information about the repository and the change being
+will include the following information about the repository and the change being
 made:
 
 - the checksum hash of the tree
@@ -1011,13 +1016,13 @@ effectively assure you of the following:
 - what the state of their repository was at the time of signing:
   - the tag includes the hash of the commit
     - the commit hash includes the hash of the toplevel tree
-      - which includes hashes of all files and subtrees
+      - which includes hashes of all files, contents, and subtrees
     - it also includes all information about authorship
     - including exact times when changes were made
 
 When you clone a git repository and verify a signed tag, that gives you
-assurances that _all contents in the repository, including all of its
-history, are exactly the same as the contents of the repository on the
+cryptographic assurance that _all contents in the repository, including all of
+its history, are exactly the same as the contents of the repository on the
 developer's computer at the time of signing_.
 
 #### Signed commits
@@ -1036,7 +1041,7 @@ to be enabled on the server receiving the push before it does anything useful.
 As we saw above, PGP-signing a git object gives verifiable information about
 the developer's git tree, but not about their *intent* for that tree.
 
-For example, you can be working on an experimental branch in your repository
+For example, you can be working on an experimental branch in your own git fork
 trying out a promising cool feature, but after you submit your work for
 review, someone finds a nasty bug in your code. Since your commits are
 properly signed, someone can take the branch containing your nasty bug and
@@ -1045,15 +1050,15 @@ in production. Since the commit is properly signed with your key, everything
 looks legitimate and your reputation is questioned when the bug is discovered.
 
 Ability to enforce PGP-signatures during `git push` was added in order to
-enforce the *intent* of the commit, and not merely certify what the commit is.
+enforce the *intent* of the commit, and not merely certify its contents.
 
 #### Configure git to use your PGP key
 
 If you only have one secret key in your keyring, then you don't really need to
 do anything extra, as it becomes your default key.
 
-However, if you happen to have multiple keys, you can tell git which key
-should be used (`[fpr]` is the fingerprint of your key):
+However, if you happen to have multiple secret keys, you can tell git which
+key should be used (`[fpr]` is the fingerprint of your key):
 
     $ git config --global user.signingKey [fpr]
 
@@ -1070,13 +1075,13 @@ To create a signed tag, simply pass the `-s` switch to the tag command:
 
 Our recommendation is to always sign git tags, as this allows other developers
 to ensure that the git repository they are working with has not been
-maliciously altered (e.g. to introduce backdoors).
+maliciously altered (e.g. in order to introduce backdoors).
 
 ##### How to verify signed tags
 
-To verify a signed tag, simply pass the `-v` switch to the tag command:
+To verify a signed tag, simply use the `verify-tag` command:
 
-    $ git tag -v [tagname]
+    $ git verify-tag [tagname]
 
 If you are verifying someone else's git tag, then you will need to import
 their PGP key. Please refer to the "Trusted Team communication" document in
@@ -1119,7 +1124,7 @@ incorporate them into your workflow. Many projects use signed commits as a
 sort of "Committed-by:" line equivalent that records code provenance -- the
 signatures are rarely verified by others except when tracking down project
 history. In a sense, signed commits are used for "tamper evidence," and not to
-"tamper-proof" the repository.
+"tamper-proof" the git workflow.
 
 To create a signed commit, you just need to pass the `-S` flag to the `git
 commit` command (it's capital `-S` due to collision with another flag):
@@ -1139,7 +1144,7 @@ To verify a single commit you can use `verify-commit`:
 You can also look at repository logs and request that all commit signatures
 are verified and shown:
 
-    $ git log --pretty=short --show-signatures
+    $ git log --pretty=short --show-signature
 
 ##### Verifying commits during git merge
 
@@ -1152,7 +1157,7 @@ the `-S` flag):
 Note, that the merge will fail if there is even one commit that is not signed
 or does not pass verification. As it is often the case, technology is the easy
 part -- the human side of the equation is what makes adopting strict commit
-signing difficult.
+signing for your project difficult.
 
 ##### If your project uses mailing lists for patch management
 
@@ -1171,13 +1176,13 @@ You can tell git to always sign commits:
 
     git config --global commit.gpgSign true
 
-Or you can train your muscle memory to always pass the -S flag to all git
-commit operations.
+Or you can train your muscle memory to always pass the `-S` flag to all `git
+commit` operations (this includes `--amend`).
 
 #### Configure gpg-agent options
 
 The GnuPG agent is a helper tool that will start automatically whenever you
-use the `gpg` command and run on the background with the purpose of caching
+use the `gpg` command and run in the background with the purpose of caching
 the private key passphrase. This way you only have to unlock your key once to
 use it repeatedly (very handy if you need to sign a bunch of git operations in
 an automated script without having to continuously retype your passphrase).
@@ -1215,23 +1220,23 @@ Then, add this to your `.bashrc`:
 
     export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
-You will need to kill existing `gpg-agent` sessions and start a new login
-session:
+You will need to kill the existing `gpg-agent` process and start a new login
+session for the changes to take effect:
 
     $ killall gpg-agent
     $ bash
     $ ssh-add -L
 
 The last command should list the SSH representation of your PGP Auth key (the
-comment should say `cardno:XXXXXXX` at the end to indicate it's coming from
+comment should say `cardno:XXXXXXXX` at the end to indicate it's coming from
 the smartcard).
 
-To enable key-based logins with ssh, just add the above output to
+To enable key-based logins with ssh, just add the `ssh-add -L` output to
 `~/.ssh/authorized_keys` on remote systems you log in to. Congratulations,
 you've just made your ssh credentials extremely difficult to steal.
 
 As a bonus, you can get other people's PGP-based ssh keys from public
-keyservers, should you need to grant them ssh-based access to anything:
+keyservers, should you need to grant them ssh access to anything:
 
     $ gpg --export-ssh-key [keyid]
 
@@ -1277,19 +1282,19 @@ The most widely known mechanisms for 2-factor authentication are:
 SMS-based verification is easiest to configure, but has the following
 important downsides: it is useless in areas without signal (e.g. most building
 basements), and can be defeated if the attacker is able to intercept or divert
-SMS messages.
+SMS messages, for example by cloning your SIM card.
 
 TOTP-based multi-factor authentication offers more protection than SMS, but
 has important scaling downsides (there are only so many tokens you can add to
-your smartphone app before finding the correct one becomes a hurdle). Plus,
+your smartphone app before finding the correct one becomes unwieldy). Plus,
 there's no avoiding the fact that your secret key ends up stored on the
 smartphone itself -- which is a complex, globally connected device that may or
 may not have been receiving timely security patches from the manufacturer.
 
 Most importantly, neither TOTP nor SMS methods protect you from phishing
-attacks -- if the phisher is able to obtain both your account password and
-the 2-factor token, they can replay them on the legitimate site and gain
-access to your account.
+attacks -- if the phisher is able to steal both your account password and the
+2-factor token, they can replay them on the legitimate site and gain access to
+your account.
 
 [Fido U2F](https://en.wikipedia.org/wiki/Universal_2nd_Factor) is a standard
 developed specifically to provide a mechanism for 2-factor authentication
@@ -1331,7 +1336,7 @@ where this functionality should be enabled are:
 #### Configure TOTP failover, if possible
 
 Many sites will allow you to configure multiple 2-factor mechanisms, and the
-recommended option is:
+recommended setup is:
 
 - U2F token as the primary mechanism
 - TOTP phone app as the secondary mechanism
