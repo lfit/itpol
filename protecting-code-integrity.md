@@ -1077,6 +1077,9 @@ Our recommendation is to always sign git tags, as this allows other developers
 to ensure that the git repository they are working with has not been
 maliciously altered (e.g. in order to introduce backdoors).
 
+See also [git-evtag](http://github.com/cgwalters/git-evtag) for an even
+stronger form of signed tags.
+
 ##### How to verify signed tags
 
 To verify a signed tag, simply use the `verify-tag` command:
