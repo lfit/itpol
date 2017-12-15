@@ -892,7 +892,7 @@ First, find out where the media got mounted, e.g. by looking at the output of
 the `mount` command. Then, locate the directory with the backup of your GnuPG
 directory and tell GnuPG to use that as its home:
 
-    $ export GNUPGHOME=/media/user/disks/somename/gnupg-backup
+    $ export GNUPGHOME=/media/disk/name/gnupg-backup
     $ gpg --list-secret-keys
 
 You want to make sure that you see `sec` and not `sec#` in the output (the `#`
