@@ -904,7 +904,7 @@ directory location).
 After you make any changes to your key using the offline storage, you will
 want to import these changes back into your regular working directory:
 
-    $ gpg --export | gpg --home ~/.gnupg --import
+    $ gpg --export | gpg --homedir ~/.gnupg --import
     $ unset GNUPGHOME
 
 #### Extending key expiration date
