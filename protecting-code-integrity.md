@@ -566,7 +566,7 @@ gets mounted under `/media/disk`, under Mac it's `/Volumes`).
 
 Once you know the full mount path, copy your entire GnuPG directory there:
 
-    $ cp -rp $HOME/.gnupg [/media/disk/name]/gnupg-backup
+    $ cp -rp ~/.gnupg [/media/disk/name]/gnupg-backup
 
 You should now test to make sure it still works:
 
