@@ -221,9 +221,11 @@ from other PGP users you come across.
 
 If you are using Linux, you should already have GnuPG installed.  On a Mac,
 you should install [GPG-Suite](https://gpgtools.org) or you can use `brew
-install gnupg2`. On a Windows PC, you should install [GPG4Win](https://www.gpg4win.org).
-For all other platforms, you'll need to do your own research
-to find the correct places to download and install GnuPG.
+install gnupg2`. On a Windows PC, you should install
+[GPG4Win](https://www.gpg4win.org), and you will probably need to adjust some
+of the commands in the guide to work for you, unless you have a unix-like
+environment set up. For all other platforms, you'll need to do your own
+research to find the correct places to download and install GnuPG.
 
 ##### GnuPG 1 vs. 2
 
@@ -333,6 +335,13 @@ we'll be sticking to RSA keys, at least for a little while longer. While it is
 possible to start using ED25519 keys right now, it is likely that you will
 come across tools and hardware devices that will not be able to handle them
 correctly.
+
+You may also wonder why the master key is 4096-bit, if later in the guide we
+state that 2048-bit keys should be good enough for the lifetime of RSA public
+key cryptography. The reasons are mostly social and not technical: master keys
+happen to be the most visible ones on the keychain, and some of the developers
+you interact with will inevitably judge you negatively if your master key has
+fewer bits than theirs.
 
 #### Generate the master key
 
