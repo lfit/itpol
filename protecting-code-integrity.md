@@ -221,7 +221,8 @@ from other PGP users you come across.
 
 If you are using Linux, you should already have GnuPG installed.  On a Mac,
 you should install [GPG-Suite](https://gpgtools.org) or you can use `brew
-install gnupg2`. For all other platforms, you'll need to do your own research
+install gnupg2`. On a Windows PC, you should install [GPG4Win](https://www.gpg4win.org).
+For all other platforms, you'll need to do your own research
 to find the correct places to download and install GnuPG.
 
 ##### GnuPG 1 vs. 2
