@@ -578,7 +578,10 @@ Once you know the full mount path, copy your entire GnuPG directory there:
 
     $ cp -rp ~/.gnupg [/media/disk/name]/gnupg-backup
 
-You should now test to make sure it still works:
+(Note: If you get any `Operation not supported on socket` errors, those are
+benign and you can ignore them.)
+
+You should now test to make sure everything still works:
 
     $ gpg --homedir=[/media/disk/name]/gnupg-backup --list-key [fpr]
 
@@ -591,8 +594,8 @@ adding or revoking subkeys, or signing other people's keys.
 #### Remove the master key
 
 Please see the previous section and make sure you have backed up your GnuPG
-directory in its entirety. What we are about to do will make your key useless
-if you do not have a usable backup!
+directory in its entirety. What we are about to do will render your key
+useless if you do not have a usable backup!
 
 First, identify the keygrip of your master key:
 
