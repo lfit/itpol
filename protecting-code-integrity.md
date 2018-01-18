@@ -961,16 +961,16 @@ including all of its tags, commits and branches. However, with hundreds of
 cloned repositories floating around, how does anyone verify that the
 repository you downloaded has not been tampered with by a malicious third
 party? You may have cloned it from GitHub or some other official-looking
-location, but what someone managed to trick you?
+location, but what if someone had managed to trick you?
 
 Or what happens if a backdoor is discovered in one of the projects you've
 worked on, and the "Author" line in the commit says it was done by you, while
 you're pretty sure you had [nothing to do with
 it](https://github.com/jayphelps/git-blame-someone-else)?
 
-To address both of these issues, Git introduced PGP integration -- signed tags
+To address both of these issues, Git introduced PGP integration. Signed tags
 prove the repository integrity by assuring that its contents are exactly the
-same as on the workstation of the developer who created the tag, and signed
+same as on the workstation of the developer who created the tag, while signed
 commits make it nearly impossible for someone to impersonate you without
 having access to your PGP keys.
 
@@ -1078,12 +1078,12 @@ For example, you can be working on an experimental branch in your own git fork
 trying out a promising cool feature, but after you submit your work for
 review, someone finds a nasty bug in your code. Since your commits are
 properly signed, someone can take the branch containing your nasty bug and
-push it into master, introducing a vulnerability that was never intended to be
-in production. Since the commit is properly signed with your key, everything
+push it into master, introducing a vulnerability that was never intended to go
+into production. Since the commit is properly signed with your key, everything
 looks legitimate and your reputation is questioned when the bug is discovered.
 
-Ability to enforce PGP-signatures during `git push` was added in order to
-enforce the *intent* of the commit, and not merely certify its contents.
+Ability to require PGP-signatures during `git push` was added in order to
+certify the *intent* of the commit, and not merely verify its contents.
 
 #### Configure git to use your PGP key
 
