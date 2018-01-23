@@ -1,8 +1,8 @@
 # Protecting code integrity with PGP
 
-Updated: 2018-01-18
+Updated: 2018-01-22
 
-*Status: CURRENT, BETA*
+*Status: CURRENT*
 
 ### Target audience
 
@@ -295,7 +295,7 @@ other keys. Only the **[C]** key can be used to:
 - sign other people's keys for the web of trust purposes
 
 In the Free Software world, the **[C]** key is your digital identity. Once you
-create the key, you should take extra care to protect it and prevent it from
+create that key, you should take extra care to protect it and prevent it from
 falling into malicious hands.
 
 #### Before you create the master key
@@ -305,7 +305,7 @@ your master passphrase.
 
 ##### Primary identity
 
-An identity is basically in the same format as the "From" field in emails:
+Identities are strings using the same format as the "From" field in emails:
 
     Alice Engineer <alice.engineer@example.org>
 
@@ -489,7 +489,7 @@ Most keyservers communicate with each-other, so your key information will
 eventually synchronize to all the others.
 
 **NOTE ON PRIVACY:** Keyservers are completely public and therefore, by
-design, leak potentially private information about you, such as your full
+design, leak potentially sensitive information about you, such as your full
 name, nicknames, and personal or work email addresses. If you sign other
 people's keys or someone signs yours, keyservers will additionally become
 leakers of your social connections. Once such personal information makes it to
@@ -515,9 +515,8 @@ To generate the public key output suitable to paste in, just run:
 
 #### Set up a refresh cronjob
 
-You will need to regularly refresh the public keys on your keyring in order to
-get the latest changes on other people's keys. You can set up a cronjob to do
-that:
+You will need to regularly refresh your keyring in order to get the latest
+changes on other people's public keys. You can set up a cronjob to do that:
 
     $ crontab -e
 
@@ -630,8 +629,8 @@ master keygrip:
     $ cd ~/.gnupg/private-keys-v1.d
     $ rm AAAA999988887777666655554444333322221111.key
 
-If you issue the `--list-secret-keys` command, it will show that the master
-key is missing (the `#` indicates it is not available):
+Now, if you issue the `--list-secret-keys` command, it will show that the
+master key is missing (the `#` indicates it is not available):
 
     $ gpg --list-secret-keys
     sec#  rsa4096 2017-12-06 [C] [expires: 2019-12-06]
@@ -648,7 +647,7 @@ certificate that was automatically created with your master key. A revocation
 certificate allows someone to permanently mark your key as revoked, meaning it
 can no longer be used or trusted for any purpose. You would normally use it to
 revoke a key that, for some reason, you can no longer control -- for example,
-if you had lost the passphrase.
+if you had lost the key passphrase.
 
 Just as with the master key, if a revocation certificate leaks into malicious
 hands, it can be used to destroy your developer digital identity, so it's
@@ -764,8 +763,8 @@ You so rarely need to use the Admin PIN, that you will inevitably forget what
 it is if you do not record it.
 
 Getting back to the main card menu, you can also set other values (such as
-name, sex, login data, etc, but it's not necessary and will additionally leak
-information about your smartcard should you lose it).
+name, sex, login data, etc), but it's not necessary and will additionally leak
+information about your smartcard should you lose it.
 
 #### Moving the subkeys to your smartcard
 
