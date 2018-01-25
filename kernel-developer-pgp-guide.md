@@ -859,17 +859,18 @@ default in GnuPG v2). To set it, add (or modify) the `trust-model` setting in
 
 #### Learn to use keyservers (more) safely
 
-If, despite setting `auto-key-retrieve`, you still get a `public key not
-found` error when trying to validate someone's tag, then you should attempt to
-lookup that key using a keyserver. It is important to keep in mind that there
-is absolutely no guarantee that the key you retrieve from a keyserver belongs
-to the actual person -- that much is by design. You are supposed to use the
-Web of Trust to establish key validity.
+If, despite setting `auto-key-retrieve`, you still get a "No public key" error
+when trying to validate someone's tag, then you should attempt to lookup that
+key using a keyserver. It is important to keep in mind that there is
+absolutely no guarantee that the key you retrieve from a keyserver belongs to
+the actual person -- that much is by design. You are supposed to use the Web
+of Trust to establish key validity.
 
 How to properly maintain the Web of Trust is beyond the scope of this
 document, simply because doing it properly requires both effort and dedication
 that tends to be beyond the caring threshold of most human beings. Here are
-some shortcuts that will help reduce the risk of importing a malicious key.
+some shortcuts that will help you reduce the risk of importing a malicious
+key.
 
 First, let's say you've tried to run `git verify-tag` but it returned an error
 saying the key is not found:
@@ -888,7 +889,7 @@ finding out the ID of the master key it is associated with):
     gpg: data source: hkp://keys.gnupg.net
     (1) Chen-Yu Tsai <wens@...org>
           4096 bit RSA key C94035C21B4F2AEB, created: 2017-03-14, expires: 2019-03-15
-    Keys 1-1 of 1 for "DA73759BF8619E484E5A3B47389A54219C0F2430".  Enter number(s), N)ext, or Q)uit >
+    Keys 1-1 of 1 for "DA73759BF8619E484E5A3B47389A54219C0F2430".  Enter number(s), N)ext, or Q)uit > q
 
 Locate the ID of the master key in the output, in our example
 `C94035C21B4F2AEB`. Now say `q` and display the key of Linus Torvalds that you
