@@ -242,10 +242,11 @@ signing subkey.
 
 ##### RSA vs. ECC subkeys
 
-GnuPG v2 has full support for Elliptic Curve Cryptography, with ability to
-combine ECC subkeys with traditional RSA master keys. The main upside of ECC
-cryptography is that it is much faster computationally and creates much
-smaller signatures when compared byte for byte with 2048+ bit RSA keys.
+GnuPG 2.1 and later has full support for Elliptic Curve Cryptography, with
+ability to combine ECC subkeys with traditional RSA master keys. The main
+upside of ECC cryptography is that it is much faster computationally and
+creates much smaller signatures when compared byte for byte with 2048+ bit RSA
+keys.
 
 Unless you plan on using a smartcard device that does not support ECC
 operations, we recommend that you create an ECC signing subkey for your kernel
