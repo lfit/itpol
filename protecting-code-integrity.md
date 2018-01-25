@@ -593,6 +593,23 @@ adding or revoking subkeys, or signing other people's keys.
 
 #### Remove the master key
 
+The files in our home directory are not as well protected as we like to think.
+They can be leaked or stolen via many different means:
+
+- by accident when making quick homedir copies to set up a new workstation
+- by systems administrator negligence or malice
+- via poorly secured backups
+- via malware in desktop apps (browsers, pdf viewers, etc)
+- via coercion when crossing international borders
+
+Protecting your key with a good passphrase greatly helps reduce the risk of
+any of the above, but passphrases can be discovered via keyloggers,
+shoulder-surfing, or any number of other means. For this reason, the
+recommended setup is to remove your master key from your home directory and
+store it on offline storage.
+
+##### Removing your master key
+
 Please see the previous section and make sure you have backed up your GnuPG
 directory in its entirety. What we are about to do will render your key
 useless if you do not have a usable backup!
@@ -668,9 +685,12 @@ better to remove it from your home directory.
 ### Considerations
 
 Even though the master key is now safe from being leaked or stolen, the
-subkeys are still in the home directory. Anyone who manages to get their hands
-on those will be able to decrypt your communication or fake your signatures
-(if they know the passphrase, that is).
+subkeys are still in your home directory. Anyone who manages to get their
+hands on those will be able to decrypt your communication or fake your
+signatures (if they know the passphrase). Furthermore, each time a GnuPG
+operation is performed, the keys are loaded into system memory and can be
+stolen from there by sufficiently advanced malware (think Meltdown and
+Spectre).
 
 The best way to completely protect your keys is to move them to a specialized
 hardware device that is capable of smartcard operations.

@@ -16,7 +16,7 @@ This document covers the following topics:
 
 1. How to improve your PGP key security
 2. When and how to use PGP with git
-3. How to verify kernel developer identities
+3. How to verify fellow kernel developer identities
 
 ### Structure
 
@@ -65,7 +65,7 @@ Ever since the 2011 compromise of core kernel.org systems, the main operating
 principle of the Kernel Archives project has been to assume that any part of
 the infrastructure can be compromised at any time. For this reason, the
 administrators have taken deliberate steps to emphasize that trust must always
-be placed with the developers and never with code hosting infrastructure,
+be placed with developers and never with the code hosting infrastructure,
 regardless of how good the security practices for the latter may be.
 
 The above guiding principle is the reason why this guide is needed. We want to
@@ -79,7 +79,7 @@ Linux Kernel itself.
 
 ### Checklist
 
-- [ ] Make sure you have GnuPG version 2 _(ESSENTIAL)_
+- [ ] Make sure you use GnuPG version 2 _(ESSENTIAL)_
 - [ ] Configure gpg-agent _(ESSENTIAL)_
 - [ ] Set up a refresh cronjob _(ESSENTIAL)_
 
@@ -87,11 +87,10 @@ Linux Kernel itself.
 
 ### Installing GnuPG
 
-Your distro should already have GnuPG installed by default, unless they are
-doing something horribly wrong. We just need to verify that you are using
-version 2.x and not the legacy 1.4 release. Unfortunately, most distributions
-still package both, with the default `gpg` command invoking GnuPG v.1. To
-check, run:
+Your distro should already have GnuPG installed by default, we just need to
+verify that you are using version 2.x and not the legacy 1.4 release --
+many distributions still package both, with the default `gpg` command invoking
+GnuPG v.1. To check, run:
 
     $ gpg --version | head -n1
 
@@ -103,9 +102,9 @@ command (if you don't have it, you may need to install the gnupg2 package):
 If you see `gpg (GnuPG) 2.x.x`, then you are good to go. This guide will
 assume you have the version 2.2 of GnuPG (or later). If you are using version
 2.0 of GnuPG, then some of the commands in this guide will not work, and you
-should consider installing the latest 2.2 version of GnuPG. Most recent
-versions of gnupg-2.1 should be compatible for the purposes of this guide,
-too.
+should consider installing the latest 2.2 version of GnuPG. Versions of
+gnupg-2.1.11 and later should be compatible for the purposes of this guide as
+well.
 
 ##### Making sure you always use GnuPG v.2
 
@@ -207,8 +206,9 @@ By default, GnuPG creates the following when generating new keys:
 - A master key carrying both Certify and Sign capabilities (**[SC]**)
 - A separate subkey with the Encryption capability (**[E]**)
 
-If you used default parameters when generating your key, that is what you will
-have. You can verify by running `gpg --list-secret-keys`, for example:
+If you used the default parameters when generating your key, then that is what
+you will have. You can verify by running `gpg --list-secret-keys`, for
+example:
 
     sec   rsa2048 2018-01-23 [SC] [expires: 2020-01-23]
           000000000000000000000000AAAABBBBCCCCDDDD
@@ -289,7 +289,8 @@ home, such as your bank vault.
 **NOTE ON PRINTERS**: Your printer is probably no longer a simple dumb device
 connected to your parallel port, but since the output is still encrypted with
 your passphrase, printing out even to "cloud-integrated" modern printers
-should remain a relatively safe operation.
+should remain a relatively safe operation. One option is to change the
+passphrase on your master key immediately after you are done with paperkey.
 
 #### Back up your whole GnuPG directory
 
@@ -336,6 +337,23 @@ you'll need to use it every now and again for things like editing identities,
 adding or revoking subkeys, or signing other people's keys.
 
 #### Remove the master key from  your homedir
+
+The files in our home directory are not as well protected as we like to think.
+They can be leaked or stolen via many different means:
+
+- by accident when making quick homedir copies to set up a new workstation
+- by systems administrator negligence or malice
+- via poorly secured backups
+- via malware in desktop apps (browsers, pdf viewers, etc)
+- via coercion when crossing international borders
+
+Protecting your key with a good passphrase greatly helps reduce the risk of
+any of the above, but passphrases can be discovered via keyloggers,
+shoulder-surfing, or any number of other means. For this reason, the
+recommended setup is to remove your master key from your home directory and
+store it on offline storage.
+
+##### Removing your master key
 
 Please see the previous section and make sure you have backed up your GnuPG
 directory in its entirety. What we are about to do will render your key
@@ -410,7 +428,10 @@ which still contains your private keys.
 Even though the master key is now safe from being leaked or stolen, the
 subkeys are still in your home directory. Anyone who manages to get their
 hands on those will be able to decrypt your communication or fake your
-signatures (if they know the passphrase).
+signatures (if they know the passphrase). Furthermore, each time a GnuPG
+operation is performed, the keys are loaded into system memory and can be
+stolen from there by sufficiently advanced malware (think Meltdown and
+Spectre).
 
 The best way to completely protect your keys is to move them to a specialized
 hardware device that is capable of smartcard operations.
@@ -763,14 +784,15 @@ commit` operations (this includes `--amend`).
 
 ## How to verify kernel developer identities
 
-Signing tags is easy, but how does one go about verifying that the key used to
-sign something belongs to the actual kernel developer and not an imposter?
+Signing tags and commits is easy, but how does one go about verifying that the
+key used to sign something belongs to the actual kernel developer and not to
+a malicious imposter?
 
 ### Checklist
 
 - [ ] Configure auto-key-retrieval using WKD and DANE _(ESSENTIAL)_
 - [ ] Configure trust-model to `tofu+pgp` _(ESSENTIAL)_
-- [ ] Learn how to use keyservers safely _(ESSENTIAL)_
+- [ ] Learn how to use keyservers (more) safely _(ESSENTIAL)_
 
 ### Considerations
 
@@ -780,7 +802,7 @@ If you are not already someone with an extensive collection of other
 developers' public keys, then you can jumpstart your keyring by relying
 on key auto-discovery and auto-retrieval. GnuPG can piggyback on other
 delegated trust technologies, namely DNSSEC and TLS, to get you going if the
-prospect of starting your own Web of Trust going is too daunting.
+prospect of starting your own Web of Trust from scratch is too daunting.
 
 Add the following to your `~/.gnupg/gpg.conf`:
 
@@ -800,10 +822,6 @@ keys for Linus Torvalds and Greg Kroah-Hartman (if you don't already have
 them):
 
     $ gpg --locate-keys torvalds@kernel.org gregkh@kernel.org
-
-You wouldn't normally have to use `--locate-keys` manually, as the benefit of
-`auto-key-retrieve` is that it will attempt to fetch missing keys
-automatically before bailing out with "public key not found" errors.
 
 If you have a kernel.org account, then you should make sure that you have
 [added the kernel.org UID to your key](https://korg.wiki.kernel.org/userdoc/mail#adding_a_kernelorg_uid_to_your_pgp_key)
@@ -839,8 +857,62 @@ default in GnuPG v2). To set it, add (or modify) the `trust-model` setting in
 
     trust-model tofu+pgp
 
-#### Learn to use keyservers safely
+#### Learn to use keyservers (more) safely
 
 If, despite setting `auto-key-retrieve`, you still get a `public key not
 found` error when trying to validate someone's tag, then you should attempt to
-lookup that key using a keyserver.
+lookup that key using a keyserver. It is important to keep in mind that there
+is absolutely no guarantee that the key you retrieve from a keyserver belongs
+to the actual person -- that much is by design. You are supposed to use the
+Web of Trust to establish key validity.
+
+How to properly maintain the Web of Trust is beyond the scope of this
+document, simply because doing it properly requires both effort and dedication
+that tends to be beyond the caring threshold of most human beings. Here are
+some shortcuts that will help reduce the risk of importing a malicious key.
+
+First, let's say you've tried to run `git verify-tag` but it returned an error
+saying the key is not found:
+
+    $ git verify-tag sunxi-fixes-for-4.15-2
+    gpg: Signature made Sun 07 Jan 2018 10:51:55 PM EST
+    gpg:                using RSA key DA73759BF8619E484E5A3B47389A54219C0F2430
+    gpg:                issuer "wens@...org"
+    gpg: Can't check signature: No public key
+
+Let's query the keyserver for more info about that key fingerprint (the
+fingerprint probably belongs to a subkey, so we can't use it directly without
+finding out the ID of the master key it is associated with):
+
+    $ gpg --search DA73759BF8619E484E5A3B47389A54219C0F2430
+    gpg: data source: hkp://keys.gnupg.net
+    (1) Chen-Yu Tsai <wens@...org>
+          4096 bit RSA key C94035C21B4F2AEB, created: 2017-03-14, expires: 2019-03-15
+    Keys 1-1 of 1 for "DA73759BF8619E484E5A3B47389A54219C0F2430".  Enter number(s), N)ext, or Q)uit >
+
+Locate the ID of the master key in the output, in our example
+`C94035C21B4F2AEB`. Now say `q` and display the key of Linus Torvalds that you
+have on your keyring:
+
+    $ git --list-key torvalds@kernel.org
+    pub   rsa2048 2011-09-20 [SC]
+          ABAF11C65A2970B130ABE3C479BE3E4300411886
+    uid           [ unknown] Linus Torvalds <torvalds@kernel.org>
+    sub   rsa2048 2011-09-20 [E]
+
+Next, open the [PGP pathfinder](https://pgp.cs.uu.nl/). In the "From" field,
+paste the key fingerprint of Linus Torvalds from the output above. In the "To"
+field, paste they key-id you found via `gpg --search` of the unknown key, and
+check the results:
+
+- [From Linus to Chen-Yu](https://pgp.cs.uu.nl/paths/79BE3E4300411886/to/C94035C21B4F2AEB.html)
+
+If you get a few decent trust paths, then it's a pretty good indication that
+it is a valid key. You can add it to your keyring from the keyserver now:
+
+    $ gpg --recv-key C94035C21B4F2AEB
+
+This process is not perfect, and you are obviously trusting the administrators
+of the PGP Pathfinder service to not be malicious. However, if you do not
+carefully maintain your own web of trust, then it is an improvement over
+blindly trusting keyservers.
