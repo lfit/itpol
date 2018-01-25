@@ -14,9 +14,10 @@ covers the following topics:
 3. How to protect your developer accounts
 
 We use the term "Free" as in "Freedom," but this guide can also be used for
-developing non-free or source-available ("Open Source") software. If you write
-code that goes into public source repositories, you can benefit from getting
-acquainted with and following this guide.
+any other kind of software that relies on contributions from a distributed
+team of developers. If you write code that goes into public source
+repositories, you can benefit from getting acquainted with and following this
+guide.
 
 ### Structure
 
