@@ -87,7 +87,7 @@ Linux Kernel itself.
 
 ### Installing GnuPG
 
-Your distro should already have GnuPG installed by default, we just need to
+Your distro should already have GnuPG installed by default, you just need to
 verify that you are using version 2.x and not the legacy 1.4 release --
 many distributions still package both, with the default `gpg` command invoking
 GnuPG v.1. To check, run:
@@ -376,8 +376,8 @@ The output will be something like this:
           Keygrip = 3333000000000000000000000000000000000000
 
 Find the keygrip entry that is beneath the `pub` line (right under the master
-key fingerprint). This will correspond directly to a file in your home
-`.gnupg` directory:
+key fingerprint). This will correspond directly to a file in your `~/.gnupg`
+directory:
 
     $ cd ~/.gnupg/private-keys-v1.d
     $ ls
@@ -646,9 +646,9 @@ want to import these changes back into your regular working directory:
 
 #### Extending key expiration date
 
-The master key we created has the default expiration date of 2 years from the
-date of creation. This is done both for security reasons and to make obsolete
-keys eventually disappear from keyservers.
+The master key has the default expiration date of 2 years from the date of
+creation. This is done both for security reasons and to make obsolete keys
+eventually disappear from keyservers.
 
 To extend the expiration on your key by a year from current date, just run:
 
@@ -721,7 +721,8 @@ To verify a signed tag, simply use the `verify-tag` command:
     $ git verify-tag [tagname]
 
 If you are verifying someone else's git tag, then you will need to import
-their PGP key. Please refer to the "Web of Trust" section below.
+their PGP key. Please refer to the "how to verify kernel developer identities"
+section below.
 
 ##### Verifying at pull time
 
