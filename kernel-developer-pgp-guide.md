@@ -275,7 +275,7 @@ Paperkey should already be packaged for most distributions.
 
 Run the following command to create a hardcopy backup of your private key:
 
-    $ gpg --export-secret-key [fpr] | paperkey > /tmp/key-backup.txt
+    $ gpg --export-secret-key [fpr] | paperkey -o /tmp/key-backup.txt
 
 Print out that file (or pipe the output straight to lpr), then take a pen and
 write your passphrase on the margin of the paper. **This is strongly

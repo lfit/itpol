@@ -390,7 +390,7 @@ all Linux distros, as well as installable via `brew install paperkey` on Macs.
 Run the following command, replacing `[fpr]` with the full fingerprint of your
 key:
 
-    $ gpg --export-secret-key [fpr] | paperkey > /tmp/key-backup.txt
+    $ gpg --export-secret-key [fpr] | paperkey -o /tmp/key-backup.txt
 
 The output will be in a format that is easy to OCR or input by hand, should
 you ever need to recover it. Print out that file, then take a pen and write
