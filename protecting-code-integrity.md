@@ -777,11 +777,10 @@ there are no convenient command-line switches:
     Admin commands are allowed
     gpg/card> passwd
 
-You should set the user PIN (1), Admin PIN (3), and the Reset Code (4). Please
-make sure to record and store these in a safe place -- especially the Admin
-PIN and the Reset Code (which allows you to completely wipe the smartcard).
-You so rarely need to use the Admin PIN, that you will inevitably forget what
-it is if you do not record it.
+You should set the user PIN (1) and Admin PIN (3). Please make sure to record 
+and store these in a safe place -- especially the Admin PIN. You so rarely 
+need to use the Admin PIN, that you will inevitably forget what it is if 
+you do not record it.
 
 Getting back to the main card menu, you can also set other values (such as
 name, sex, login data, etc), but it's not necessary and will additionally leak
