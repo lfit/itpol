@@ -16,4 +16,4 @@ Attribution-ShareAlike 4.0 International License. To view a copy of this
 license, visit http://creativecommons.org/licenses/by-sa/4.0/ or send a letter
 to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-[1]: http://www.linux.com/news/featured-blogs/167-amanda-mcpherson/850607-linux-foundation-sysadmins-open-source-their-it-policies
+[1]: https://www.linuxfoundation.org/blog/2015/09/linux-foundation-sysadmins-open-source-their-it-policies/
