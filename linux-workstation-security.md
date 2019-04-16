@@ -791,7 +791,7 @@ This work is licensed under a
 [15]: https://github.com/lfit/ssh-gpg-smartcard-config
 [16]: http://www.pavelkogan.com/2014/05/23/luks-full-disk-encryption/
 [17]: https://en.wikipedia.org/wiki/Cold_boot_attack
-[18]: http://www.linux.com/news/featured-blogs/167-amanda-mcpherson/850607-linux-foundation-sysadmins-open-source-their-it-policies
+[18]: https://www.linuxfoundation.org/blog/2015/09/linux-foundation-sysadmins-open-source-their-it-policies/
 [19]: https://firejail.wordpress.com/
 [20]: https://firejail.wordpress.com/documentation-2/firefox-guide/
 [21]: https://www.nitrokey.com/
