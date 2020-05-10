@@ -4,6 +4,36 @@ Updated: 2015-08-13
 
 *Status: OUTDATED*
 
+### Table of contents
+
+- [Trusted Team Communication](#trusted-team-communication)
+    - [Table of contents](#table-of-contents)
+  - [Trusting email](#trusting-email)
+    - [OpenPGP vs S/MIME](#openpgp-vs-smime)
+      - [Main upsides of S/MIME](#main-upsides-of-smime)
+      - [Main downsides of S/MIME](#main-downsides-of-smime)
+      - [Main upsides of OpenPGP](#main-upsides-of-openpgp)
+      - [Main downsides of OpenPGP](#main-downsides-of-openpgp)
+    - [Understanding the OpenPGP Web of Trust](#understanding-the-openpgp-web-of-trust)
+    - [Using the Web of Trust in your team](#using-the-web-of-trust-in-your-team)
+      - [Spinning the web](#spinning-the-web)
+        - [Yes, but what if they are 12 timezones away?](#yes-but-what-if-they-are-12-timezones-away)
+        - [Keysigning parties](#keysigning-parties)
+    - [Sending trusted emails](#sending-trusted-emails)
+      - [When to sign](#when-to-sign)
+      - [When to encrypt](#when-to-encrypt)
+  - [Trusting IM sessions](#trusting-im-sessions)
+    - [One-on-one messaging](#one-on-one-messaging)
+    - [Group messaging](#group-messaging)
+  - [Trusting git commits](#trusting-git-commits)
+      - [Signed-off-by's](#signed-off-bys)
+      - [Signed tags and commits](#signed-tags-and-commits)
+  - [Releasing code trusted by the community](#releasing-code-trusted-by-the-community)
+  - [Securing infrastructure access](#securing-infrastructure-access)
+    - [Using PGP keys with SSH](#using-pgp-keys-with-ssh)
+  - [Checklist](#checklist)
+  - [License](#license)
+
 Establishing trusted communication between members of your team is paramount
 not only to avoid potential security problems associated with phishing and
 impersonation, but also to make it possible to exchange sensitive information
