@@ -23,7 +23,7 @@ Updated: 2018-01-24
   - [Protecting your master PGP key](#protecting-your-master-pgp-key)
     - [Checklist](#checklist-1)
     - [Considerations](#considerations-1)
-      - [Understanding the "Master" (Certify) key](#understanding-the-%22master%22-certify-key)
+      - [Understanding the "Master" (Certify) key](#understanding-the-master-certify-key)
       - [Ensure your passphrase is strong](#ensure-your-passphrase-is-strong)
       - [Create a separate Signing subkey](#create-a-separate-signing-subkey)
         - [RSA vs. ECC subkeys](#rsa-vs-ecc-subkeys)
