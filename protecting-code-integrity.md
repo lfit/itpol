@@ -1,6 +1,6 @@
 # Protecting code integrity with PGP
 
-Updated: 2018-01-22
+Updated: 2021-05-13
 
 *Status: CURRENT*
 
@@ -23,35 +23,31 @@ Updated: 2018-01-22
       - [Web of Trust (WOT) vs. Trust on First Use (TOFU)](#web-of-trust-wot-vs-trust-on-first-use-tofu)
     - [Installing OpenPGP software](#installing-openpgp-software)
       - [Installing GnuPG](#installing-gnupg)
-        - [GnuPG 1 vs. 2](#gnupg-1-vs-2)
-        - [Making sure you always use GnuPG v.2](#making-sure-you-always-use-gnupg-v2)
-  - [Generating and protecting your master PGP key](#generating-and-protecting-your-master-pgp-key)
+  - [Generating and protecting your certification key](#generating-and-protecting-your-certification-key)
     - [Checklist](#checklist-1)
     - [Considerations](#considerations-1)
-      - [Understanding the "Master" (Certify) key](#understanding-the-%22master%22-certify-key)
-      - [Before you create the master key](#before-you-create-the-master-key)
+      - [Understanding the certification key](#understanding-the-certification-key)
+      - [Before you create the certification key](#before-you-create-the-certification-key)
         - [Primary identity](#primary-identity)
         - [Passphrase](#passphrase)
         - [Algorithm and key strength](#algorithm-and-key-strength)
-      - [Generate the master key](#generate-the-master-key)
-      - [Back up your master key](#back-up-your-master-key)
+      - [Generate the certification key](#generate-the-certification-key)
+      - [Back up your certification key](#back-up-your-certification-key)
       - [Add relevant identities](#add-relevant-identities)
         - [Pick the primary UID](#pick-the-primary-uid)
   - [Generating PGP subkeys](#generating-pgp-subkeys)
     - [Checklist](#checklist-2)
     - [Considerations](#considerations-2)
       - [Create the subkeys](#create-the-subkeys)
-      - [Upload your public keys to the keyserver](#upload-your-public-keys-to-the-keyserver)
-        - [Upload your public key to GitHub](#upload-your-public-key-to-github)
-      - [Set up a refresh cronjob](#set-up-a-refresh-cronjob)
-  - [Moving your master key to offline storage](#moving-your-master-key-to-offline-storage)
+      - [Upload your public key to GitHub](#upload-your-public-key-to-github)
+  - [Moving your certification key to offline storage](#moving-your-certification-key-to-offline-storage)
     - [Checklist](#checklist-3)
     - [Considerations](#considerations-3)
       - [Back up your GnuPG directory](#back-up-your-gnupg-directory)
       - [Prepare detachable encrypted storage](#prepare-detachable-encrypted-storage)
       - [Back up your GnuPG directory](#back-up-your-gnupg-directory-1)
-      - [Remove the master key](#remove-the-master-key)
-        - [Removing your master key](#removing-your-master-key)
+      - [Remove the certification key](#remove-the-certification-key)
+        - [Removing your certification key](#removing-your-certification-key)
       - [Remove the revocation certificate](#remove-the-revocation-certificate)
   - [Move the subkeys to a hardware device](#move-the-subkeys-to-a-hardware-device)
     - [Checklist](#checklist-4)
@@ -65,7 +61,7 @@ Updated: 2018-01-22
         - [Verifying that the keys were moved](#verifying-that-the-keys-were-moved)
       - [Verifying that the smartcard is functioning](#verifying-that-the-smartcard-is-functioning)
     - [Other common GnuPG operations](#other-common-gnupg-operations)
-      - [Mounting your master key offline storage](#mounting-your-master-key-offline-storage)
+      - [Mounting your offline storage](#mounting-your-offline-storage)
         - [Updating your regular GnuPG working directory](#updating-your-regular-gnupg-working-directory)
       - [Extending key expiration date](#extending-key-expiration-date)
       - [Revoking identities](#revoking-identities)
@@ -78,7 +74,6 @@ Updated: 2018-01-22
         - [Hashing function](#hashing-function)
       - [Annotated tags and tag signatures](#annotated-tags-and-tag-signatures)
       - [Signed commits](#signed-commits)
-      - [Signed pushes](#signed-pushes)
       - [Configure git to use your PGP key](#configure-git-to-use-your-pgp-key)
       - [How to work with signed tags](#how-to-work-with-signed-tags)
         - [How to verify signed tags](#how-to-verify-signed-tags)
@@ -325,66 +320,39 @@ of the commands in the guide to work for you, unless you have a unix-like
 environment set up. For all other platforms, you'll need to do your own
 research to find the correct places to download and install GnuPG.
 
-##### GnuPG 1 vs. 2
-
-Both GnuPG v.1 and GnuPG v.2 implement the same standard, but they provide
-incompatible libraries and command-line tools, so many distributions ship both
-the legacy version 1 and the latest version 2. You need to make sure you are
-always using GnuPG v.2.
-
-First, run:
-
-    $ gpg --version | head -n1
-
-If you see `gpg (GnuPG) 1.4.x`, then you are using GnuPG v.1. Try the `gpg2`
-command:
-
-    $ gpg2 --version | head -n1
-
-If you see `gpg (GnuPG) 2.x.x`, then you are good to go. This guide will
-assume you have the version 2.2 of GnuPG (or later). If you are using version
-2.0 of GnuPG, some of the commands in this guide will not work, and you should
-consider installing the latest 2.2 version of GnuPG.
-
-##### Making sure you always use GnuPG v.2
-
-If you have both `gpg` and `gpg2` commands, you should make sure you are
-always using GnuPG v2, not the legacy version. You can make sure of this by
-setting the alias:
-
-    $ alias gpg=gpg2
-
-You can put that in your `.bashrc` to make sure it's always loaded whenever
-you use the gpg commands.
-
-## Generating and protecting your master PGP key
+## Generating and protecting your certification key
 
 ### Checklist
 
-- [ ] Generate a 4096-bit RSA master key _(ESSENTIAL)_
-- [ ] Back up the master key using paperkey _(ESSENTIAL)_
+- [ ] Generate a 4096-bit RSA certification key _(ESSENTIAL)_
+- [ ] Back up the certification key using paperkey _(ESSENTIAL)_
 - [ ] Add all relevant identities _(ESSENTIAL)_
 
 ### Considerations
 
-#### Understanding the "Master" (Certify) key
+#### Understanding the certification key
 
-In this and next section we'll talk about the "master key" and "subkeys". It
-is important to understand the following:
+In this and next section we'll talk about the certification key and subkeys.
+The certification key is often called "the master key," but it is a poor
+analogy, as it doesn't act in any way like a physical master key (in the sense
+that it cannot decrypt content encrypted to any of the subkeys, as one
+example). For this reason, we'll stick to calling it the "certification key."
 
-1. There are no technical differences between the "master key" and "subkeys."
+It is important to understand the following:
+
+1. There are no technical differences between the certify key and any of the
+   subkeys
 2. At creation time, we assign functional limitations to each key by
    giving it specific capabilities.
-3. A PGP key can have 4 capabilities.
+3. A PGP key can have 4 capabilities:
    - **[S]** key can be used for signing
    - **[E]** key can be used for encryption
    - **[A]** key can be used for authentication
    - **[C]** key can be used for certifying other keys
 4. A single key may have multiple capabilities.
 
-The key carrying the **[C]** (certify) capability is considered the "master"
-key because it is the only key that can be used to indicate relationship with
-other keys. Only the **[C]** key can be used to:
+The key carrying the **[C]** (certify) capability is used to indicate
+relationship with other PGP keys. Only the **[C]** key can be used to:
 
 - add or revoke other keys (subkeys) with S/E/A capabilities
 - add, change or revoke identities (uids) associated with the key
@@ -395,10 +363,10 @@ In the Free Software world, the **[C]** key is your digital identity. Once you
 create that key, you should take extra care to protect it and prevent it from
 falling into malicious hands.
 
-#### Before you create the master key
+#### Before you create the certify key
 
-Before you create your master key you need to pick your primary identity and
-your master passphrase.
+Before you create your certify key you need to pick your primary identity and
+your passphrase.
 
 ##### Primary identity
 
@@ -428,23 +396,24 @@ to type and easy to remember.
 
 ##### Algorithm and key strength
 
-Even though GnuPG has had support for Elliptic Curve crypto for a while now,
-we'll be sticking to RSA keys, at least for a little while longer. While it is
-possible to start using ED25519 keys right now, it is likely that you will
-come across tools and hardware devices that will not be able to handle them
-correctly.
+GnuPG supports many algorithms, but we will only consider the below two:
 
-You may also wonder why the master key is 4096-bit, if later in the guide we
-state that 2048-bit keys should be good enough for the lifetime of RSA public
-key cryptography. The reasons are mostly social and not technical: master keys
-happen to be the most visible ones on the keychain, and some of the developers
-you interact with will inevitably judge you negatively if your master key has
-fewer bits than theirs.
+- RSA for the certification key
+- ECC (Elliptic Curve) for all other subkeys
 
-#### Generate the master key
+We use RSA for the certification key mainly for compatibility reasons -- there
+is probably still some tooling that does not properly handle ECC keys, so
+sticking with RSA for the certification key makes sense. We will use it only
+very occasionally, so the slowness/size considerations are unimportant.
 
-To generate your new master key, issue the following command, putting in the
-right values instead of "Alice Engineer:"
+All of the day-to-day work will be done using subkeys, so picking ECC makes
+perfect sense there -- it will be faster and the resulting signatures will be
+dramatically smaller.
+
+#### Generate the certification key
+
+To generate your new certification key, issue the following command, putting
+in the right values instead of "Alice Engineer:"
 
     $ gpg --quick-generate-key 'Alice Engineer <alice@example.org>' rsa4096 cert
 
@@ -454,7 +423,7 @@ the command completes.
 
 Review the output of the command, it will be something like this:
 
-    pub   rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+    pub   rsa4096 2021-05-01 [C] [expires: 2023-05-01]
           111122223333444455556666AAAABBBBCCCCDDDD
     uid                      Alice Engineer <alice@example.org>
 
@@ -472,7 +441,7 @@ At this point, I suggest you open a text editor, copy the fingerprint of your
 new key and paste it there. You'll need to use it for the next few steps, so
 having it close by will be handy.
 
-#### Back up your master key
+#### Back up your certification key
 
 For disaster recovery purposes -- and especially if you intend to use the Web
 of Trust and collect key signatures from other project developers -- you
@@ -508,9 +477,9 @@ safe operation, but use your best paranoid judgement.
 #### Add relevant identities
 
 If you have multiple relevant email addresses (personal, work, open-source
-project, etc), you should add them to your master key. You don't need to do
-this for any addresses that you don't expect to use with PGP (e.g. probably
-not your school alumni address).
+project, etc), you should add them to your key. You don't need to do this for
+any addresses that you don't expect to use with PGP (e.g. probably not your
+school alumni address).
 
 The command is (put the full key fingerprint instead of `[fpr]`):
 
@@ -531,78 +500,58 @@ different from what you want, you should fix it back:
 
 ### Checklist
 
-- [ ] Generate a 2048-bit Encryption subkey _(ESSENTIAL)_
-- [ ] Generate a 2048-bit Signing subkey _(ESSENTIAL)_
-- [ ] Generate a 2048-bit Authentication subkey _(NICE)_
-- [ ] Upload your public keys to a PGP keyserver _(ESSENTIAL)_
-- [ ] Set up a refresh cronjob _(ESSENTIAL)_
+- [ ] Generate the Encryption subkey _(ESSENTIAL)_
+- [ ] Generate the Signing subkey _(ESSENTIAL)_
+- [ ] Generate the Authentication subkey _(NICE)_
+- [ ] Upload your public keys to a PGP keyserver _(NICE)_
+- [ ] Set up a refresh cronjob _(NICE)_
 
 ### Considerations
 
-Now that we've created the master key, let's create the keys you'll actually
-be using for day-to-day work. We create 2048-bit keys because a lot of
-specialized hardware (we'll discuss this further) does not handle larger keys,
-but also for pragmatic reasons. If we ever find ourselves in a world where
-2048-bit RSA keys are not considered good enough, it will be because of
-fundamental breakthroughs in computing or mathematics and therefore longer
-4096-bit keys will not make much difference.
+Now that we've created the certification key, let's create the keys you'll
+actually be using for day-to-day work. Before we do this, we need to pick the
+ECC algorithm flavor.
+
+#### ED25519 or NIST?
+
+We won't go into the reasons behind why ECC is split into two camps. All you
+need to know is that many people consider ed25519 "more pure" due to the way
+its underlying curve primitives were selected and NIST "less pure" because
+that selection process was not as public or thorough.
+
+Do you plan to use a hardware device like a Yubikey for storing your subkeys?
+Then pick NIST (use "nistp256" instead of "cv25519" and "ed25519" below). If
+you just plan to store your subkeys on your computer, then pick ED25519 (the
+GnuPG default).
+
+Since you can revoke subkeys and create new ones at any time, this is not a
+life or death kind of decision. If in doubt, pick ed25519.
 
 #### Create the subkeys
 
 To create the subkeys, run:
 
-    $ gpg --quick-add-key [fpr] rsa2048 encr
-    $ gpg --quick-add-key [fpr] rsa2048 sign
+    $ gpg --quick-add-key [fpr] cv25519 encr
+    $ gpg --quick-add-key [fpr] ed25519 sign
 
 You can also create the Authentication key, which will allow you to use your
 PGP key for ssh purposes:
 
-    $ gpg --quick-add-key [fpr] rsa2048 auth
+    $ gpg --quick-add-key [fpr] ed25519 auth
 
 You can review your key information using `gpg --list-key [fpr]`:
 
-    pub   rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+    pub   rsa4096 2021-05-01 [C] [expires: 2023-05-01]
           111122223333444455556666AAAABBBBCCCCDDDD
     uid           [ultimate] Alice Engineer <alice@example.org>
     uid           [ultimate] Alice Engineer <allie@example.net>
-    sub   rsa2048 2017-12-06 [E]
-    sub   rsa2048 2017-12-06 [S]
+    sub   cv25519 2021-05-01 [E]
+    sub   ed25519 2021-05-01 [S]
 
-#### Upload your public keys to the keyserver
+#### Upload your public key to GitHub
 
-Your key creation is complete, so now you need to make it easier for others to
-find it by uploading it to one of the public keyservers. (Do not do this step
-if you're just messing around and aren't planning on actually using the key
-you've created, as this just litters keyservers with useless data.)
-
-    $ gpg --send-key [fpr]
-
-If this command does not succeed, you can try specifying the keyserver on a
-port that is most likely to work:
-
-    $ gpg --keyserver hkp://pgp.mit.edu:80 --send-key [fpr]
-
-Most keyservers communicate with each-other, so your key information will
-eventually synchronize to all the others.
-
-**NOTE ON PRIVACY:** Keyservers are completely public and therefore, by
-design, leak potentially sensitive information about you, such as your full
-name, nicknames, and personal or work email addresses. If you sign other
-people's keys or someone signs yours, keyservers will additionally become
-leakers of your social connections. Once such personal information makes it to
-the keyservers, it becomes impossible to edit or delete. Even if you revoke a
-signature or identity, that does not delete them from your key record, just
-marks them as revoked -- making them stand out even more.
-
-That said, if you participate in software development on a public project, all
-of the above information is already public record, and therefore making it
-additionally available via keyservers does not result in a net loss in
-privacy.
-
-##### Upload your public key to GitHub
-
-If you use GitHub in your development (and who doesn't?), you should upload
-your key following the instructions they have provided:
+If you use GitHub in your development, you should upload your key following
+the instructions they have provided:
 
 - [Adding a PGP key to your GitHub account](https://help.github.com/articles/adding-a-new-gpg-key-to-your-github-account/)
 
@@ -610,39 +559,33 @@ To generate the public key output suitable to paste in, just run:
 
     $ gpg --export --armor [fpr]
 
-#### Set up a refresh cronjob
+#### Upload your public key to keys.openpgp.org
 
-You will need to regularly refresh your keyring in order to get the latest
-changes on other people's public keys. You can set up a cronjob to do that:
+To make it easier for others to find your public key, you can upload it to the
+keys.openpgp.org keyserver. Please follow the instructions provided here:
 
-    $ crontab -e
+- [Upload to keys.openpgp.org](https://keys.openpgp.org/about/usage#gnupg-upload)
 
-Add the following on a new line:
 
-    @daily /usr/bin/gpg2 --refresh >/dev/null 2>&1
-
-**NOTE**: check the full path to your `gpg` or `gpg2` command and use the `gpg2`
-command if regular `gpg` for you is the legacy GnuPG v.1.
-
-## Moving your master key to offline storage
+## Moving your cerification key to offline storage
 
 ### Checklist
 
 - [ ] Prepare encrypted detachable storage _(ESSENTIAL)_
 - [ ] Back up your GnuPG directory _(ESSENTIAL)_
-- [ ] Remove the master key from your home directory _(NICE)_
+- [ ] Remove the certification key from your home directory _(NICE)_
 - [ ] Remove the revocation certificate from your home directory _(NICE)_
 
 ### Considerations
 
-Why would you want to remove your master **[C]** key from your home directory?
-This is generally done to prevent your master key from being stolen or
-accidentally leaked. Private keys are tasty targets for malicious actors -- we
-know this from several successful malware attacks that scanned users' home
+Why would you want to remove your certification (**[C]**) key from your home
+directory? This is generally done to prevent it from being stolen or
+accidentally leaked. Private keys are tasty targets for malicious actors --
+we know this from several successful malware attacks that scanned users' home
 directories and uploaded any private key content found there.
 
 It would be very damaging for any developer to have their PGP keys stolen --
-in the Free Software world this is often tantamount to identity theft.
+in the Free Software world this is basically equal to identity theft.
 Removing private keys from your home directory helps protect you from such
 events.
 
@@ -662,7 +605,8 @@ for backup purposes. You will first need to encrypt them:
 - [Apple instructions](https://support.apple.com/kb/PH25745)
 - [Linux instructions](https://help.ubuntu.com/community/EncryptedFilesystemsOnRemovableStorage)
 
-For the encryption passphrase, you can use the same one as on your master key.
+For the encryption passphrase, you can use the same one as on your private
+key.
 
 #### Back up your GnuPG directory
 
@@ -688,7 +632,7 @@ a random USB drive, and put in a safe place -- but not too far away, because
 you'll need to use it every now and again for things like editing identities,
 adding or revoking subkeys, or signing other people's keys.
 
-#### Remove the master key
+#### Remove the certification key
 
 The files in our home directory are not as well protected as we like to think.
 They can be leaked or stolen via many different means:
@@ -702,32 +646,32 @@ They can be leaked or stolen via many different means:
 Protecting your key with a good passphrase greatly helps reduce the risk of
 any of the above, but passphrases can be discovered via keyloggers,
 shoulder-surfing, or any number of other means. For this reason, the
-recommended setup is to remove your master key from your home directory and
-store it on offline storage.
+recommended setup is to remove your certification key from your home directory
+and store it on offline storage.
 
-##### Removing your master key
+##### Removing your certification key
 
 Please see the previous section and make sure you have backed up your GnuPG
 directory in its entirety. What we are about to do will render your key
 useless if you do not have a usable backup!
 
-First, identify the keygrip of your master key:
+First, identify the "keygrip" of your certification key:
 
     $ gpg --with-keygrip --list-key [fpr]
 
 The output will be something like this:
 
-    pub   rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+    pub   rsa4096 2021-05-01 [C] [expires: 2023-05-01]
           111122223333444455556666AAAABBBBCCCCDDDD
           Keygrip = AAAA999988887777666655554444333322221111
     uid           [ultimate] Alice Engineer <alice@example.org>
     uid           [ultimate] Alice Engineer <allie@example.net>
-    sub   rsa2048 2017-12-06 [E]
+    sub   cv25519 2021-05-01 [E]
           Keygrip = BBBB999988887777666655554444333322221111
-    sub   rsa2048 2017-12-06 [S]
+    sub   ed25519 2021-05-01 [S]
           Keygrip = CCCC999988887777666655554444333322221111
 
-Find the keygrip entry that is beneath the `pub` line (right under the master
+Find the keygrip entry that is beneath the `pub` line (right under the public
 key fingerprint). This will correspond directly to a file in your home
 `.gnupg` directory:
 
@@ -738,34 +682,34 @@ key fingerprint). This will correspond directly to a file in your home
     CCCC999988887777666655554444333322221111.key
 
 All you have to do is simply remove the `.key` file that corresponds to the
-master keygrip:
+certification keygrip:
 
     $ cd ~/.gnupg/private-keys-v1.d
     $ rm AAAA999988887777666655554444333322221111.key
 
 Now, if you issue the `--list-secret-keys` command, it will show that the
-master key is missing (the `#` indicates it is not available):
+**[C]** key is not present (indicated by the `#` character):
 
     $ gpg --list-secret-keys
-    sec#  rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+    sec#  rsa4096 2021-05-01 [C] [expires: 2023-05-01]
           111122223333444455556666AAAABBBBCCCCDDDD
     uid           [ultimate] Alice Engineer <alice@example.org>
     uid           [ultimate] Alice Engineer <allie@example.net>
-    ssb   rsa2048 2017-12-06 [E]
-    ssb   rsa2048 2017-12-06 [S]
+    ssb   cv25519 2021-05-01 [E]
+    ssb   ed25519 2021-05-01 [S]
 
 #### Remove the revocation certificate
 
 Another file you should remove (but keep in backups) is the revocation
-certificate that was automatically created with your master key. A revocation
-certificate allows someone to permanently mark your key as revoked, meaning it
-can no longer be used or trusted for any purpose. You would normally use it to
-revoke a key that, for some reason, you can no longer control -- for example,
-if you had lost the key passphrase.
+certificate that was automatically created with your certification key. A
+revocation certificate allows someone to permanently mark your key as revoked,
+meaning it can no longer be used or trusted for any purpose. You would
+normally use it to revoke a key that, for some reason, you can no longer
+control -- for example, if you had lost the key passphrase.
 
-Just as with the master key, if a revocation certificate leaks into malicious
-hands, it can be used to destroy your developer digital identity, so it's
-better to remove it from your home directory.
+Just as with the certification key, if a revocation certificate leaks into
+malicious hands, it can be used to destroy your developer digital identity, so
+it's better to remove it from your home directory.
 
     cd ~/.gnupg/openpgp-revocs.d
     rm [fpr].rev
@@ -781,7 +725,7 @@ better to remove it from your home directory.
 
 ### Considerations
 
-Even though the master key is now safe from being leaked or stolen, the
+Even though the certification key is now safe from being leaked or stolen, the
 subkeys are still in your home directory. Anyone who manages to get their
 hands on those will be able to decrypt your communication or fake your
 signatures (if they know the passphrase). Furthermore, each time a GnuPG
@@ -826,17 +770,18 @@ features on the internal chip. Here are a few recommendations:
 
 - [Nitrokey Start](https://shop.nitrokey.com/shop/product/nitrokey-start-6):
   Open hardware and Free Software: one of the cheapest options for GnuPG use,
-  but with fewest extra security features
+  but with fewest extra security features.
 - [Nitrokey Pro](https://shop.nitrokey.com/shop/product/nitrokey-pro-3):
   Similar to the Nitrokey Start, but is tamper-resistant and offers more
-  security features (but not U2F, see the Fido U2F section of the guide)
-- [Yubikey 4](https://www.yubico.com/product/yubikey-4-series/): Proprietary
-  hardware and software, but cheaper than Nitrokey Pro and comes available
-  in the USB-C form that is more useful with newer laptops; also offers
-  additional security features such as U2F
+  security features (but not U2F, see the Fido U2F section of the guide); only
+  supports NIST ECC cryptography.
+- [Yubikey](https://www.yubico.com/): Proprietary hardware and software, but
+  cheaper than Nitrokey Pro and comes available in the USB-C form that is more
+  useful with newer laptops; also offers additional security features such as
+  U2F; only supports NIST ECC cryptography.
 
-Our recommendation is to pick a device that is capable of both smartcard
-functionality and U2F, which, at the time of writing, means a Yubikey 4.
+If you want to use ED25519 subkeys, then your only choice is a Nitrokey Start,
+though once Nitrokey 3 Pro is available, it should also be considered.
 
 #### Configuring your smartcard device
 
@@ -894,12 +839,12 @@ the full 40-character fingerprint of your key.
     Secret subkeys are available.
 
     pub  rsa4096/AAAABBBBCCCCDDDD
-         created: 2017-12-07  expires: 2019-12-07  usage: C
+         created: 2021-05-01  expires: 2023-05-01  usage: C
          trust: ultimate      validity: ultimate
-    ssb  rsa2048/1111222233334444
-         created: 2017-12-07  expires: never       usage: E
-    ssb  rsa2048/5555666677778888
-         created: 2017-12-07  expires: never       usage: S
+    ssb  cv25519/1111222233334444
+         created: 2021-05-01  expires: never       usage: E
+    ssb  ed25519/5555666677778888
+         created: 2021-05-01  expires: never       usage: S
     [ultimate] (1). Alice Engineer <alice@example.org>
     [ultimate] (2)  Alice Engineer <allie@example.net>
 
@@ -917,12 +862,12 @@ typing `key 1` (it's the first one in the listing, our **[E]** subkey):
 The output should be subtly different:
 
     pub  rsa4096/AAAABBBBCCCCDDDD
-         created: 2017-12-07  expires: 2019-12-07  usage: C
+         created: 2021-05-01  expires: 2023-05-01  usage: C
          trust: ultimate      validity: ultimate
-    ssb* rsa2048/1111222233334444
-         created: 2017-12-07  expires: never       usage: E
-    ssb  rsa2048/5555666677778888
-         created: 2017-12-07  expires: never       usage: S
+    ssb* cv25519/1111222233334444
+         created: 2021-05-01  expires: never       usage: E
+    ssb  ed25519/5555666677778888
+         created: 2021-05-01  expires: never       usage: S
     [ultimate] (1). Alice Engineer <alice@example.org>
     [ultimate] (2)  Alice Engineer <allie@example.net>
 
@@ -974,12 +919,12 @@ If you perform `--list-secret-keys` now, you will see a subtle difference in
 the output:
 
     $ gpg --list-secret-keys
-    sec#  rsa4096 2017-12-06 [C] [expires: 2019-12-06]
+    sec#  rsa4096 2021-05-01 [C] [expires: 2023-05-01]
           111122223333444455556666AAAABBBBCCCCDDDD
     uid           [ultimate] Alice Engineer <alice@example.org>
     uid           [ultimate] Alice Engineer <allie@example.net>
-    ssb>  rsa2048 2017-12-06 [E]
-    ssb>  rsa2048 2017-12-06 [S]
+    ssb>  cv25519 2021-05-01 [E]
+    ssb>  ed25519 2021-05-01 [S]
 
 The `>` in the `ssb>` output indicates that the subkey is only available on
 the smartcard. If you go back into your secret keys directory and look at the
@@ -1013,10 +958,10 @@ your PGP key.
 
 In all of the below commands, the `[fpr]` is your key fingerprint.
 
-#### Mounting your master key offline storage
+#### Mounting your offline storage
 
-You will need your master key for any of the operations below, so you will
-first need to mount your backup offline storage and tell GnuPG to use it.
+You will need your certification key for any of the operations below, so you
+will first need to mount your backup offline storage and tell GnuPG to use it.
 First, find out where the media got mounted, e.g. by looking at the output of
 the `mount` command. Then, locate the directory with the backup of your GnuPG
 directory and tell GnuPG to use that as its home:
@@ -1038,18 +983,18 @@ want to import these changes back into your regular working directory:
 
 #### Extending key expiration date
 
-The master key we created has the default expiration date of 2 years from the
-date of creation. This is done both for security reasons and to make obsolete
-keys eventually disappear from keyservers.
+The certification key we created has the default expiration date of 2 years
+from the date of creation. This is done both for security reasons and to make
+obsolete keys eventually disappear from keyservers.
 
 To extend the expiration on your key by a year from current date, just run:
 
     $ gpg --quick-set-expire [fpr] 1y
 
 You can also use a specific date if that is easier to remember (e.g. your
-birthday, January 1st, or Canada Day):
+birthday, January 1st, or Canada Day, 2030):
 
-    $ gpg --quick-set-expire [fpr] 2020-07-01
+    $ gpg --quick-set-expire [fpr] 2030-07-01
 
 Remember to send the updated key back to keyservers:
 
@@ -1080,8 +1025,7 @@ location, but what if someone had managed to trick you?
 
 Or what happens if a backdoor is discovered in one of the projects you've
 worked on, and the "Author" line in the commit says it was done by you, while
-you're pretty sure you had [nothing to do with
-it](https://github.com/jayphelps/git-blame-someone-else)?
+you're pretty sure you had [nothing to do with it](https://github.com/jayphelps/git-blame-someone-else)?
 
 To address both of these issues, Git introduced PGP integration. Signed tags
 prove the repository integrity by assuring that its contents are exactly the
@@ -1091,7 +1035,7 @@ having access to your PGP keys.
 
 ### Checklist
 
-- [ ] Understand signed tags, commits, and pushes _(ESSENTIAL)_
+- [ ] Understand signed tags, commits  _(ESSENTIAL)_
 - [ ] Configure git to use your key _(ESSENTIAL)_
 - [ ] Learn how tag signing and verification works _(ESSENTIAL)_
 - [ ] Configure git to always sign annotated tags _(NICE)_
@@ -1102,8 +1046,7 @@ having access to your PGP keys.
 ### Considerations
 
 Git implements multiple levels of integration with PGP, first starting with
-signed tags, then introducing signed commits, and finally adding support for
-signed pushes.
+signed tags, and then introducing signed commits.
 
 #### Understanding Git Hashes
 
@@ -1182,24 +1125,6 @@ developer's tree at the time the signature was made. Tag signatures and commit
 PGP signatures provide exact same security assurances about the repository and
 its entire history.
 
-#### Signed pushes
-
-This is included here for completeness' sake, since this functionality needs
-to be enabled on the server receiving the push before it does anything useful.
-As we saw above, PGP-signing a git object gives verifiable information about
-the developer's git tree, but not about their *intent* for that tree.
-
-For example, you can be working on an experimental branch in your own git fork
-trying out a promising cool feature, but after you submit your work for
-review, someone finds a nasty bug in your code. Since your commits are
-properly signed, someone can take the branch containing your nasty bug and
-push it into master, introducing a vulnerability that was never intended to go
-into production. Since the commit is properly signed with your key, everything
-looks legitimate and your reputation is questioned when the bug is discovered.
-
-Ability to require PGP-signatures during `git push` was added in order to
-certify the *intent* of the commit, and not merely verify its contents.
-
 #### Configure git to use your PGP key
 
 If you only have one secret key in your keyring, then you don't really need to
@@ -1209,11 +1134,6 @@ However, if you happen to have multiple secret keys, you can tell git which
 key should be used (`[fpr]` is the fingerprint of your key):
 
     $ git config --global user.signingKey [fpr]
-
-**NOTE**: If you have a distinct `gpg2` command, then you should tell git to
-always use it instead of the legacy `gpg` from version 1:
-
-    $ git config --global gpg.program gpg2
 
 #### How to work with signed tags
 
@@ -1360,18 +1280,12 @@ smartcard, you can use it with ssh for adding 2-factor authentication for your
 ssh sessions. You just need to tell your environment to use the correct socket
 file for talking to the agent.
 
-First, add the following to your `~/.gnupg/gpg-agent.conf`:
-
-    enable-ssh-support
-
-Then, add this to your `.bashrc`:
+All you need is add this to your `.bashrc`:
 
     export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
-You will need to kill the existing `gpg-agent` process and start a new login
-session for the changes to take effect:
+Then start a new login session for the changes to take effect:
 
-    $ killall gpg-agent
     $ bash
     $ ssh-add -L
 
@@ -1500,7 +1414,8 @@ By this point you have accomplished the following important tasks:
 
 1. Created your developer identity and protected it using PGP cryptography.
 2. Configured your environment so your identity is not easily stolen by moving
-   your master key offline and your subkeys to an external hardware device.
+   your certification key offline and your subkeys to an external hardware
+   device.
 3. Configured your git environment to ensure that anyone using your project is
    able to verify the integrity of the repository and its entire history.
 4. Secured your online accounts using 2-factor authentication.
