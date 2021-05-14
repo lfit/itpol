@@ -1,6 +1,6 @@
 # Linux workstation security checklist
 
-Updated: 2017-12-15
+Updated: 2019-08-22
 
 *Status: CURRENT*
 
@@ -168,6 +168,10 @@ ExpressCard are guilty of the same, though some later implementations of
 Thunderbolt attempt to limit the scope of memory access. It is best if the
 system you are getting has none of these ports, but it is not critical, as
 they usually can be turned off via UEFI or disabled in the kernel itself.
+If you are getting a system that has Thunderbolt 3, it is best if you plan on 
+leaving it enabled to ensure that Thunderbolt security is enabled and if security 
+levels are supported it is set to User Authorzation. This will prevent Thunderbolt 
+devices from attaching to the system without the user's knowledge.
 
 #### TPM Chip
 
