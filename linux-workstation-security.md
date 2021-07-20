@@ -261,8 +261,8 @@ what you should consider when picking a distribution to use.
 Mandatory Access Controls (MAC) or Role-Based Access Controls (RBAC) are an
 extension of the basic user/group security mechanism used in legacy POSIX
 systems. Most distributions these days either already come bundled with a
-MAC/RBAC implementation (Fedora, Ubuntu), or provide a mechanism to add it via
-an optional post-installation step (Gentoo, Arch, Debian). Obviously, it is
+MAC/RBAC implementation (Fedora, Ubuntu, Debian), or provide a mechanism to add it via
+an optional post-installation step (Gentoo, Arch). Obviously, it is
 highly advised that you pick a distribution that comes pre-configured with a
 MAC/RBAC system, but if you have strong feelings about a distribution that
 doesn't have one enabled by default, do plan to configure it
