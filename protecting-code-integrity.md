@@ -567,7 +567,7 @@ keys.openpgp.org keyserver. Please follow the instructions provided here:
 - [Upload to keys.openpgp.org](https://keys.openpgp.org/about/usage#gnupg-upload)
 
 
-## Moving your cerification key to offline storage
+## Moving your certification key to offline storage
 
 ### Checklist
 
