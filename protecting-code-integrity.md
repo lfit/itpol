@@ -780,8 +780,12 @@ features on the internal chip. Here are a few recommendations:
   useful with newer laptops; also offers additional security features such as
   U2F; only supports NIST ECC cryptography.
 
-If you want to use ED25519 subkeys, then your only choice is a Nitrokey Start,
-though once Nitrokey 3 Pro is available, it should also be considered.
+If you want to use ED25519 subkeys, then your one of your choices is a
+Nitrokey Start, though once Nitrokey 3 Pro is available, it should
+also be considered.
+
+ED25519 algorithm is also supported on YubiKeys 5 that use firmware
+version 5.2.3 or newer.
 
 #### Configuring your smartcard device
 
