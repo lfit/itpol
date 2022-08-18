@@ -144,6 +144,8 @@ this section addresses core considerations when choosing a work system.
 - [ ] System has no firewire, thunderbolt or ExpressCard ports _(NICE)_
 - [ ] System has a TPM chip _(NICE)_
 - [ ] System has disabled Intel ME chip _(PARANOID)_
+- [ ] System is not susceptible to Row hammer _(PARANOID)_
+- [ ] System has no CPU vulnerabilities _(PARANOID)_
 
 ### Considerations
 
@@ -200,6 +202,18 @@ possible to use a tool such as [me_cleaner][25] to significantly reduce the
 chip functionality on your own. You should be mindful that it is an involved
 process, and that disabling the IME may void the manufacturer support warranty
 (or even be against your employer policy).
+
+#### Row hammer
+
+There are no known types of RAM not effected by [Row hammer][28] / eccploit / Rowhammer.js /etc so test.
+
+#### CPU vulnerabilities
+
+Can be checked with
+
+    cd /sys/devices/system/cpu/vulnerabilities/ && grep . * | grep -v "Not affected"
+    
+Anything other than no response is not ideal
 
 ## Pre-boot environment
 
@@ -871,3 +885,4 @@ This work is licensed under a
 [25]: https://github.com/corna/me_cleaner
 [26]: https://en.wikipedia.org/wiki/Intel_Active_Management_Technology#Known_vulnerabilities_and_exploits
 [27]: https://puri.sm/posts/purism-librem-laptops-completely-disable-intel-management-engine/
+[28]: https://en.wikipedia.org/wiki/Row_hammer
