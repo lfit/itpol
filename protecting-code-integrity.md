@@ -524,6 +524,10 @@ Then pick NIST (use "nistp256" instead of "cv25519" and "ed25519" below). If
 you just plan to store your subkeys on your computer, then pick ED25519 (the
 GnuPG default).
 
+(Note: If using NIST or Brainpool curves for `sign` or `auth` subkeys, you must
+specify the algorithm explicitly, e.g.: `nistp256/ecdsa` instead of `nistp256`
+due to a long-standing bug [https://dev.gnupg.org/T4052].)
+
 Since you can revoke subkeys and create new ones at any time, this is not a
 life or death kind of decision. If in doubt, pick ed25519.
 
