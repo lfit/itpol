@@ -553,7 +553,7 @@ You can review your key information using `gpg --list-key [fpr]`:
 If you use GitHub in your development, you should upload your key following
 the instructions they have provided:
 
-- [Adding a PGP key to your GitHub account](https://help.github.com/articles/adding-a-new-gpg-key-to-your-github-account/)
+- [Adding a GPG key to your GitHub account](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
 
 To generate the public key output suitable to paste in, just run:
 
